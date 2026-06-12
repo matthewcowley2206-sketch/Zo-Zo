@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --color-cream: #fbf8f6;
+  --color-cream-dark: #f3ece8;
+  --color-ink: #1d1d1f;
+  --color-ink-soft: #322929;
+  --color-muted: #6e6e73;
+  --color-muted-light: #86868b;
+  --color-line: rgba(0, 0, 0, 0.08);
+  --color-accent: #322929;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-cream text-ink font-sans;
+    font-feature-settings: "kern" 1, "liga" 1;
+  }
+
+  ::selection {
+    @apply bg-ink text-cream;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .headline-hero {
+    @apply text-[2.5rem] sm:text-[3.25rem] md:text-[4.5rem] lg:text-[5.5rem] font-semibold tracking-[-0.04em] leading-[1.05] text-balance;
+  }
+
+  .headline-section {
+    @apply text-[2rem] sm:text-[2.75rem] md:text-[3.5rem] font-semibold tracking-[-0.03em] leading-[1.08] text-balance;
+  }
+
+  .headline-small {
+    @apply text-[1.5rem] sm:text-[1.75rem] md:text-[2rem] font-semibold tracking-[-0.02em] leading-[1.12];
+  }
+
+  .body-large {
+    @apply text-[1.125rem] sm:text-[1.3125rem] md:text-[1.4375rem] leading-[1.5] text-muted font-normal;
+  }
+
+  .body-regular {
+    @apply text-[1.0625rem] leading-[1.58] text-muted;
+  }
+
+  .eyebrow {
+    @apply text-[0.8125rem] font-medium tracking-[0.04em] uppercase text-muted-light;
+  }
+
+  .section-pad {
+    @apply px-6 sm:px-10 lg:px-16 xl:px-24;
+  }
+
+  .content-max {
+    @apply max-w-[980px] mx-auto;
+  }
+
+  .content-wide {
+    @apply max-w-[1200px] mx-auto;
+  }
+
+  .nav-blur {
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+  }
+
+  .demo-guide-pulse {
+    animation: demo-guide-pulse 1.6s ease-in-out infinite;
+  }
+
+  .demo-guide-pulse-delayed {
+    animation: demo-guide-pulse 1.6s ease-in-out 0.4s infinite;
+  }
+
+  .demo-guide-target {
+    position: relative;
+    z-index: 10;
+  }
+
+  .demo-phone-beacon {
+    box-shadow: 0 0 0 0 var(--beacon-color, rgba(12, 74, 110, 0.35));
+    animation: demo-phone-beacon 2s ease-in-out 3;
+  }
+
+  @keyframes demo-guide-pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.45;
+      transform: scale(1.02);
+    }
+  }
+
+  @keyframes demo-phone-beacon {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 var(--beacon-color, rgba(12, 74, 110, 0.35));
+    }
+    50% {
+      box-shadow: 0 0 0 12px transparent;
+    }
+  }
+}
