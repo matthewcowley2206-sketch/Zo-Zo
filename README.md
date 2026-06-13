@@ -23,7 +23,7 @@ After deployment, the public site is here:
 
 This is the live version anyone can open in a browser. It is not `localhost`.
 
-In the repo, go to **Settings → Pages** and set **Source** to **GitHub Actions** if the site is not live yet.
+In the repo, go to **Settings → Pages** and set **Branch** to `gh-pages` / `/ (root)` if the site is not live yet.
 
 ## Local development
 
