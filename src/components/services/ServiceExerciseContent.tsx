@@ -1,17 +1,32 @@
 import { Link } from 'react-router-dom'
+import type { ComponentType, ReactNode } from 'react'
 import type { Service } from '../../content/services'
 import { getRelatedServices } from '../../content/services'
+import { serviceImagery } from '../../content/serviceImagery'
 import { engagementTypes } from '../../content/site'
 import { Button } from '../ui/Button'
 import { FadeIn } from '../ui/FadeIn'
 import { Section, SectionHeader } from '../ui/Section'
 
-type ServiceDetailContentProps = {
+type ServiceExerciseContentProps = {
   service: Service
+  Demo: ComponentType
+  exerciseCaption: string
+  outcomesDescription?: string
+  engagementDescription?: string
+  callout?: ReactNode
 }
 
-export function ServiceDetailContent({ service }: ServiceDetailContentProps) {
+export function ServiceExerciseContent({
+  service,
+  Demo,
+  exerciseCaption,
+  outcomesDescription = 'Every engagement is scoped toward deliverables you can use - not reports that gather dust.',
+  engagementDescription = 'Some clients need a single session. Others want a scoped project or ongoing support. We figure out what fits together.',
+  callout,
+}: ServiceExerciseContentProps) {
   const related = getRelatedServices(service.slug)
+  const imagery = serviceImagery[service.slug]
 
   return (
     <>
@@ -21,6 +36,7 @@ export function ServiceDetailContent({ service }: ServiceDetailContentProps) {
             <h2 className="headline-small">Who this is for</h2>
             <p className="mt-4 body-regular">{service.whoFor}</p>
             <p className="mt-6 body-regular">{service.summary}</p>
+            {callout}
           </FadeIn>
 
           <FadeIn delay={0.1}>
@@ -38,19 +54,46 @@ export function ServiceDetailContent({ service }: ServiceDetailContentProps) {
       </Section>
 
       <Section>
-        <SectionHeader
-          eyebrow="How we approach this"
-          title={service.approachTitle}
-          description={service.approachDescription}
-        />
-        <div className="content-wide space-y-0">
+        <FadeIn className="content-wide">
+          <Demo />
+          <p className="mx-auto mt-5 max-w-[640px] text-center text-[0.8125rem] leading-relaxed text-muted-light">
+            {exerciseCaption}
+          </p>
+        </FadeIn>
+      </Section>
+
+      <Section theme="cream">
+        <div className="content-wide grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <FadeIn>
+            <SectionHeader
+              align="left"
+              eyebrow="How we approach this"
+              title={service.approachTitle}
+              description={service.approachDescription}
+              className="!mb-0 !max-w-none"
+            />
+          </FadeIn>
+          {imagery?.secondary && (
+            <FadeIn delay={0.1}>
+              <div className="overflow-hidden rounded-3xl">
+                <img
+                  src={imagery.secondary.url}
+                  alt={imagery.secondary.alt}
+                  className="aspect-[4/3] w-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+            </FadeIn>
+          )}
+        </div>
+        <div className="content-wide mt-12 space-y-0">
           {service.processSteps.map((step, i) => (
             <FadeIn key={step.number} delay={i * 0.05}>
               <div className="grid gap-4 border-b border-line py-10 sm:grid-cols-[100px_240px_1fr] sm:gap-12">
                 <span className="text-[0.875rem] font-medium tabular-nums text-muted-light">
                   {step.number}
                 </span>
-                <h2 className="headline-small">{step.title}</h2>
+                <h2 className="headline-small text-[1.375rem]">{step.title}</h2>
                 <p className="body-regular max-w-[560px]">{step.description}</p>
               </div>
             </FadeIn>
@@ -63,7 +106,7 @@ export function ServiceDetailContent({ service }: ServiceDetailContentProps) {
           theme="dark"
           eyebrow="What you leave with"
           title="Outcomes that matter."
-          description="Every engagement is scoped toward deliverables you can use - not reports that gather dust."
+          description={outcomesDescription}
         />
         <div className="content-max mx-auto max-w-[720px]">
           <ul className="space-y-4">
@@ -80,10 +123,7 @@ export function ServiceDetailContent({ service }: ServiceDetailContentProps) {
       </Section>
 
       <Section theme="cream">
-        <SectionHeader
-          eyebrow="Common questions"
-          title="Good to know before we start."
-        />
+        <SectionHeader eyebrow="Common questions" title="Good to know before we start." />
         <div className="content-max mx-auto max-w-[720px] space-y-8">
           {service.faq.map((item, i) => (
             <FadeIn key={item.question} delay={i * 0.05}>
@@ -119,13 +159,13 @@ export function ServiceDetailContent({ service }: ServiceDetailContentProps) {
         <SectionHeader
           eyebrow="Engagement types"
           title="Flexible to fit where you are."
-          description="Some clients need a single session. Others want a scoped project or ongoing support. We figure out what fits together."
+          description={engagementDescription}
         />
         <div className="content-wide grid gap-6 md:grid-cols-3">
           {engagementTypes.map((type, i) => (
             <FadeIn key={type.title} delay={i * 0.08}>
               <div className="rounded-3xl border border-line bg-cream p-8 sm:p-10">
-                <h3 className="headline-small">{type.title}</h3>
+                <h3 className="headline-small text-[1.375rem]">{type.title}</h3>
                 <p className="mt-4 body-regular">{type.description}</p>
               </div>
             </FadeIn>

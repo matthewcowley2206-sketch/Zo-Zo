@@ -1,3 +1,5 @@
+import { hiRes, photos } from './imageUrls'
+
 export type ProjectDemo = {
   id: string
   clientName: string
@@ -26,8 +28,7 @@ export const projectDemos: ProjectDemo[] = [
       'We mapped the loyalty-led journey, aligned stakeholders on priority flows, and built a clickable prototype covering miles balance through boarding.',
     outcome:
       'Shared understanding across teams, faster decisions, and a validated brief before development spend.',
-    humanImage:
-      'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1200&q=80',
+    humanImage: hiRes(photos.demoAirport),
     humanImageAlt: 'Traveller at an airport window, looking out at aircraft',
     accentColor: '#0c4a6e',
   },
@@ -44,8 +45,7 @@ export const projectDemos: ProjectDemo[] = [
       'We designed and built a working order flow - menu, customisation, cart, and loyalty progress - ready to click through and share.',
     outcome:
       'A validated customer journey and a sharper go-to-market plan, without building the wrong product first.',
-    humanImage:
-      'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200&q=80',
+    humanImage: hiRes(photos.demoCafe),
     humanImageAlt: 'Barista pouring latte art in a warm cafe',
     accentColor: '#92400e',
   },
@@ -62,9 +62,8 @@ export const projectDemos: ProjectDemo[] = [
       'We structured the problem, simplified the options, and delivered a working portal prototype leadership could navigate themselves.',
     outcome:
       'Faster alignment, clearer requirements, and confidence in what to build next.',
-    humanImage:
-      'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1200&q=80',
-    humanImageAlt: 'Professional team collaborating around a table',
+    humanImage: hiRes(photos.demoLegal),
+    humanImageAlt: 'Professional team reviewing documents and outcomes together',
     accentColor: '#1e3a5f',
   },
 ]
@@ -74,13 +73,8 @@ export function getProjectDemo(id: string): ProjectDemo | undefined {
 }
 
 export const humanImagery = {
-  hero:
-    'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1600&q=80',
-  heroAlt: 'Business owner in conversation, planning the path forward',
-  about:
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=800&q=80',
+  hero: hiRes(photos.homeHero, 2400),
+  heroAlt: 'Diverse team collaborating together - people first, not a solo screen',
+  about: hiRes(photos.founderPortrait, 1200),
   aboutAlt: 'Matthew Cowley, founder of Zo and Zo Advisory',
-  working:
-    'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80',
-  workingAlt: 'Team reviewing a prototype together on screen',
 } as const

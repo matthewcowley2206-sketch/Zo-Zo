@@ -1,3 +1,5 @@
+import { hiRes, photos } from './imageUrls'
+
 export type ServiceImage = {
   url: string
   alt: string
@@ -11,12 +13,82 @@ export type ServiceImagerySet = {
 export const serviceImagery: Partial<Record<string, ServiceImagerySet>> = {
   strategy: {
     hero: {
-      url: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&q=80',
-      alt: 'Small team collaborating around a laptop in a bright, casual workspace',
+      url: hiRes(photos.strategyTeam),
+      alt: 'Small diverse team collaborating around a laptop in a bright workspace',
     },
     secondary: {
-      url: 'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1200&q=80',
+      url: hiRes(photos.strategyWhiteboard),
       alt: 'Team working through ideas together at a whiteboard',
+    },
+  },
+  'client-listening': {
+    hero: {
+      url: hiRes(photos.clientConversation),
+      alt: 'Two colleagues in a thoughtful conversation at a table',
+    },
+    secondary: {
+      url: hiRes(photos.clientFollowUp),
+      alt: 'Professional woman in a focused client conversation',
+    },
+  },
+  'sales-marketing': {
+    hero: {
+      url: hiRes(photos.salesMeeting),
+      alt: 'Marketing team reviewing plans together at a table',
+    },
+    secondary: {
+      url: hiRes(photos.salesCollaboration),
+      alt: 'Colleagues discussing positioning and go-to-market together',
+    },
+  },
+  communication: {
+    hero: {
+      url: hiRes(photos.commPresentation),
+      alt: 'Leadership team in a focused presentation and discussion',
+    },
+    secondary: {
+      url: hiRes(photos.commDiscussion),
+      alt: 'Diverse team in an open discussion with clear eye contact',
+    },
+  },
+  'data-ai': {
+    hero: {
+      url: hiRes(photos.dataTeam),
+      alt: 'Mixed team reviewing insights together at screens - not a dashboard on its own',
+    },
+    secondary: {
+      url: hiRes(photos.dataInsights),
+      alt: 'Colleagues making decisions from shared data in conversation',
+    },
+  },
+  operations: {
+    hero: {
+      url: hiRes(photos.opsPlanning),
+      alt: 'Team mapping a process together in a working session',
+    },
+    secondary: {
+      url: hiRes(photos.opsWorkshop),
+      alt: 'Diverse team simplifying a workflow together',
+    },
+  },
+  'prototype-development': {
+    hero: {
+      url: hiRes(photos.prototypeReview),
+      alt: 'Team reviewing a prototype together on screen',
+    },
+    secondary: {
+      url: hiRes(photos.opsAlignment),
+      alt: 'Colleagues in a working session reacting to a deliverable',
+    },
+  },
+  'go-to-market': {
+    hero: {
+      url: hiRes(photos.gtmPlanning),
+      alt: 'Diverse launch team planning together in a modern office with women and men',
+    },
+    secondary: {
+      url: hiRes(photos.gtmStakeholders),
+      alt: 'Stakeholders aligning on launch priorities in conversation',
     },
   },
 }

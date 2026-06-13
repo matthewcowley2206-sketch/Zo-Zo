@@ -1,4 +1,4 @@
-import { humanImagery, projectDemos } from '../../content/demos'
+import { projectDemos } from '../../content/demos'
 import { ProjectShowcase } from '../demos/ProjectShowcase'
 import { Button } from '../ui/Button'
 import { FadeIn } from '../ui/FadeIn'
@@ -28,12 +28,14 @@ export function WorkShowcase({ showIntro = true }: WorkShowcaseProps) {
               </FadeIn>
             </div>
             <FadeIn delay={0.1}>
-              <div className="overflow-hidden rounded-3xl">
-                <img
-                  src={humanImagery.working}
-                  alt={humanImagery.workingAlt}
-                  className="aspect-[4/3] w-full object-cover"
-                />
+              <div className="overflow-hidden rounded-3xl bg-ink p-8 text-cream sm:p-10">
+                <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-cream/50">
+                  How we work
+                </p>
+                <p className="mt-4 text-[1.125rem] leading-relaxed text-cream/85">
+                  Clickable prototypes your stakeholders can use in context - not slides about what
+                  something might feel like.
+                </p>
               </div>
             </FadeIn>
           </div>

@@ -6,6 +6,7 @@ import {
   synthesizeStrategy,
   type Lane,
 } from './strategySynthesis'
+import { NextActionHint } from '../exercise/NextActionHint'
 
 const lanes: { id: Lane; label: string; sub: string; color: string }[] = [
   { id: 'now', label: 'Now', sub: 'Next 30 days', color: 'bg-amber-100 ring-amber-200/80 text-amber-950' },
@@ -111,6 +112,14 @@ export function StrategyClarityDemo() {
   const dropHighlight = (zone: Lane | 'pool') =>
     overZone === zone ? 'ring-2 ring-ink/30 bg-ink/[0.03]' : ''
 
+  const nextAction = !done
+    ? sortedCount === 0
+      ? 'Drag any yellow sticky below into Now, Next, or Park'
+      : `Drag the next sticky into a column (${sortedCount} of ${stickyDefs.length} sorted)`
+    : outputTab === 'page'
+      ? 'Scroll your Strategy-on-a-Page below, or tap 8-slide pack'
+      : 'Tap Reset exercise to sort again'
+
   return (
     <div className="overflow-hidden rounded-3xl border border-line bg-cream-dark/40">
       <div className="border-b border-line bg-cream px-6 py-5 sm:px-8">
@@ -127,6 +136,8 @@ export function StrategyClarityDemo() {
       </div>
 
       <div className="p-6 sm:p-8">
+        <NextActionHint action={nextAction} highlightContinue={done} />
+        <div className="mt-6">
         {sortedCount > 0 && (
           <div className="mb-6 flex justify-end">
             <button
@@ -457,6 +468,7 @@ export function StrategyClarityDemo() {
             </div>
           </motion.div>
         )}
+        </div>
       </div>
 
       <AnimatePresence>
