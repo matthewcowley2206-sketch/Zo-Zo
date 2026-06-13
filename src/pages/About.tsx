@@ -31,6 +31,8 @@ export function About() {
                 src={humanImagery.about}
                 alt={humanImagery.aboutAlt}
                 className="h-full w-full object-cover"
+                loading="lazy"
+                decoding="async"
               />
             </div>
             <p className="mt-4 text-center text-[0.9375rem] font-semibold text-ink lg:text-left">

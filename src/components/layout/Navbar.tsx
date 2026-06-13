@@ -45,7 +45,7 @@ export function Navbar() {
             {navLinks.map((link) => {
               const isActive =
                 link.href === '/services'
-                  ? location.pathname === '/services'
+                  ? location.pathname === '/services' || location.pathname.startsWith('/services/')
                   : location.pathname === link.href ||
                     location.pathname.startsWith(`${link.href}/`)
 

@@ -52,8 +52,8 @@ export function ClientListeningContent({ service }: ClientListeningContentProps)
         <FadeIn className="content-wide">
           <ClientListeningDemo />
           <p className="mx-auto mt-5 max-w-[640px] text-center text-[0.8125rem] leading-relaxed text-muted-light">
-            A simplified sample of the 360 listening loop. Real programs include your clients, your
-            CRM data, and a roadmap for AI and automation across every stage.
+            Tap each stage to expand what happens, what you leave with, and where automation can help.
+            The loop runs continuously - not as a one-off survey.
           </p>
         </FadeIn>
       </Section>

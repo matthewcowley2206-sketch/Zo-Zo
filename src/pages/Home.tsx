@@ -15,12 +15,12 @@ export function Home() {
     <>
       <Section size="hero" className="pt-24 sm:pt-28">
         <div className="content-wide grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          <div className="text-center lg:text-left">
+          <div className="min-w-0 text-center lg:text-left">
             <FadeIn>
               <p className="eyebrow mb-6">Zo&Zo Advisory · Sydney · Australia-wide</p>
             </FadeIn>
             <FadeIn delay={0.1}>
-              <h1 className="headline-hero text-ink">
+              <h1 className="headline-hero-split text-ink">
                 See your idea working - before you commit to building it.
               </h1>
             </FadeIn>
@@ -43,6 +43,8 @@ export function Home() {
                 src={humanImagery.hero}
                 alt={humanImagery.heroAlt}
                 className="aspect-[4/5] w-full object-cover sm:aspect-[3/4]"
+                decoding="async"
+                sizes="(max-width: 1024px) 100vw, 50vw"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink/30 via-transparent to-transparent" />
             </div>

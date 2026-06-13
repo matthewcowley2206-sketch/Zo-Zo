@@ -193,11 +193,13 @@ export const services: Service[] = [
   {
     slug: 'communication',
     title: 'Communication & Clarity',
-    tagline: 'Turn your thinking into messages people actually understand.',
+    tagline: 'Storytelling and clarity for board, team, and clients.',
     summary:
-      'Great ideas fall flat when the message is muddy. We turn complex thinking into words your board, team, or clients actually understand.',
+      'Great ideas fall flat when the message is muddy. We use storytelling to turn complex thinking into narratives your board, team, and clients actually understand.',
     whoFor: 'Leaders rolling out change who need everyone pulling in the same direction.',
     includes: [
+      'Narrative spine and storytelling frameworks for your core message',
+      'Client narrative development for proposals, updates, and key accounts',
       'Board-ready presentations without the waffle',
       'Executive summaries that get to the point',
       'Team communication packs for direction and context',
@@ -205,9 +207,9 @@ export const services: Service[] = [
       'Staff comms for new strategies or changes',
       'FAQs, talking points, scripts, and explainers',
     ],
-    approachTitle: 'Say it once. Say it clearly.',
+    approachTitle: 'Find the story. Tell it clearly.',
     approachDescription:
-      'We turn complex thinking into messages that land - whether the audience is your board, your team, or your clients.',
+      'We shape a narrative spine first - then build the materials that carry it. Board, team, client, and rollout - one story, told well.',
     processSteps: [
       { number: '01', title: 'Understand the audience', description: 'Who needs to hear this, what they care about, and what they need to do differently.' },
       { number: '02', title: 'Distil the message', description: 'Cut the waffle. Find the one thing that needs to land.' },
@@ -221,8 +223,8 @@ export const services: Service[] = [
       { question: 'Do you present on our behalf?', answer: 'We prepare you and your leaders to present with confidence. Coaching can be part of the engagement.' },
     ],
     outcomes: [
-      'Messages that people actually understand',
-      'Materials ready for board, team, or clients',
+      'A clear narrative spine your leaders can repeat',
+      'Client narratives and materials ready for board, team, or clients',
       'Less confusion and faster alignment during change',
     ],
     relatedSlugs: ['strategy', 'sales-marketing'],

@@ -1,269 +1,259 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
-  funnelStages,
-  positioningTiles,
-  stepGuides,
-  synthesizeSalesMarketing,
-  workflowSteps,
-  type Audience,
-  type Differentiator,
-  type FunnelStage,
-  type Value,
-  type WorkflowStepId,
-} from './salesMarketingSynthesis'
-import { ExerciseShell } from '../exercise/ExerciseShell'
-import {
-  DeliverableFrame,
-  FunnelVisual,
-  ProgressBarVisual,
-  StatPill,
-} from '../exercise/VisualDeliverables'
+  supportAreas,
+  supportFlowHeadline,
+  supportFlowIntro,
+  type SupportAreaId,
+} from './salesMarketingSupport'
+
+function StepBadge({ index, active }: { index: number; active: boolean }) {
+  return (
+    <span
+      className={`text-[0.8125rem] font-bold tabular-nums ${
+        active ? 'text-cream' : 'text-ink'
+      }`}
+    >
+      {String(index + 1).padStart(2, '0')}
+    </span>
+  )
+}
 
 export function SalesMarketingDemo() {
-  const [step, setStep] = useState<WorkflowStepId>('funnel')
-  const [leaks, setLeaks] = useState<FunnelStage[]>([])
-  const [audience, setAudience] = useState<Audience | null>(null)
-  const [value, setValue] = useState<Value | null>(null)
-  const [differentiator, setDifferentiator] = useState<Differentiator | null>(null)
-  const [outputTab, setOutputTab] = useState<'position' | 'journey'>('position')
+  const panelRef = useRef<HTMLDivElement>(null)
+  const [activeId, setActiveId] = useState<SupportAreaId | null>('positioning')
+  const activeArea = supportAreas.find((area) => area.id === activeId)
+  const activeIndex = activeArea
+    ? supportAreas.findIndex((area) => area.id === activeArea.id)
+    : -1
 
-  const stepIndex = workflowSteps.findIndex((s) => s.id === step)
-  const positioningComplete = audience && value && differentiator
-  const funnelComplete = leaks.length >= 2
-  const complete = funnelComplete && positioningComplete
-
-  const output = useMemo(
-    () =>
-      complete
-        ? synthesizeSalesMarketing({
-            leaks,
-            audience: audience!,
-            value: value!,
-            differentiator: differentiator!,
-          })
-        : null,
-    [leaks, audience, value, differentiator, complete],
-  )
-
-  const toggleLeak = (id: FunnelStage) => {
-    setLeaks((prev) => {
-      if (prev.includes(id)) return prev.filter((l) => l !== id)
-      if (prev.length >= 2) return [prev[1], id]
-      return [...prev, id]
-    })
+  const toggleArea = (id: SupportAreaId) => {
+    setActiveId((current) => (current === id ? null : id))
   }
 
-  const reset = () => {
-    setStep('funnel')
-    setLeaks([])
-    setAudience(null)
-    setValue(null)
-    setDifferentiator(null)
-    setOutputTab('position')
-  }
-
-  const handlePrimary = () => {
-    if (step === 'output') {
-      if (outputTab === 'position') {
-        setOutputTab('journey')
-        return
-      }
-      reset()
-      return
+  useEffect(() => {
+    if (activeId && panelRef.current) {
+      panelRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
     }
-    setStep(workflowSteps[stepIndex + 1].id)
-  }
-
-  const handleBack = () => {
-    if (step === 'output' && outputTab === 'journey') {
-      setOutputTab('position')
-      return
-    }
-    setStep(workflowSteps[stepIndex - 1].id)
-  }
-
-  const canAdvance =
-    (step === 'funnel' && funnelComplete) ||
-    (step === 'position' && positioningComplete) ||
-    step === 'output'
-
-  const primaryLabel =
-    step === 'funnel' && !funnelComplete
-      ? `Mark ${2 - leaks.length} leak point${leaks.length === 1 ? '' : 's'} on the funnel`
-      : step === 'position' && !positioningComplete
-        ? 'Pick one tile in each row'
-        : step === 'output' && outputTab === 'position'
-          ? 'Next · Journey & cadence'
-          : step === 'output'
-            ? 'Reset · try another journey'
-            : `Continue to ${workflowSteps[stepIndex + 1]?.label ?? 'next'}`
-
-  const highlightContinue =
-    (step === 'funnel' && funnelComplete) ||
-    (step === 'position' && !!positioningComplete) ||
-    (step === 'output' && outputTab === 'position')
-
-  const nextAction = (() => {
-    if (step === 'funnel') {
-      if (leaks.length < 2) {
-        const stage = funnelStages.find((s) => !leaks.includes(s.id))
-        return `Tap Mark leak under ${stage?.label ?? 'a stage'} (${leaks.length} of 2 done)`
-      }
-      return 'Tap the pulsing Continue button below'
-    }
-    if (step === 'position') {
-      if (!audience) return 'Tap a yellow tile in the Who row'
-      if (!value) return 'Now tap a tile in the Why you row'
-      if (!differentiator) return 'Now tap a tile in the Difference row'
-      return 'Tap the pulsing Continue button below'
-    }
-    if (step === 'output' && outputTab === 'position') return 'Tap Next · Journey & cadence below'
-    return 'Scroll the tabs above, or tap Reset below to try again'
-  })()
+  }, [activeId])
 
   return (
-    <ExerciseShell
-      eyebrow="Sample exercise · Customer journey map"
-      title="Find the leak. Build the message."
-      intro="Mark where prospects drop off, then assemble your positioning from tiles - see a visual one-pager and funnel fix."
-      stepIndex={stepIndex}
-      totalSteps={workflowSteps.length}
-      guide={stepGuides[step]}
-      nextAction={nextAction}
-      highlightContinue={highlightContinue}
-      subLabel={step === 'output' ? (outputTab === 'position' ? 'Positioning' : 'Journey') : undefined}
-      subProgress={step === 'funnel' ? leaks.length : undefined}
-      subMax={step === 'funnel' ? 2 : undefined}
-      showReset={stepIndex > 0 || leaks.length > 0}
-      showBack={stepIndex > 0 || outputTab === 'journey'}
-      primaryLabel={primaryLabel}
-      primaryDisabled={step !== 'output' && !canAdvance}
-      isFinal={step === 'output' && outputTab === 'journey'}
-      onReset={reset}
-      onBack={handleBack}
-      onPrimary={handlePrimary}
-      scrollKey={`${step}-${outputTab}-${leaks.join()}`}
-    >
-      <AnimatePresence mode="wait">
-        {step === 'funnel' && (
-          <motion.div key="funnel" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-            <FunnelVisual stages={funnelStages} leakIds={leaks} />
-            <div className="mt-4 grid gap-2 sm:grid-cols-5">
-              {funnelStages.map((s) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => toggleLeak(s.id)}
-                  className={`rounded-xl px-2 py-2.5 text-[0.6875rem] font-semibold transition ring-1 ${
-                    leaks.includes(s.id)
-                      ? 'bg-rose-500 text-white ring-rose-500'
-                      : 'bg-white text-ink ring-line hover:ring-ink/25'
-                  }`}
-                >
-                  {leaks.includes(s.id) ? '✓ Leak' : 'Mark leak'}
-                  <span className="mt-0.5 block font-normal opacity-80">{s.label}</span>
-                </button>
-              ))}
-            </div>
-          </motion.div>
-        )}
+    <div className="overflow-hidden rounded-3xl border border-line bg-cream-dark/40">
+      <div className="border-b border-line bg-cream px-6 py-5 sm:px-8">
+        <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted-light">
+          How we support you
+        </p>
+        <p className="mt-2 text-[1.125rem] font-semibold text-ink">{supportFlowHeadline}</p>
+        <p className="mt-2 max-w-[560px] text-[0.9375rem] leading-relaxed text-muted">
+          {supportFlowIntro}
+        </p>
+      </div>
 
-        {step === 'position' && (
-          <motion.div key="position" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-5">
-            {(
-              [
-                { key: 'audience', label: 'Who', tiles: positioningTiles.audience, selected: audience, set: setAudience },
-                { key: 'value', label: 'Why you', tiles: positioningTiles.value, selected: value, set: setValue },
-                { key: 'diff', label: 'Difference', tiles: positioningTiles.differentiator, selected: differentiator, set: setDifferentiator },
-              ] as const
-            ).map((row) => (
-              <div key={row.key}>
-                <p className="mb-2 text-[0.6875rem] font-semibold uppercase text-muted-light">{row.label}</p>
-                <div className="flex flex-wrap gap-2">
-                  {row.tiles.map((t) => (
-                    <button
-                      key={t.id}
-                      type="button"
-                      onClick={() => row.set(t.id as never)}
-                      className={`rounded-full px-4 py-2 text-[0.8125rem] font-medium transition ring-1 ${
-                        row.selected === t.id
-                          ? 'bg-ink text-cream ring-ink'
-                          : 'bg-[#fef9c3] text-ink ring-amber-200/80 hover:shadow-md'
+      <div className="p-6 sm:p-8">
+        <div className="hidden lg:block">
+          <div className="relative flex items-start justify-between gap-2">
+            {supportAreas.map((area, index) => {
+              const isActive = activeId === area.id
+              const isPast =
+                activeId !== null &&
+                supportAreas.findIndex((a) => a.id === activeId) > index
+
+              return (
+                <div key={area.id} className="relative flex flex-1 flex-col items-center">
+                  {index < supportAreas.length - 1 && (
+                    <div
+                      className={`absolute left-[calc(50%+28px)] top-7 h-0.5 w-[calc(100%-56px)] ${
+                        isPast || isActive ? 'bg-ink/30' : 'bg-line'
+                      }`}
+                      aria-hidden
+                    />
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => toggleArea(area.id)}
+                    aria-expanded={isActive}
+                    aria-controls={`sales-support-panel-${area.id}`}
+                    className={`relative z-10 flex h-14 w-14 items-center justify-center rounded-2xl ring-1 transition ${
+                      isActive
+                        ? 'bg-ink text-cream ring-ink shadow-lg shadow-ink/15'
+                        : 'bg-white text-ink ring-line hover:bg-cream hover:ring-ink/25'
+                    }`}
+                  >
+                    <StepBadge index={index} active={isActive} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => toggleArea(area.id)}
+                    className="mt-4 w-full text-center"
+                  >
+                    <p
+                      className={`text-[0.8125rem] font-semibold ${
+                        isActive ? 'text-ink' : 'text-muted'
                       }`}
                     >
-                      {t.label}
-                    </button>
-                  ))}
+                      {area.label}
+                    </p>
+                    <p className="mt-1 text-[0.6875rem] leading-snug text-muted-light">
+                      {area.tagline}
+                    </p>
+                  </button>
                 </div>
-              </div>
-            ))}
-            {positioningComplete && (
-              <div className="rounded-xl bg-emerald-50 px-4 py-3 text-[0.8125rem] text-emerald-900 ring-1 ring-emerald-100">
-                Positioning assembled · continue to see your sample deliverable
-              </div>
-            )}
-          </motion.div>
-        )}
+              )
+            })}
+          </div>
+        </div>
 
-        {step === 'output' && output && (
-          <motion.div key={outputTab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-            <div className="mb-4 flex gap-1 rounded-full bg-white p-1 ring-1 ring-line">
-              {(['position', 'journey'] as const).map((tab) => (
+        <div className="space-y-3 lg:hidden">
+          {supportAreas.map((area, index) => {
+            const isActive = activeId === area.id
+
+            return (
+              <div key={area.id} className="overflow-hidden rounded-2xl ring-1 ring-line">
                 <button
-                  key={tab}
                   type="button"
-                  onClick={() => setOutputTab(tab)}
-                  className={`flex-1 rounded-full py-2 text-[0.75rem] font-semibold transition ${
-                    outputTab === tab ? 'bg-ink text-cream' : 'text-muted hover:text-ink'
+                  onClick={() => toggleArea(area.id)}
+                  aria-expanded={isActive}
+                  aria-controls={`sales-support-panel-${area.id}`}
+                  className={`flex w-full items-center gap-4 px-4 py-4 text-left transition sm:px-5 ${
+                    isActive ? 'bg-ink text-cream' : 'bg-white hover:bg-cream-dark/50'
                   }`}
                 >
-                  {tab === 'position' ? 'Positioning one-pager' : 'Journey & cadence'}
+                  <span
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
+                      isActive ? 'bg-white/15' : 'bg-cream ring-1 ring-line'
+                    }`}
+                  >
+                    <StepBadge index={index} active={isActive} />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="flex items-center gap-2">
+                      <span className="text-[0.6875rem] font-semibold tabular-nums opacity-60">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <span className="text-[0.9375rem] font-semibold">{area.label}</span>
+                    </span>
+                    <span
+                      className={`mt-0.5 block text-[0.8125rem] ${
+                        isActive ? 'text-cream/80' : 'text-muted'
+                      }`}
+                    >
+                      {area.summary}
+                    </span>
+                  </span>
+                  <span
+                    className={`shrink-0 text-[1.25rem] leading-none transition ${
+                      isActive ? 'rotate-45 text-cream/70' : 'text-muted-light'
+                    }`}
+                    aria-hidden
+                  >
+                    +
+                  </span>
                 </button>
-              ))}
-            </div>
-
-            {outputTab === 'position' && (
-              <DeliverableFrame label="Positioning one-pager · sample" badge="Sales & marketing">
-                <p className="text-[1.25rem] font-bold leading-snug text-ink">{output.oneLiner}</p>
-                <p className="mt-4 rounded-xl bg-cream-dark/60 p-4 text-[0.9375rem] leading-relaxed text-muted">
-                  {output.positioning}
-                </p>
-                <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                  <StatPill label="Pitch angle" value="Ready" tone="good" />
-                  <StatPill label="Channel focus" value={output.channelFocus.split(' ')[0]} />
-                </div>
-                <p className="mt-4 text-[0.8125rem] leading-relaxed text-muted">{output.pitchAngle}</p>
-              </DeliverableFrame>
-            )}
-
-            {outputTab === 'journey' && (
-              <div className="space-y-4">
-                <DeliverableFrame label="Funnel fix · annotated">
-                  <FunnelVisual stages={funnelStages} leakIds={leaks} fixLabel={output.funnelFixLabel} />
-                </DeliverableFrame>
-                <DeliverableFrame label="90-day content rhythm · sample">
-                  <div className="grid gap-3 sm:grid-cols-3">
-                    {output.cadenceStrip.map((m) => (
-                      <div key={m.month} className="rounded-xl bg-cream-dark/50 p-3 ring-1 ring-line">
-                        <p className="text-[0.6875rem] font-bold uppercase text-ink">{m.month}</p>
-                        <ul className="mt-2 space-y-1">
-                          {m.actions.map((a) => (
-                            <li key={a} className="text-[0.6875rem] text-muted">· {a}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-4">
-                    <ProgressBarVisual value={2} max={3} label="Cadence health · sample" color="bg-emerald-500" />
-                  </div>
-                </DeliverableFrame>
               </div>
-            )}
-          </motion.div>
+            )
+          })}
+        </div>
+
+        <AnimatePresence mode="wait">
+          {activeArea && (
+            <motion.div
+              ref={panelRef}
+              key={activeArea.id}
+              id={`sales-support-panel-${activeArea.id}`}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.25 }}
+              className="mt-8 overflow-hidden rounded-2xl bg-white ring-1 ring-line"
+            >
+              <div className="border-b border-line bg-cream-dark/40 px-5 py-4 sm:px-6">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-ink text-cream">
+                    <StepBadge index={activeIndex} active />
+                  </span>
+                  <div>
+                    <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted-light">
+                      Area {activeIndex + 1} of {supportAreas.length}
+                    </p>
+                    <p className="text-[1.0625rem] font-semibold text-ink">{activeArea.label}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid gap-8 p-5 sm:p-6 lg:grid-cols-2">
+                <div>
+                  <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted-light">
+                    How we help
+                  </p>
+                  <p className="mt-3 text-[0.9375rem] leading-relaxed text-muted">
+                    {activeArea.whatWeDo}
+                  </p>
+
+                  <div className="mt-6 rounded-xl bg-cream-dark/50 p-4 ring-1 ring-line/80">
+                    <p className="text-[0.6875rem] font-semibold uppercase text-muted-light">
+                      Example
+                    </p>
+                    <p className="mt-2 text-[0.875rem] italic leading-relaxed text-ink/90">
+                      {activeArea.example}
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted-light">
+                    What you leave with
+                  </p>
+                  <ul className="mt-3 space-y-2.5">
+                    {activeArea.deliverables.map((item) => (
+                      <li
+                        key={item}
+                        className="flex gap-3 text-[0.875rem] leading-relaxed text-muted"
+                      >
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-ink/35" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="mt-6 rounded-xl bg-ink p-4">
+                    <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-cream/50">
+                      Outcome
+                    </p>
+                    <p className="mt-2 text-[0.8125rem] leading-relaxed text-cream/90">
+                      {activeArea.outcome}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-2 border-t border-line bg-cream/50 px-5 py-4 sm:px-6">
+                {supportAreas.map((area) => (
+                  <button
+                    key={area.id}
+                    type="button"
+                    onClick={() => setActiveId(area.id)}
+                    className={`rounded-full px-3 py-1.5 text-[0.75rem] font-medium transition ${
+                      area.id === activeArea.id
+                        ? 'bg-ink text-cream'
+                        : 'bg-white text-muted ring-1 ring-line hover:text-ink'
+                    }`}
+                  >
+                    {area.label}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {!activeArea && (
+          <p className="mt-6 text-center text-[0.875rem] text-muted">
+            Tap an area above to explore how we support sales and marketing.
+          </p>
         )}
-      </AnimatePresence>
-    </ExerciseShell>
+      </div>
+    </div>
   )
 }

@@ -2,6 +2,7 @@
 
 @theme {
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
 
   --color-cream: #fbf8f6;
   --color-cream-dark: #f3ece8;
@@ -36,11 +37,15 @@
   }
 
   .headline-hero {
-    @apply text-[2.5rem] sm:text-[3.25rem] md:text-[4.5rem] lg:text-[5.5rem] font-semibold tracking-[-0.04em] leading-[1.05] text-balance;
+    @apply text-[2.5rem] sm:text-[3.25rem] md:text-[4.5rem] lg:text-[5.5rem] font-semibold tracking-[-0.04em] leading-[1.05] text-pretty;
+  }
+
+  .headline-hero-split {
+    @apply text-[2.5rem] sm:text-[3rem] md:text-[3.5rem] lg:text-[3.75rem] xl:text-[4.25rem] font-semibold tracking-[-0.035em] leading-[1.08] text-pretty;
   }
 
   .headline-section {
-    @apply text-[2rem] sm:text-[2.75rem] md:text-[3.5rem] font-semibold tracking-[-0.03em] leading-[1.08] text-balance;
+    @apply text-[2rem] sm:text-[2.75rem] md:text-[3.5rem] font-semibold tracking-[-0.03em] leading-[1.08] text-pretty;
   }
 
   .headline-small {

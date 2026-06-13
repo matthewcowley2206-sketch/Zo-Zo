@@ -1,259 +1,303 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
-  getProcessDef,
-  processOptions,
-  stepGuides,
-  synthesizeOperations,
-  TARGET_STEPS,
-  workflowSteps,
-  type AutomationLevel,
-  type Process,
-  type WorkflowStepId,
-} from './operationsSynthesis'
-import { ExerciseShell } from '../exercise/ExerciseShell'
-import {
-  DeliverableFrame,
-  FlowDiagram,
-  ProgressBarVisual,
-  StatPill,
-} from '../exercise/VisualDeliverables'
+  activityIntro,
+  activityTitle,
+  afterSteps,
+  beforeSteps,
+  processPain,
+  processTitle,
+  supportAreas,
+  type ProcessStep,
+  type SupportAreaId,
+} from './operationsSupport'
 
-export function OperationsDemo() {
-  const [step, setStep] = useState<WorkflowStepId>('simplify')
-  const [process, setProcess] = useState<Process | null>(null)
-  const [removedIds, setRemovedIds] = useState<string[]>([])
-  const [automation, setAutomation] = useState<AutomationLevel | null>(null)
-
-  const procDef = process ? getProcessDef(process) : null
-  const keptIds = procDef ? procDef.steps.filter((s) => !removedIds.includes(s.id)).map((s) => s.id) : []
-  const simplifyComplete = procDef && keptIds.length === TARGET_STEPS
-
-  const output = useMemo(
-    () =>
-      simplifyComplete && automation
-        ? synthesizeOperations({ process: process!, keptStepIds: keptIds, automation })
-        : null,
-    [process, keptIds, automation, simplifyComplete],
-  )
-
-  const toggleRemove = (stepId: string) => {
-    if (!procDef) return
-    setRemovedIds((prev) => {
-      if (prev.includes(stepId)) return prev.filter((id) => id !== stepId)
-      const next = [...prev, stepId]
-      if (procDef.steps.length - next.length < TARGET_STEPS) return prev
-      return next
-    })
-  }
-
-  const reset = () => {
-    setStep('simplify')
-    setProcess(null)
-    setRemovedIds([])
-    setAutomation(null)
-  }
-
-  const handlePrimary = () => {
-    if (step === 'output') {
-      reset()
-      return
-    }
-    if (step === 'simplify' && simplifyComplete) setStep('automate')
-    else if (step === 'automate' && automation) setStep('output')
-  }
-
-  const handleBack = () => {
-    if (step === 'output') setStep('automate')
-    else if (step === 'automate') setStep('simplify')
-  }
-
-  const canAdvance =
-    (step === 'simplify' && simplifyComplete) ||
-    (step === 'automate' && automation) ||
-    step === 'output'
-
-  const highlightContinue =
-    (step === 'simplify' && simplifyComplete) ||
-    (step === 'automate' && !!automation)
-
-  const nextAction = (() => {
-    if (step === 'simplify') {
-      if (!process) return 'Tap one of the four process cards to start'
-      if (keptIds.length > TARGET_STEPS) {
-        return `Tap ${keptIds.length - TARGET_STEPS} more step(s) in the list to cut them`
-      }
-      return 'Tap the pulsing Continue button below'
-    }
-    if (step === 'automate') {
-      if (!automation) return 'Tap Light touch, Moderate, or Full workflow'
-      return 'Tap the pulsing Continue button below'
-    }
-    return 'Tap Reset below to try another process'
-  })()
+function StepNode({
+  step,
+  mode,
+}: {
+  step: ProcessStep
+  mode: 'before' | 'after' | 'owners' | 'automate'
+}) {
+  const isBottleneck = mode === 'before' && step.bottleneck
+  const showOwner = mode === 'owners' || mode === 'automate'
+  const isAutomated = mode === 'automate' && step.automated
 
   return (
-    <ExerciseShell
-      eyebrow="Sample exercise · Process strip"
-      title="Cut steps. See the flow simplify."
-      intro="Pick a messy process, strike steps until four remain, choose automation - then see a before/after flow visual."
-      stepIndex={workflowSteps.findIndex((s) => s.id === step)}
-      totalSteps={workflowSteps.length}
-      guide={stepGuides[step]}
-      nextAction={nextAction}
-      highlightContinue={highlightContinue}
-      subLabel={
-        step === 'simplify' && procDef
-          ? `${keptIds.length}/${TARGET_STEPS} steps kept`
-          : undefined
-      }
-      showReset={process !== null}
-      showBack={step !== 'simplify'}
-      primaryLabel={
-        step === 'simplify' && procDef && keptIds.length > TARGET_STEPS
-          ? `Remove ${keptIds.length - TARGET_STEPS} more step${keptIds.length - TARGET_STEPS === 1 ? '' : 's'}`
-          : step === 'simplify' && !simplifyComplete
-            ? 'Pick a process and cut to four steps'
-            : step === 'automate' && !automation
-              ? 'Choose automation level'
-              : step === 'output'
-                ? 'Reset · try another process'
-                : `Continue to ${workflowSteps[workflowSteps.findIndex((s) => s.id === step) + 1]?.label ?? 'next'}`
-      }
-      primaryDisabled={step !== 'output' && !canAdvance}
-      isFinal={step === 'output'}
-      onReset={reset}
-      onBack={handleBack}
-      onPrimary={handlePrimary}
-      scrollKey={`${step}-${process}-${removedIds.join()}`}
+    <div
+      className={`relative h-full rounded-xl px-2.5 py-3 text-center ring-1 transition sm:px-3 sm:py-3.5 ${
+        isBottleneck
+          ? 'bg-rose-50 ring-rose-300'
+          : isAutomated
+            ? 'bg-violet-50 ring-violet-200'
+            : mode === 'after' || mode === 'owners' || mode === 'automate'
+              ? 'bg-emerald-50 ring-emerald-200'
+              : 'bg-white ring-line'
+      }`}
     >
-      <AnimatePresence mode="wait">
-        {step === 'simplify' && (
-          <motion.div key="simplify" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-            {!process ? (
-              <div className="grid gap-3 sm:grid-cols-2">
-                {processOptions.map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => {
-                      setProcess(p.id)
-                      setRemovedIds([])
-                    }}
-                    className="rounded-2xl bg-white p-4 text-left ring-1 ring-line transition hover:ring-ink/25"
-                  >
-                    <p className="font-semibold text-ink">{p.title}</p>
-                    <p className="mt-1 text-[0.8125rem] text-muted">{p.sub}</p>
-                    <p className="mt-2 text-[0.6875rem] text-muted-light">{p.steps.length} steps today</p>
-                  </button>
-                ))}
-              </div>
-            ) : (
-              procDef && (
-                <div>
-                  <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-[0.8125rem] font-semibold text-ink">{procDef.title}</p>
-                    <button type="button" onClick={() => setProcess(null)} className="text-[0.75rem] text-muted underline">
-                      Change process
-                    </button>
-                  </div>
-                  <FlowDiagram steps={procDef.steps} frictionIds={removedIds} variant="before" />
-                  <div className="mt-4 space-y-2">
-                    {procDef.steps.map((s) => {
-                      const cut = removedIds.includes(s.id)
-                      return (
-                        <button
-                          key={s.id}
-                          type="button"
-                          onClick={() => toggleRemove(s.id)}
-                          className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left ring-1 transition ${
-                            cut
-                              ? 'bg-slate-100 text-muted line-through ring-slate-200'
-                              : 'bg-emerald-50 ring-emerald-200'
-                          }`}
-                        >
-                          <span className={`h-3 w-3 rounded-full ${cut ? 'bg-slate-300' : 'bg-emerald-500'}`} />
-                          <span className="font-medium">{s.label}</span>
-                          <span className="ml-auto text-[0.6875rem] font-semibold uppercase">
-                            {cut ? 'Cut' : 'Keep'}
-                          </span>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              )
-            )}
-          </motion.div>
-        )}
+      {isBottleneck && (
+        <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[0.625rem] font-bold text-white">
+          !
+        </span>
+      )}
+      {isAutomated && (
+        <span className="absolute -right-1 -top-1 rounded-full bg-violet-600 px-1.5 py-0.5 text-[0.5625rem] font-bold uppercase text-white">
+          Auto
+        </span>
+      )}
+      <p className="text-[0.6875rem] font-semibold leading-snug text-ink sm:text-[0.75rem]">
+        {step.label}
+      </p>
+      {showOwner && (
+        <p className="mt-1.5 text-[0.5625rem] font-medium uppercase tracking-wide text-muted">
+          {step.owner}
+        </p>
+      )}
+    </div>
+  )
+}
 
-        {step === 'automate' && (
-          <motion.div key="automate" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-3">
-            {(
-              [
-                { id: 'light' as const, title: 'Light touch', sub: 'Templates and checklists' },
-                { id: 'moderate' as const, title: 'Moderate', sub: 'Routing and nudges' },
-                { id: 'full' as const, title: 'Full workflow', sub: 'End-to-end with audit trail' },
-              ] as const
-            ).map((opt) => (
+function FlowSequence({
+  steps,
+  mode,
+}: {
+  steps: ProcessStep[]
+  mode: 'before' | 'after' | 'owners' | 'automate'
+}) {
+  const columns = steps.length <= 4 ? steps.length : 4
+  const gridClass =
+    columns === 4
+      ? 'grid-cols-2 sm:grid-cols-4'
+      : columns === 3
+        ? 'grid-cols-3'
+        : 'grid-cols-2 sm:grid-cols-4'
+
+  const rows: ProcessStep[][] = []
+  for (let i = 0; i < steps.length; i += columns) {
+    rows.push(steps.slice(i, i + columns))
+  }
+
+  return (
+    <div className="space-y-3">
+      {rows.map((row, rowIndex) => (
+        <div key={`row-${rowIndex}`}>
+          <div className={`grid ${gridClass} gap-2.5 sm:gap-3`}>
+            {row.map((step, index) => (
+              <div key={step.id} className="relative min-w-0">
+                <StepNode step={step} mode={mode} />
+                {index < row.length - 1 && (
+                  <span
+                    className="absolute -right-2 top-1/2 hidden -translate-y-1/2 text-[0.75rem] text-muted-light sm:inline"
+                    aria-hidden
+                  >
+                    →
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+          {rowIndex < rows.length - 1 && (
+            <div className="flex justify-center py-1.5 text-[0.875rem] text-muted-light" aria-hidden>
+              ↓
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function FlowSection({
+  label,
+  labelClassName,
+  steps,
+  mode,
+}: {
+  label: string
+  labelClassName: string
+  steps: ProcessStep[]
+  mode: 'before' | 'after' | 'owners' | 'automate'
+}) {
+  return (
+    <div>
+      <p className={`mb-3 text-[0.625rem] font-semibold uppercase tracking-[0.08em] ${labelClassName}`}>
+        {label}
+      </p>
+      <FlowSequence steps={steps} mode={mode} />
+    </div>
+  )
+}
+
+function ProcessFlow({ mode }: { mode: SupportAreaId | null }) {
+  const showBefore = mode === 'map' || mode === null
+  const showCompare = mode === 'redesign'
+  const afterMode = mode === 'automate' ? 'automate' : mode === 'document' ? 'owners' : 'after'
+
+  if (showCompare) {
+    return (
+      <div className="space-y-6">
+        <FlowSection
+          label={`Before · ${beforeSteps.length} steps`}
+          labelClassName="text-rose-700"
+          steps={beforeSteps}
+          mode="before"
+        />
+        <FlowSection
+          label={`After · ${afterSteps.length} steps`}
+          labelClassName="text-emerald-700"
+          steps={afterSteps}
+          mode="after"
+        />
+      </div>
+    )
+  }
+
+  const steps = showBefore ? beforeSteps : afterSteps
+  const stepMode = showBefore ? 'before' : afterMode
+
+  return (
+    <FlowSection
+      label={
+        showBefore
+          ? `Current flow · ${beforeSteps.length} steps`
+          : `Redesigned flow · ${afterSteps.length} steps`
+      }
+      labelClassName="text-muted-light"
+      steps={steps}
+      mode={stepMode}
+    />
+  )
+}
+
+export function OperationsDemo() {
+  const [activeId, setActiveId] = useState<SupportAreaId | null>('map')
+  const activeArea = supportAreas.find((area) => area.id === activeId) ?? null
+
+  return (
+    <div className="overflow-hidden rounded-3xl border border-line bg-cream-dark/40">
+      <div className="border-b border-line bg-cream px-6 py-5 sm:px-8">
+        <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted-light">
+          Process simplification · sample workflow
+        </p>
+        <p className="mt-2 text-[1.125rem] font-semibold text-ink">{activityTitle}</p>
+        <p className="mt-2 max-w-[560px] text-[0.9375rem] leading-relaxed text-muted">
+          {activityIntro}
+        </p>
+      </div>
+
+      <div className="p-6 sm:p-8">
+        <div className="rounded-2xl bg-white p-4 ring-1 ring-line sm:p-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-[0.875rem] font-semibold text-ink">{processTitle}</p>
+              <p className="mt-0.5 text-[0.6875rem] text-muted-light">{processPain}</p>
+            </div>
+            {activeArea && (
+              <span className="max-w-full rounded-full bg-cream-dark px-3 py-1 text-[0.6875rem] font-medium leading-snug text-muted sm:max-w-[220px] sm:text-right">
+                {activeArea.flowNote}
+              </span>
+            )}
+          </div>
+          <div className="mt-6">
+            <ProcessFlow mode={activeId} />
+          </div>
+        </div>
+
+        <div className="mt-6 flex gap-2 overflow-x-auto pb-1">
+          {supportAreas.map((area) => {
+            const isActive = activeId === area.id
+
+            return (
               <button
-                key={opt.id}
+                key={area.id}
                 type="button"
-                onClick={() => setAutomation(opt.id)}
-                className={`w-full rounded-2xl p-4 text-left ring-1 transition sm:p-5 ${
-                  automation === opt.id ? 'bg-ink text-cream ring-ink ring-2' : 'bg-white ring-line hover:ring-ink/20'
+                onClick={() => setActiveId(area.id)}
+                className={`shrink-0 rounded-full px-4 py-2 text-[0.8125rem] font-medium transition ring-1 ${
+                  isActive
+                    ? 'bg-ink text-cream ring-ink'
+                    : 'bg-white text-muted ring-line hover:text-ink'
                 }`}
               >
-                <p className="font-semibold">{opt.title}</p>
-                <p className={`mt-1 text-[0.8125rem] ${automation === opt.id ? 'text-cream/75' : 'text-muted'}`}>{opt.sub}</p>
+                {area.label}
               </button>
-            ))}
-          </motion.div>
-        )}
+            )
+          })}
+        </div>
 
-        {step === 'output' && output && (
-          <motion.div key="output" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-4">
-            <div className="grid gap-3 sm:grid-cols-3">
-              <StatPill label="Steps cut" value={String(output.removedLabels.length)} tone="warn" />
-              <StatPill label="Time saved" value={output.hoursSaved} tone="good" />
-              <StatPill label="Steps left" value={String(output.afterSteps.length)} />
-            </div>
+        <AnimatePresence mode="wait">
+          {activeArea ? (
+            <motion.div
+              key={activeArea.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.25 }}
+              className="mt-5 overflow-hidden rounded-2xl bg-white ring-1 ring-line"
+            >
+              <div className="border-b border-line bg-emerald-50/80 px-5 py-4 sm:px-6">
+                <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-emerald-800/60">
+                  {activeArea.tagline}
+                </p>
+                <p className="mt-1 text-[1.0625rem] font-semibold text-ink">{activeArea.label}</p>
+                <p className="mt-1 text-[0.875rem] text-muted">{activeArea.summary}</p>
+              </div>
 
-            <DeliverableFrame label="Before & after · flow">
-              <p className="mb-2 text-[0.6875rem] font-semibold uppercase text-rose-700">Before · {output.beforeSteps.length} steps</p>
-              <FlowDiagram steps={output.beforeSteps} frictionIds={removedIds} variant="before" />
-              <p className="mb-2 mt-5 text-[0.6875rem] font-semibold uppercase text-emerald-700">After · {output.afterSteps.length} steps</p>
-              <FlowDiagram steps={output.afterSteps} variant="after" />
-              <ProgressBarVisual value={output.hoursSavedNum} max={16} label="Admin load reduced · sample" color="bg-emerald-500" />
-            </DeliverableFrame>
+              <div className="grid gap-6 p-5 sm:p-6 lg:grid-cols-2">
+                <div>
+                  <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted-light">
+                    How we help
+                  </p>
+                  <p className="mt-2 text-[0.875rem] leading-relaxed text-muted">
+                    {activeArea.whatWeDo}
+                  </p>
+                  <div className="mt-5 rounded-xl bg-cream-dark/50 p-4 ring-1 ring-line/80">
+                    <p className="text-[0.6875rem] font-semibold uppercase text-muted-light">
+                      Example
+                    </p>
+                    <p className="mt-2 text-[0.8125rem] leading-relaxed text-ink/90">
+                      {activeArea.example}
+                    </p>
+                  </div>
+                </div>
 
-            <div className="grid gap-4 lg:grid-cols-2">
-              <DeliverableFrame label="SOP checklist · sample">
-                <ul className="space-y-2">
-                  {output.sopOutline.map((line, i) => (
-                    <li key={line} className="flex gap-3 text-[0.8125rem] text-muted">
-                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ink text-[0.625rem] font-bold text-cream">
-                        {i + 1}
-                      </span>
-                      {line}
-                    </li>
-                  ))}
-                </ul>
-              </DeliverableFrame>
-              <DeliverableFrame label="Automations · sample">
-                <ul className="space-y-2">
-                  {output.automations.map((a) => (
-                    <li key={a} className="flex gap-2 rounded-lg bg-violet-50 px-3 py-2 text-[0.8125rem] text-violet-950 ring-1 ring-violet-100">
-                      <span>⚡</span>
-                      {a}
-                    </li>
-                  ))}
-                </ul>
-              </DeliverableFrame>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </ExerciseShell>
+                <div>
+                  <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted-light">
+                    What you leave with
+                  </p>
+                  <ul className="mt-2 space-y-2">
+                    {activeArea.deliverables.map((item) => (
+                      <li
+                        key={item}
+                        className="flex gap-2.5 text-[0.8125rem] leading-relaxed text-muted"
+                      >
+                        <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-emerald-500" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-5 rounded-xl bg-ink px-4 py-3">
+                    <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-cream/50">
+                      Outcome
+                    </p>
+                    <p className="mt-1 text-[0.8125rem] leading-relaxed text-cream/90">
+                      {activeArea.outcome}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.p
+              key="empty"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mt-5 text-center text-[0.875rem] text-muted"
+            >
+              Select an area to see how we simplify operations.
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
   )
 }

@@ -1,178 +1,202 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
-  audienceOptions,
-  stepGuides,
-  synthesizeCommunication,
-  waffleParagraphs,
-  workflowSteps,
-  type CommAudience,
-  type WorkflowStepId,
-} from './communicationSynthesis'
-import { ExerciseShell } from '../exercise/ExerciseShell'
-import {
-  BeforeAfterDoc,
-  DeliverableFrame,
-  ProgressBarVisual,
-  SlideMock,
-} from '../exercise/VisualDeliverables'
+  activityIntro,
+  activityTitle,
+  narrativeSpine,
+  storyBeats,
+  type StoryBeatId,
+} from './communicationStory'
 
 export function CommunicationDemo() {
-  const [step, setStep] = useState<WorkflowStepId>('redact')
-  const [audience, setAudience] = useState<CommAudience>('team')
-  const [redacted, setRedacted] = useState<string[]>([])
+  const [openId, setOpenId] = useState<StoryBeatId | null>('spine')
 
-  const para = waffleParagraphs[audience]
-  const allRedacted = redacted.length >= para.segments.length
-  const clarityPct = Math.round((redacted.length / para.segments.length) * 100)
-
-  const output = useMemo(
-    () => (allRedacted ? synthesizeCommunication({ audience, redactedIds: redacted }) : null),
-    [audience, redacted, allRedacted],
-  )
-
-  const toggleSegment = (id: string) => {
-    setRedacted((prev) => (prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]))
+  const toggle = (id: StoryBeatId) => {
+    setOpenId((current) => (current === id ? null : id))
   }
-
-  const reset = () => {
-    setStep('redact')
-    setAudience('team')
-    setRedacted([])
-  }
-
-  const handlePrimary = () => {
-    if (step === 'output') {
-      reset()
-      return
-    }
-    if (allRedacted) setStep('output')
-  }
-
-  const handleBack = () => setStep('redact')
-
-  const highlightContinue = allRedacted && step === 'redact'
-
-  const nextAction = (() => {
-    if (step === 'output') return 'Tap Reset below to try another audience'
-    if (redacted.length === 0) {
-      return `First tap an audience chip above, then tap any pink crossed-out phrase in the paragraph`
-    }
-    const next = para.segments.find((s) => !redacted.includes(s.id))
-    if (next) {
-      return `Tap the next pink phrase (${redacted.length} of ${para.segments.length} fixed)`
-    }
-    return 'Tap the pulsing See your communication pack button below'
-  })()
 
   return (
-    <ExerciseShell
-      eyebrow="Sample exercise · Waffle redactor"
-      title="Strike the filler. Watch clarity rise."
-      intro="Pick your audience, tap corporate phrases to replace them with plain English - then see a before/after doc and slide mock."
-      stepIndex={step === 'redact' ? 0 : 1}
-      totalSteps={workflowSteps.length}
-      guide={stepGuides[step]}
-      nextAction={nextAction}
-      highlightContinue={highlightContinue}
-      subLabel={step === 'redact' ? `${clarityPct}% clear` : 'Deliverables'}
-      subProgress={step === 'redact' ? redacted.length : undefined}
-      subMax={step === 'redact' ? para.segments.length : undefined}
-      showReset={redacted.length > 0 || step === 'output'}
-      showBack={step === 'output'}
-      primaryLabel={
-        step === 'output'
-          ? 'Reset · try another audience'
-          : !allRedacted
-            ? `Redact ${para.segments.length - redacted.length} more phrase${para.segments.length - redacted.length === 1 ? '' : 's'}`
-            : 'See your communication pack'
-      }
-      primaryDisabled={step === 'redact' && !allRedacted}
-      isFinal={step === 'output'}
-      onReset={reset}
-      onBack={handleBack}
-      onPrimary={handlePrimary}
-      scrollKey={`${step}-${audience}-${redacted.join()}`}
-      coachExtra={
-        step === 'redact' ? (
-          <div className="mt-4">
-            <ProgressBarVisual value={redacted.length} max={para.segments.length} label="Clarity meter" color="bg-emerald-400" />
+    <div className="overflow-hidden rounded-3xl border border-line bg-[#f6f2ef]">
+      <div className="border-b border-line bg-cream px-6 py-5 sm:px-8">
+        <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted-light">
+          Storytelling & clarity
+        </p>
+        <p className="mt-2 font-serif text-[1.25rem] font-semibold text-ink sm:text-[1.375rem]">
+          {activityTitle}
+        </p>
+        <p className="mt-2 max-w-[560px] text-[0.9375rem] leading-relaxed text-muted">
+          {activityIntro}
+        </p>
+
+        <div className="mt-6 rounded-2xl bg-ink px-4 py-4 sm:px-5">
+          <p className="text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-cream/45">
+            Every story follows a spine
+          </p>
+          <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {narrativeSpine.map((step, index) => (
+              <div
+                key={step.label}
+                className="relative rounded-xl bg-white/10 px-3 py-2.5 text-center sm:py-3"
+              >
+                {index < narrativeSpine.length - 1 && (
+                  <span
+                    className="absolute -right-1.5 top-1/2 hidden h-px w-3 -translate-y-1/2 bg-cream/25 sm:block"
+                    aria-hidden
+                  />
+                )}
+                <p className="text-[0.6875rem] font-semibold text-cream">{step.label}</p>
+                <p className="mt-0.5 text-[0.625rem] text-cream/55">{step.hint}</p>
+              </div>
+            ))}
           </div>
-        ) : undefined
-      }
-    >
-      <AnimatePresence mode="wait">
-        {step === 'redact' && (
-          <motion.div key="redact" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-            <div className="mb-4 flex flex-wrap gap-2">
-              {audienceOptions.map((a) => (
-                <button
-                  key={a.id}
-                  type="button"
-                  onClick={() => {
-                    setAudience(a.id)
-                    setRedacted([])
-                  }}
-                  className={`rounded-full px-3 py-1.5 text-[0.75rem] font-semibold ring-1 transition ${
-                    audience === a.id ? 'bg-ink text-cream ring-ink' : 'bg-white text-muted ring-line'
+        </div>
+      </div>
+
+      <div className="p-6 sm:p-8">
+        <ol className="relative space-y-0">
+          <div
+            className="absolute bottom-4 left-[1.125rem] top-4 w-px bg-gradient-to-b from-ink/20 via-ink/10 to-transparent sm:left-[1.375rem]"
+            aria-hidden
+          />
+
+          {storyBeats.map((beat, index) => {
+            const isOpen = openId === beat.id
+
+            return (
+              <li key={beat.id} className="relative pl-10 sm:pl-12">
+                <span
+                  className={`absolute left-2 top-5 flex h-5 w-5 items-center justify-center rounded-full ring-2 ring-[#f6f2ef] sm:left-2.5 sm:h-6 sm:w-6 ${
+                    isOpen ? 'bg-ink' : 'bg-white ring-1 ring-line'
                   }`}
+                  aria-hidden
                 >
-                  {a.label}
-                </button>
-              ))}
-            </div>
+                  <span
+                    className={`h-1.5 w-1.5 rounded-full ${isOpen ? 'bg-cream' : 'bg-ink/30'}`}
+                  />
+                </span>
 
-            <div className="rounded-2xl bg-white p-5 ring-1 ring-line sm:p-6">
-              <p className="text-[0.625rem] font-semibold uppercase text-muted-light">Draft paragraph · tap to fix</p>
-              <p className="mt-4 text-[1.0625rem] leading-[1.75] text-ink">
-                {para.segments.map((s, i) => {
-                  const fixed = redacted.includes(s.id)
-                  return (
-                    <span key={s.id}>
-                      {i > 0 && ' '}
-                      <button
-                        type="button"
-                        onClick={() => toggleSegment(s.id)}
-                        className={`rounded px-0.5 transition ${
-                          fixed
-                            ? 'font-semibold text-emerald-800 underline decoration-emerald-300 decoration-2 underline-offset-4'
-                            : 'bg-rose-100/80 text-rose-950 line-through decoration-rose-400 hover:bg-rose-200/80'
+                <div className="pb-4 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => toggle(beat.id)}
+                    aria-expanded={isOpen}
+                    aria-controls={`story-beat-${beat.id}`}
+                    className={`w-full rounded-2xl px-4 py-4 text-left transition sm:px-5 sm:py-5 ${
+                      isOpen
+                        ? 'bg-ink text-cream shadow-lg shadow-ink/10'
+                        : 'bg-white ring-1 ring-line hover:ring-ink/20'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <p
+                          className={`text-[0.625rem] font-semibold uppercase tracking-[0.1em] ${
+                            isOpen ? 'text-cream/50' : 'text-muted-light'
+                          }`}
+                        >
+                          {beat.beat} · {beat.storyLine}
+                        </p>
+                        <p
+                          className={`mt-1.5 text-[1.0625rem] font-semibold leading-snug sm:text-[1.125rem] ${
+                            isOpen ? 'text-cream' : 'text-ink'
+                          }`}
+                        >
+                          {beat.title}
+                        </p>
+                        <p
+                          className={`mt-2 text-[0.875rem] leading-relaxed ${
+                            isOpen ? 'text-cream/80' : 'text-muted'
+                          }`}
+                        >
+                          {beat.summary}
+                        </p>
+                      </div>
+                      <span
+                        className={`mt-1 shrink-0 text-[1.125rem] leading-none transition ${
+                          isOpen ? 'rotate-45 text-cream/60' : 'text-muted-light'
                         }`}
+                        aria-hidden
                       >
-                        {fixed ? s.plain : s.text}
-                      </button>
-                    </span>
-                  )
-                })}
-              </p>
-            </div>
-          </motion.div>
-        )}
+                        +
+                      </span>
+                    </div>
+                  </button>
 
-        {step === 'output' && output && (
-          <motion.div key="output" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-4">
-            <DeliverableFrame label="Before & after · sample" badge={`Clarity ${output.clarityScore}%`}>
-              <BeforeAfterDoc before={output.beforeText} after={output.headline} clarityScore={output.clarityScore} />
-            </DeliverableFrame>
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        id={`story-beat-${beat.id}`}
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.28, ease: [0.25, 0.1, 0.25, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <div className="mt-3 space-y-4 rounded-2xl bg-white p-5 ring-1 ring-line sm:p-6">
+                          <blockquote className="border-l-2 border-ink/20 pl-4">
+                            <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted-light">
+                              Story in one line
+                            </p>
+                            <p className="mt-2 text-[1rem] italic leading-relaxed text-ink/90 sm:text-[1.0625rem]">
+                              &ldquo;{beat.storySnippet}&rdquo;
+                            </p>
+                          </blockquote>
 
-            <div className="grid gap-4 lg:grid-cols-2">
-              <DeliverableFrame label="Slide mock · sample">
-                <SlideMock title={output.headline} bullets={output.talkingPoints} />
-              </DeliverableFrame>
+                          <div className="grid gap-6 sm:grid-cols-2">
+                            <div>
+                              <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted-light">
+                                How we help
+                              </p>
+                              <p className="mt-2 text-[0.875rem] leading-relaxed text-muted">
+                                {beat.whatWeDo}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted-light">
+                                What you leave with
+                              </p>
+                              <ul className="mt-2 space-y-2">
+                                {beat.deliverables.map((item) => (
+                                  <li
+                                    key={item}
+                                    className="flex gap-2.5 text-[0.8125rem] leading-relaxed text-muted"
+                                  >
+                                    <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-ink/35" />
+                                    {item}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
 
-              <DeliverableFrame label="FAQ & rollout · sample">
-                {output.faqExcerpt.map((f) => (
-                  <div key={f.q} className="border-t border-line py-3 first:border-0 first:pt-0">
-                    <p className="text-[0.8125rem] font-semibold text-ink">{f.q}</p>
-                    <p className="mt-1 text-[0.8125rem] text-muted">{f.a}</p>
-                  </div>
-                ))}
-                <p className="mt-4 rounded-lg bg-cream-dark/60 p-3 text-[0.75rem] text-muted">{output.rolloutTip}</p>
-              </DeliverableFrame>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </ExerciseShell>
+                          <div className="rounded-xl bg-cream-dark/60 px-4 py-3">
+                            <p className="text-[0.6875rem] font-semibold uppercase text-muted-light">
+                              Outcome
+                            </p>
+                            <p className="mt-1 text-[0.8125rem] leading-relaxed text-ink">
+                              {beat.outcome}
+                            </p>
+                          </div>
+
+                          {index < storyBeats.length - 1 && (
+                            <button
+                              type="button"
+                              onClick={() => setOpenId(storyBeats[index + 1].id)}
+                              className="text-[0.8125rem] font-semibold text-ink underline underline-offset-2 hover:text-ink/70"
+                            >
+                              Next beat · {storyBeats[index + 1].title} →
+                            </button>
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </li>
+            )
+          })}
+        </ol>
+      </div>
+    </div>
   )
 }

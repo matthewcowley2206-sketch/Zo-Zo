@@ -37,7 +37,7 @@ export function ServiceDetail() {
           <ServiceExerciseContent
             service={service}
             Demo={SalesMarketingDemo}
-            exerciseCaption="Mark funnel leaks and assemble positioning tiles - then see a visual one-pager and journey fix. Real work is shaped with your customers and your numbers."
+            exerciseCaption="Four areas of support - positioning, go-to-market plan, customer journey, and sales assets. Tap each to see how we help and what you leave with."
             outcomesDescription="Clear positioning, a plan you can run, and sales and marketing saying the same thing."
             engagementDescription="Some clients need positioning clarity in a session. Others want a full go-to-market plan and pitch packs."
           />
@@ -47,8 +47,8 @@ export function ServiceDetail() {
           <ServiceExerciseContent
             service={service}
             Demo={CommunicationDemo}
-            exerciseCaption="Strike corporate filler and watch clarity rise - then see a before/after doc and slide mock. Real packs are built with your leaders and your rollout."
-            outcomesDescription="Messages people understand, materials ready to use, and less confusion during change."
+            exerciseCaption="Follow the narrative spine - five story beats from core storyline to client narrative and rollout toolkit. Expand each beat to see how storytelling shapes what we deliver."
+            outcomesDescription="A clear story thread, client narratives that land, and materials your team can tell consistently."
           />
         )
       case 'data-ai':
@@ -56,8 +56,8 @@ export function ServiceDetail() {
           <ServiceExerciseContent
             service={service}
             Demo={DataAiDemo}
-            exerciseCaption="Sort tasks into automate, dashboard, or human - then see a dashboard mock and roadmap. Real roadmaps connect to your systems and what you will adopt."
-            outcomesDescription="Clarity on the numbers that matter, time saved through automations, and an AI roadmap your team can follow."
+            exerciseCaption="Explore a sample dataset, ask a business question, and see how we surface insight - then what we would recommend and deliver."
+            outcomesDescription="Clarity on the numbers that matter, time saved through practical automations, and an AI roadmap your team can follow."
             engagementDescription="Some clients need a clarity session and quick wins. Others want dashboards, training, and a full roadmap."
           />
         )
@@ -66,7 +66,7 @@ export function ServiceDetail() {
           <ServiceExerciseContent
             service={service}
             Demo={OperationsDemo}
-            exerciseCaption="Cut a messy process to four steps and pick automation - then see a before/after flow visual. Real work maps your actual process and tools."
+            exerciseCaption="Follow a sample onboarding workflow - select each area of support to see the flow change and what we deliver."
             outcomesDescription="Clearer workflows, automations that save real time, and SOPs your team can follow."
           />
         )
@@ -75,8 +75,8 @@ export function ServiceDetail() {
           <ServiceExerciseContent
             service={service}
             Demo={GoToMarketDemo}
-            exerciseCaption="Drag launch activities onto a four-week board - then see messaging, calendar, and test scorecard. Real plans are built with your offer and your team."
-            outcomesDescription="A week-by-week launch plan, messaging that explains the offer, and a test-and-learn approach that cuts risk."
+            exerciseCaption="Six building blocks for launch - offer, audience, messaging, plan, pricing, and test-and-learn. Tap each block to see what we deliver."
+            outcomesDescription="A go-to-market plan you can execute week by week, messaging that lands, and a test-and-learn approach that cuts risk."
             engagementDescription="Some clients need offer clarity and a launch sequence. Others want the full strategy pack, profiles, and test plan."
           />
         )
@@ -98,9 +98,11 @@ export function ServiceDetail() {
             </Link>
           </FadeIn>
           <div className={heroImage ? 'grid items-end gap-10 lg:grid-cols-2 lg:gap-16' : ''}>
-            <FadeIn delay={heroImage ? 0 : undefined}>
+            <FadeIn delay={heroImage ? 0 : undefined} className={heroImage ? 'min-w-0' : undefined}>
               <p className="eyebrow mb-6">Services</p>
-              <h1 className="headline-hero max-w-[900px]">{service.title}</h1>
+              <h1 className={heroImage ? 'headline-hero-split' : 'headline-hero max-w-[900px]'}>
+                {service.title}
+              </h1>
               <p className="body-large mt-8 max-w-[640px]">{service.tagline}</p>
             </FadeIn>
             {heroImage && (
