@@ -3,6 +3,8 @@ import { hiRes, photos } from './imageUrls'
 export type ServiceImage = {
   url: string
   alt: string
+  /** Focal point for object-cover crops, e.g. "center 25%" */
+  objectPosition?: string
 }
 
 export type ServiceImagerySet = {
@@ -27,8 +29,9 @@ export const serviceImagery: Partial<Record<string, ServiceImagerySet>> = {
       alt: 'Two colleagues in a thoughtful conversation at a table',
     },
     secondary: {
-      url: hiRes(photos.clientFollowUp),
-      alt: 'Professional woman in a focused client conversation',
+      url: hiRes(photos.clientListeningConversation),
+      alt: 'Two professionals in a focused listening conversation at a table',
+      objectPosition: 'center 20%',
     },
   },
   'sales-marketing': {

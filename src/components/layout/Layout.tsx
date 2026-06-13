@@ -25,7 +25,7 @@ export function Layout() {
     <div className="min-h-screen">
       <ScrollToTop />
       <Navbar />
-      <main>
+      <main id="main">
         <Outlet />
       </main>
       <Footer />

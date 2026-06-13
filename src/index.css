@@ -12,13 +12,27 @@
   --color-muted-light: #86868b;
   --color-line: rgba(0, 0, 0, 0.08);
   --color-accent: #322929;
+  --color-nav: #2a2a2e;
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 4.5rem;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  @media (min-width: 640px) {
+    html {
+      scroll-padding-top: 4.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 
   body {
@@ -76,9 +90,20 @@
     @apply max-w-[1200px] mx-auto;
   }
 
-  .nav-blur {
-    backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
+  .hero-offset {
+    @apply pt-28 sm:pt-32;
+  }
+
+  .focus-ring {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-cream;
+  }
+
+  .focus-ring-nav {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-cream/50 focus-visible:ring-offset-2 focus-visible:ring-offset-nav;
+  }
+
+  .field-focus {
+    @apply outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-ink/35;
   }
 
   .demo-guide-pulse {
@@ -118,6 +143,14 @@
     }
     50% {
       box-shadow: 0 0 0 12px transparent;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .demo-guide-pulse,
+    .demo-guide-pulse-delayed,
+    .demo-phone-beacon {
+      animation: none;
     }
   }
 }

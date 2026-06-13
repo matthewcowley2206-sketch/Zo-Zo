@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { services } from '../content/services'
+import { site } from '../content/site'
 import { FadeIn } from '../components/ui/FadeIn'
 import { Section } from '../components/ui/Section'
 import { Button } from '../components/ui/Button'
@@ -7,7 +8,7 @@ import { Button } from '../components/ui/Button'
 export function Services() {
   return (
     <>
-      <Section size="hero" className="pt-28 sm:pt-32">
+      <Section size="hero" className="hero-offset">
         <div className="content-max text-center">
           <FadeIn>
             <p className="eyebrow mb-6">Services</p>
@@ -33,7 +34,7 @@ export function Services() {
                 to={`/services/${service.slug}`}
                 className={`group block rounded-3xl border p-8 transition-all duration-300 sm:p-10 ${
                   isPrototype
-                    ? 'border-ink bg-ink text-cream shadow-lg shadow-ink/10 hover:border-cream/20 hover:bg-[#2a2a2c] hover:shadow-xl hover:shadow-ink/25'
+                    ? 'border-ink bg-ink text-cream shadow-lg shadow-ink/10 hover:border-cream/20 hover:bg-nav hover:shadow-xl hover:shadow-ink/25'
                     : 'border-line/60 bg-cream text-ink hover:border-ink/15 hover:bg-white hover:shadow-lg hover:shadow-ink/8'
                 }`}
               >
@@ -67,7 +68,7 @@ export function Services() {
 
         <FadeIn className="mt-16 text-center">
           <p className="body-regular mb-6">Not sure where to start?</p>
-          <Button to="/contact">Book a clarity call</Button>
+          <Button to="/contact">{site.ctaLabel}</Button>
         </FadeIn>
       </Section>
     </>

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { humanImagery, projectDemos } from '../content/demos'
 import { engagementSteps } from '../content/howWeWork'
 import { services } from '../content/services'
-import { pillars } from '../content/site'
+import { pillars, site } from '../content/site'
 import { DemoRenderer } from '../components/demos/DemoRenderer'
 import { ArrowLink, Button } from '../components/ui/Button'
 import { FadeIn } from '../components/ui/FadeIn'
@@ -13,7 +13,7 @@ export function Home() {
 
   return (
     <>
-      <Section size="hero" className="pt-24 sm:pt-28">
+      <Section size="hero" className="hero-offset">
         <div className="content-wide grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="min-w-0 text-center lg:text-left">
             <FadeIn>
@@ -31,7 +31,7 @@ export function Home() {
               </p>
             </FadeIn>
             <FadeIn delay={0.3} className="mt-10 flex flex-col items-center gap-4 sm:flex-row lg:justify-start">
-              <Button to="/contact">Book a free clarity call</Button>
+              <Button to="/contact">{site.ctaLabel}</Button>
               <Button to="/services/prototype-development#demos" variant="ghost">
                 Try a prototype demo →
               </Button>
@@ -163,7 +163,7 @@ export function Home() {
             <FadeIn key={service.slug} delay={i * 0.04}>
               <Link
                 to={`/services/${service.slug}`}
-                className="group flex h-full flex-col rounded-3xl bg-cream-dark/60 p-8 transition-all duration-300 hover:bg-cream-dark"
+                className="group flex h-full flex-col rounded-3xl bg-cream-dark/60 p-8 transition-all duration-300 hover:bg-cream-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/25"
               >
                 <h3 className="text-[1.25rem] font-semibold tracking-[-0.02em] text-ink">
                   {service.title}
@@ -171,7 +171,7 @@ export function Home() {
                 <p className="mt-3 flex-1 text-[0.9375rem] leading-relaxed text-muted">
                   {service.tagline}
                 </p>
-                <span className="mt-6 text-[0.875rem] font-medium text-ink opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <span className="mt-6 text-[0.875rem] font-medium text-ink opacity-70 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100">
                   Learn more →
                 </span>
               </Link>
@@ -252,7 +252,7 @@ export function Home() {
               Book a free initial consultation - we will help you figure out if we are the right fit.
             </p>
             <div className="mt-10 flex flex-col items-center gap-4">
-              <Button to="/contact">Book a free clarity call</Button>
+              <Button to="/contact">{site.ctaLabel}</Button>
               <p className="text-[0.9375rem] text-muted">
                 matt@zoandzo.com.au · 0449 570 652
               </p>

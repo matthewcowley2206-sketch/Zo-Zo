@@ -1,12 +1,12 @@
+import { site } from '../content/site'
 import { Button } from '../components/ui/Button'
 import { FadeIn } from '../components/ui/FadeIn'
 import { Section } from '../components/ui/Section'
-import { humanImagery } from '../content/demos'
 
 export function About() {
   return (
     <>
-      <Section size="hero" className="pt-28 sm:pt-32">
+      <Section size="hero" className="hero-offset">
         <div className="content-max">
           <FadeIn>
             <p className="eyebrow mb-6">About</p>
@@ -24,26 +24,12 @@ export function About() {
       </Section>
 
       <Section theme="cream" size="compact">
-        <div className="content-max grid gap-16 lg:grid-cols-5">
-          <FadeIn className="lg:col-span-2">
-            <div className="aspect-[4/5] overflow-hidden rounded-3xl">
-              <img
-                src={humanImagery.about}
-                alt={humanImagery.aboutAlt}
-                className="h-full w-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
+        <div className="content-max max-w-[720px]">
+          <FadeIn className="space-y-6">
+            <div>
+              <p className="text-[1.0625rem] font-semibold text-ink">Matthew Cowley</p>
+              <p className="mt-1 text-[0.875rem] text-muted">Founder, Zo&Zo Advisory</p>
             </div>
-            <p className="mt-4 text-center text-[0.9375rem] font-semibold text-ink lg:text-left">
-              Matthew Cowley
-            </p>
-            <p className="text-center text-[0.875rem] text-muted lg:text-left">
-              Founder, Zo&Zo Advisory
-            </p>
-          </FadeIn>
-
-          <FadeIn delay={0.1} className="lg:col-span-3 space-y-6">
             <h2 className="headline-small">
               We are here to take what is already in your head and turn it into something
               structured, simple, and achievable.
@@ -86,7 +72,7 @@ export function About() {
             ours, and we will work side by side to help you grow with clarity and confidence.
           </p>
           <div className="mt-10">
-            <Button to="/contact">Book a free clarity call</Button>
+            <Button to="/contact">{site.ctaLabel}</Button>
           </div>
         </FadeIn>
       </Section>

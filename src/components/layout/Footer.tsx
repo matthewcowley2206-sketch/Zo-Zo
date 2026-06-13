@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { navLinks, site } from '../../content/site'
+import { Logo } from './Logo'
 
 export function Footer() {
   return (
@@ -7,10 +8,10 @@ export function Footer() {
       <div className="content-wide">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
-            <p className="text-[1.125rem] font-semibold tracking-[-0.02em] text-ink">
-              {site.name}
-            </p>
-            <p className="mt-2 text-[0.9375rem] text-muted">{site.tagline}</p>
+            <Link to="/" className="focus-ring inline-block rounded-sm text-ink" aria-label={`${site.name} home`}>
+              <Logo size="footer" />
+            </Link>
+            <p className="mt-4 text-[0.9375rem] text-muted">{site.tagline}</p>
           </div>
 
           <div>
@@ -22,7 +23,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     to={link.href}
-                    className="text-[0.9375rem] text-muted transition-colors hover:text-ink"
+                    className="focus-ring rounded-sm text-[0.9375rem] text-muted transition-colors hover:text-ink"
                   >
                     {link.label}
                   </Link>
@@ -37,12 +38,18 @@ export function Footer() {
             </p>
             <ul className="space-y-2.5 text-[0.9375rem] text-muted">
               <li>
-                <a href={`mailto:${site.email}`} className="transition-colors hover:text-ink">
+                <a
+                  href={`mailto:${site.email}`}
+                  className="focus-ring rounded-sm transition-colors hover:text-ink"
+                >
                   {site.email}
                 </a>
               </li>
               <li>
-                <a href={`tel:${site.phone.replace(/\s/g, '')}`} className="transition-colors hover:text-ink">
+                <a
+                  href={`tel:${site.phone.replace(/\s/g, '')}`}
+                  className="focus-ring rounded-sm transition-colors hover:text-ink"
+                >
                   {site.phone}
                 </a>
               </li>

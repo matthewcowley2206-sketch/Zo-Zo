@@ -1,20 +1,49 @@
 import { type FormEvent, useState } from 'react'
 import { site } from '../content/site'
+import { submitContactForm } from '../lib/submitContactForm'
 import { Button } from '../components/ui/Button'
 import { FadeIn } from '../components/ui/FadeIn'
 import { Section } from '../components/ui/Section'
 
+const fieldClassName =
+  'field-focus w-full rounded-2xl border-0 bg-cream-dark/80 px-4 py-3.5 text-[1rem] text-ink ring-1 ring-line'
+
 export function Contact() {
   const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setSubmitted(true)
+    setSubmitting(true)
+    setError(null)
+
+    const form = e.currentTarget
+    const data = new FormData(form)
+
+    try {
+      await submitContactForm({
+        firstName: String(data.get('firstName') ?? ''),
+        lastName: String(data.get('lastName') ?? ''),
+        email: String(data.get('email') ?? ''),
+        mobile: String(data.get('mobile') ?? ''),
+        message: String(data.get('message') ?? ''),
+      })
+      setSubmitted(true)
+    } catch (submitError) {
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : 'Unable to send your message. Please email matt@zoandzo.com.au directly.',
+      )
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
     <>
-      <Section size="hero" className="pt-28 sm:pt-32">
+      <Section size="hero" className="hero-offset">
         <div className="content-max text-center">
           <FadeIn>
             <p className="eyebrow mb-6">Contact</p>
@@ -39,7 +68,7 @@ export function Contact() {
                 </h2>
                 <a
                   href={`mailto:${site.email}`}
-                  className="mt-2 block text-[1.5rem] font-semibold tracking-[-0.02em] text-ink transition-colors hover:text-muted"
+                  className="focus-ring mt-2 block rounded-sm text-[1.5rem] font-semibold tracking-[-0.02em] text-ink transition-colors hover:text-muted"
                 >
                   {site.email}
                 </a>
@@ -50,7 +79,7 @@ export function Contact() {
                 </h2>
                 <a
                   href={`tel:${site.phone.replace(/\s/g, '')}`}
-                  className="mt-2 block text-[1.5rem] font-semibold tracking-[-0.02em] text-ink transition-colors hover:text-muted"
+                  className="focus-ring mt-2 block rounded-sm text-[1.5rem] font-semibold tracking-[-0.02em] text-ink transition-colors hover:text-muted"
                 >
                   {site.phone}
                 </a>
@@ -74,12 +103,24 @@ export function Contact() {
 
           <FadeIn delay={0.1}>
             {submitted ? (
-              <div className="rounded-3xl bg-cream p-10 text-center ring-1 ring-line">
+              <div
+                role="status"
+                aria-live="polite"
+                className="rounded-3xl bg-cream p-10 text-center ring-1 ring-line"
+              >
                 <h2 className="headline-small">Thank you.</h2>
                 <p className="mt-4 body-regular">
-                  We have received your message and will be in touch shortly.
-                  For something urgent, email us directly at {site.email}.
+                  Your message has been sent. We will be in touch shortly - usually within one
+                  business day.
                 </p>
+                <Button
+                  href={site.bookingUrl}
+                  external
+                  variant="secondary"
+                  className="mt-8"
+                >
+                  Or book via calendar →
+                </Button>
               </div>
             ) : (
               <form
@@ -96,7 +137,8 @@ export function Contact() {
                         required
                         type="text"
                         name="firstName"
-                        className="w-full rounded-2xl border-0 bg-cream-dark/80 px-4 py-3.5 text-[1rem] text-ink outline-none ring-1 ring-line transition-shadow focus:ring-ink/30"
+                        disabled={submitting}
+                        className={fieldClassName}
                       />
                     </label>
                     <label className="block">
@@ -107,7 +149,8 @@ export function Contact() {
                         required
                         type="text"
                         name="lastName"
-                        className="w-full rounded-2xl border-0 bg-cream-dark/80 px-4 py-3.5 text-[1rem] text-ink outline-none ring-1 ring-line transition-shadow focus:ring-ink/30"
+                        disabled={submitting}
+                        className={fieldClassName}
                       />
                     </label>
                   </div>
@@ -120,7 +163,8 @@ export function Contact() {
                       type="email"
                       name="email"
                       autoComplete="email"
-                      className="w-full rounded-2xl border-0 bg-cream-dark/80 px-4 py-3.5 text-[1rem] text-ink outline-none ring-1 ring-line transition-shadow focus:ring-ink/30"
+                      disabled={submitting}
+                      className={fieldClassName}
                     />
                   </label>
                   <label className="block">
@@ -132,7 +176,8 @@ export function Contact() {
                       name="mobile"
                       autoComplete="tel"
                       placeholder="04XX XXX XXX"
-                      className="w-full rounded-2xl border-0 bg-cream-dark/80 px-4 py-3.5 text-[1rem] text-ink outline-none ring-1 ring-line transition-shadow placeholder:text-muted-light focus:ring-ink/30"
+                      disabled={submitting}
+                      className={`${fieldClassName} placeholder:text-muted-light`}
                     />
                   </label>
                   <label className="block">
@@ -143,18 +188,28 @@ export function Contact() {
                       required
                       name="message"
                       rows={5}
-                      className="w-full resize-none rounded-2xl border-0 bg-cream-dark/80 px-4 py-3.5 text-[1rem] text-ink outline-none ring-1 ring-line transition-shadow focus:ring-ink/30"
+                      disabled={submitting}
+                      className={`${fieldClassName} resize-none`}
                     />
                   </label>
                 </div>
-                <button
+
+                {error && (
+                  <p role="alert" className="mt-6 rounded-2xl bg-cream-dark/80 px-4 py-3 text-[0.9375rem] text-ink ring-1 ring-line">
+                    {error}
+                  </p>
+                )}
+
+                <Button
                   type="submit"
-                  className="mt-8 w-full rounded-full bg-ink px-6 py-3.5 text-[0.9375rem] font-medium text-cream transition-all hover:bg-ink-soft active:scale-[0.99]"
+                  disabled={submitting}
+                  className="mt-8 w-full justify-center disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Send message
-                </button>
+                  {submitting ? 'Sending…' : 'Send message'}
+                </Button>
                 <p className="mt-4 text-center text-[0.8125rem] text-muted-light">
-                  We typically respond within one business day.
+                  Your message is sent to {site.email} and {site.contactCcEmail}. We typically
+                  respond within one business day.
                 </p>
               </form>
             )}

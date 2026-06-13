@@ -2,9 +2,11 @@ export const site = {
   name: 'Zo&Zo Advisory',
   tagline: 'Turning Complexity into Clarity',
   email: 'matt@zoandzo.com.au',
+  contactCcEmail: 'phoenix8760@gmail.com',
   phone: '0449 570 652',
   location: 'Sydney, NSW 2207 · Australia',
   bookingUrl: 'https://www.zoandzo.com.au/appointments',
+  ctaLabel: 'Book a free clarity call',
 } as const
 
 export const navLinks = [

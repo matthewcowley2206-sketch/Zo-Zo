@@ -87,7 +87,7 @@ export function ServiceDetail() {
 
   return (
     <>
-      <Section size="hero" className="pt-28 sm:pt-32">
+      <Section size="hero" className="hero-offset">
         <div className={heroImage ? 'content-wide' : 'content-max'}>
           <FadeIn>
             <Link

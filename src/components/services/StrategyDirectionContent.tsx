@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import type { Service } from '../../content/services'
 import { getRelatedServices } from '../../content/services'
 import { serviceImagery } from '../../content/serviceImagery'
-import { engagementTypes } from '../../content/site'
+import { engagementTypes, site } from '../../content/site'
 import { StrategyClarityDemo } from './strategy/StrategyClarityDemo'
 import { Button } from '../ui/Button'
 import { FadeIn } from '../ui/FadeIn'
@@ -68,6 +68,11 @@ export function StrategyDirectionContent({ service }: StrategyDirectionContentPr
                   src={imagery.secondary.url}
                   alt={imagery.secondary.alt}
                   className="aspect-[4/3] w-full object-cover"
+                  style={
+                    imagery.secondary.objectPosition
+                      ? { objectPosition: imagery.secondary.objectPosition }
+                      : undefined
+                  }
                   loading="lazy"
                 />
               </div>
@@ -166,7 +171,7 @@ export function StrategyDirectionContent({ service }: StrategyDirectionContentPr
             </p>
             <p className="mt-1 body-regular">Book a free clarity call to get started.</p>
           </div>
-          <Button to="/contact">Book a clarity call</Button>
+          <Button to="/contact">{site.ctaLabel}</Button>
         </FadeIn>
       </Section>
 

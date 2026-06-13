@@ -7,7 +7,7 @@ export const photos = {
   strategyTeam: 'photo-1522202176988-66273c2fd55f',
   strategyWhiteboard: 'photo-1553877522-43269d4ea984',
   clientConversation: 'photo-1517245386807-bb43f82c33c4',
-  clientFollowUp: 'photo-1573497019940-1c28c88b4f3e',
+  clientListeningConversation: 'photo-1573496359142-b8d87734a5a2',
   salesMeeting: 'photo-1552664730-d307ca884978',
   salesCollaboration: 'photo-1556761175-4b46a572b786',
   commPresentation: 'photo-1542744173-8e7e53415bb0',
@@ -23,6 +23,5 @@ export const photos = {
   demoAirport: 'photo-1436491865332-7a61a109cc05',
   demoCafe: 'photo-1495474472287-4d71bcdd2085',
   demoLegal: 'photo-1551288049-bebda4e38f71',
-  homeHero: 'photo-1560472354-b33ff0c44a43',
-  founderPortrait: 'photo-1472099645785-5658abf4ff4e',
+  homeHero: 'photo-1600880292203-757bb62b4baf',
 } as const

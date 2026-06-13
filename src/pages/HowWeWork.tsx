@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { services } from '../content/services'
 import { engagementFaq, engagementSteps } from '../content/howWeWork'
-import { engagementTypes } from '../content/site'
+import { engagementTypes, site } from '../content/site'
 import { ArrowLink, Button } from '../components/ui/Button'
 import { FadeIn } from '../components/ui/FadeIn'
 import { Section, SectionHeader } from '../components/ui/Section'
@@ -11,7 +11,7 @@ export function HowWeWork() {
 
   return (
     <>
-      <Section size="hero" className="pt-28 sm:pt-32">
+      <Section size="hero" className="hero-offset">
         <div className="content-max">
           <FadeIn>
             <p className="eyebrow mb-6">How we work</p>
@@ -132,7 +132,7 @@ export function HowWeWork() {
           ))}
         </div>
         <FadeIn className="mt-14 text-center">
-          <Button to="/contact">Book a free clarity call</Button>
+          <Button to="/contact">{site.ctaLabel}</Button>
         </FadeIn>
       </Section>
     </>

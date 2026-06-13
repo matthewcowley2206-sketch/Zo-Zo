@@ -74,7 +74,6 @@ export function getProjectDemo(id: string): ProjectDemo | undefined {
 
 export const humanImagery = {
   hero: hiRes(photos.homeHero, 2400),
-  heroAlt: 'Diverse team collaborating together - people first, not a solo screen',
-  about: hiRes(photos.founderPortrait, 1200),
-  aboutAlt: 'Matthew Cowley, founder of Zo and Zo Advisory',
+  heroAlt:
+    'Two colleagues collaborating at a desk in a bright office - people working together, not screens alone',
 } as const

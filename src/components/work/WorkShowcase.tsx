@@ -1,4 +1,5 @@
 import { projectDemos } from '../../content/demos'
+import { site } from '../../content/site'
 import { ProjectShowcase } from '../demos/ProjectShowcase'
 import { Button } from '../ui/Button'
 import { FadeIn } from '../ui/FadeIn'
@@ -12,7 +13,7 @@ export function WorkShowcase({ showIntro = true }: WorkShowcaseProps) {
   return (
     <>
       {showIntro && (
-        <Section size="compact" id="demos">
+        <Section size="compact" id="demos" className="scroll-mt-24">
           <div className="content-wide grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
             <div>
               <FadeIn>
@@ -61,7 +62,7 @@ export function WorkShowcase({ showIntro = true }: WorkShowcaseProps) {
             exploring and we will show you what a working prototype could look like.
           </p>
           <div className="mt-10">
-            <Button to="/contact">Book a free clarity call</Button>
+            <Button to="/contact">{site.ctaLabel}</Button>
           </div>
         </FadeIn>
       </Section>

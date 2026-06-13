@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { Service } from '../../content/services'
 import { getRelatedServices } from '../../content/services'
-import { engagementTypes } from '../../content/site'
+import { engagementTypes, site } from '../../content/site'
 import { Button } from '../ui/Button'
 import { FadeIn } from '../ui/FadeIn'
 import { Section, SectionHeader } from '../ui/Section'
@@ -138,7 +138,7 @@ export function ServiceDetailContent({ service }: ServiceDetailContentProps) {
             </p>
             <p className="mt-1 body-regular">Book a free clarity call to get started.</p>
           </div>
-          <Button to="/contact">Book a clarity call</Button>
+          <Button to="/contact">{site.ctaLabel}</Button>
         </FadeIn>
       </Section>
 

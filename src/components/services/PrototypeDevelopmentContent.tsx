@@ -1,6 +1,6 @@
 import type { Service } from '../../content/services'
 import { getRelatedServices } from '../../content/services'
-import { engagementTypes } from '../../content/site'
+import { engagementTypes, site } from '../../content/site'
 import { WorkShowcase } from '../work/WorkShowcase'
 import { Button } from '../ui/Button'
 import { FadeIn } from '../ui/FadeIn'
@@ -119,7 +119,7 @@ export function PrototypeDevelopmentContent({ service }: PrototypeDevelopmentCon
             <p className="text-[1.0625rem] font-medium text-ink">Ready to prototype your idea?</p>
             <p className="mt-1 body-regular">Book a free clarity call to get started.</p>
           </div>
-          <Button to="/contact">Book a clarity call</Button>
+          <Button to="/contact">{site.ctaLabel}</Button>
         </FadeIn>
       </Section>
 

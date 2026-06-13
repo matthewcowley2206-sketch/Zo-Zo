@@ -1,4 +1,4 @@
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, useReducedMotion } from 'framer-motion'
 import { useRef, type ReactNode } from 'react'
 
 type FadeInProps = {
@@ -16,16 +16,23 @@ export function FadeIn({
 }: FadeInProps) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-80px' })
+  const reduceMotion = useReducedMotion()
 
-  const initial = direction === 'up' ? { opacity: 0, y: 32 } : { opacity: 0 }
+  const initial =
+    reduceMotion || direction === 'none' ? { opacity: 0 } : { opacity: 0, y: 32 }
+  const visible = { opacity: 1, y: 0 }
 
   return (
     <motion.div
       ref={ref}
       className={className}
       initial={initial}
-      animate={isInView ? { opacity: 1, y: 0 } : initial}
-      transition={{ duration: 0.7, delay, ease: [0.25, 0.1, 0.25, 1] }}
+      animate={isInView ? visible : initial}
+      transition={{
+        duration: reduceMotion ? 0 : 0.7,
+        delay: reduceMotion ? 0 : delay,
+        ease: [0.25, 0.1, 0.25, 1],
+      }}
     >
       {children}
     </motion.div>
