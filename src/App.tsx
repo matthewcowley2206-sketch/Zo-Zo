@@ -4,11 +4,18 @@ import { About } from './pages/About'
 import { Contact } from './pages/Contact'
 import { Home } from './pages/Home'
 import { HowWeWork } from './pages/HowWeWork'
+import { Maintenance } from './pages/Maintenance'
 import { ServiceDetail } from './pages/ServiceDetail'
 import { Services } from './pages/Services'
 import { Work } from './pages/Work'
 
+const maintenanceMode = import.meta.env.VITE_MAINTENANCE_MODE === 'true'
+
 export default function App() {
+  if (maintenanceMode) {
+    return <Maintenance />
+  }
+
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
       <Routes>

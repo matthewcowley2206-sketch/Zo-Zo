@@ -41,3 +41,23 @@ Then open [http://localhost:5173](http://localhost:5173) in your browser.
 ## Contact form
 
 Submissions are emailed to **matt@zoandzo.com.au** with a copy to **phoenix8760@gmail.com** via [FormSubmit](https://formsubmit.co). The first time the form is used on the live site, FormSubmit sends a one-time activation link to matt@zoandzo.com.au — click it to enable delivery.
+
+## Pause the live site (Vercel maintenance mode)
+
+On **www.zoandzo.com.au** (Vercel), you can show a “Temporarily unavailable” page without touching GoDaddy DNS.
+
+### Turn maintenance mode ON
+
+1. Vercel → project **zo-zo-advisory** → **Settings → Environment Variables**
+2. Add:
+   - **Name:** `VITE_MAINTENANCE_MODE`
+   - **Value:** `true`
+   - **Environment:** Production only
+3. **Save**, then **Deployments** → **Redeploy** the latest production build
+
+### Turn maintenance mode OFF
+
+1. Delete `VITE_MAINTENANCE_MODE`, or set it to `false`
+2. **Redeploy** production
+
+The full site returns on the next deploy. GitHub Pages (`github.io/Zo-Zo`) is separate and is not affected by this setting.
