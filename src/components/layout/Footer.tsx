@@ -45,14 +45,6 @@ export function Footer() {
                   {site.email}
                 </a>
               </li>
-              <li>
-                <a
-                  href={`tel:${site.phone.replace(/\s/g, '')}`}
-                  className="focus-ring rounded-sm transition-colors hover:text-ink"
-                >
-                  {site.phone}
-                </a>
-              </li>
               <li>{site.location}</li>
             </ul>
           </div>

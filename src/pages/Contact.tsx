@@ -75,28 +75,12 @@ export function Contact() {
               </div>
               <div>
                 <h2 className="text-[0.8125rem] font-semibold uppercase tracking-[0.04em] text-muted-light">
-                  Phone
-                </h2>
-                <a
-                  href={`tel:${site.phone.replace(/\s/g, '')}`}
-                  className="focus-ring mt-2 block rounded-sm text-[1.5rem] font-semibold tracking-[-0.02em] text-ink transition-colors hover:text-muted"
-                >
-                  {site.phone}
-                </a>
-              </div>
-              <div>
-                <h2 className="text-[0.8125rem] font-semibold uppercase tracking-[0.04em] text-muted-light">
                   Location
                 </h2>
                 <p className="mt-2 text-[1.125rem] text-ink">{site.location}</p>
                 <p className="mt-2 body-regular">
                   Sydney-based · Working across Australia · Online worldwide
                 </p>
-              </div>
-              <div>
-                <Button href={site.bookingUrl} external variant="secondary">
-                  Book via calendar →
-                </Button>
               </div>
             </div>
           </FadeIn>
@@ -113,14 +97,6 @@ export function Contact() {
                   Your message has been sent. We will be in touch shortly - usually within one
                   business day.
                 </p>
-                <Button
-                  href={site.bookingUrl}
-                  external
-                  variant="secondary"
-                  className="mt-8"
-                >
-                  Or book via calendar →
-                </Button>
               </div>
             ) : (
               <form

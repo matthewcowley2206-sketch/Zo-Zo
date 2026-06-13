@@ -24,13 +24,6 @@ export function Maintenance() {
             >
               {site.email}
             </a>
-            {' · '}
-            <a
-              href={`tel:${site.phone.replace(/\s/g, '')}`}
-              className="focus-ring rounded-sm font-medium text-ink underline underline-offset-2"
-            >
-              {site.phone}
-            </a>
           </p>
         </div>
       </main>

@@ -253,9 +253,7 @@ export function Home() {
             </p>
             <div className="mt-10 flex flex-col items-center gap-4">
               <Button to="/contact">{site.ctaLabel}</Button>
-              <p className="text-[0.9375rem] text-muted">
-                matt@zoandzo.com.au · 0449 570 652
-              </p>
+              <p className="text-[0.9375rem] text-muted">{site.email}</p>
             </div>
           </FadeIn>
         </div>
