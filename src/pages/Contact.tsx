@@ -208,8 +208,8 @@ export function Contact() {
                   {submitting ? 'Sending…' : 'Send message'}
                 </Button>
                 <p className="mt-4 text-center text-[0.8125rem] text-muted-light">
-                  Your message is sent to {site.email} and {site.contactCcEmail}. We typically
-                  respond within one business day.
+                  Your message is sent to {site.email}. We typically respond within one business
+                  day.
                 </p>
               </form>
             )}
