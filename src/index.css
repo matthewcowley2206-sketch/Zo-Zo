@@ -132,6 +132,11 @@
     z-index: 2;
   }
 
+  .hero-circuit-content .body-large,
+  .hero-circuit-content .body-regular {
+    @apply text-ink-soft;
+  }
+
   .hero-dna-scene {
     position: absolute;
     left: 0;
