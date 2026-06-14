@@ -46,8 +46,9 @@ export const serviceImagery: Partial<Record<string, ServiceImagerySet>> = {
   },
   communication: {
     hero: {
-      url: hiRes(photos.commPresentation),
-      alt: 'Leadership team in a focused presentation and discussion',
+      url: siteImage(localImages.communicationClarityHero),
+      alt: 'Diverse team in a bright meeting room having a focused, collaborative discussion',
+      objectPosition: '38% 42%',
     },
     secondary: {
       url: hiRes(photos.commDiscussion),
@@ -66,8 +67,9 @@ export const serviceImagery: Partial<Record<string, ServiceImagerySet>> = {
   },
   operations: {
     hero: {
-      url: hiRes(photos.opsPlanning),
-      alt: 'Team mapping a process together in a working session',
+      url: siteImage(localImages.operationsSimplificationHero),
+      alt: 'Diverse team collaborating around a table with charts, sticky notes, and planning materials',
+      objectPosition: 'center 40%',
     },
     secondary: {
       url: hiRes(photos.opsWorkshop),
@@ -87,8 +89,9 @@ export const serviceImagery: Partial<Record<string, ServiceImagerySet>> = {
   },
   'go-to-market': {
     hero: {
-      url: hiRes(photos.gtmPlanning),
-      alt: 'Diverse launch team planning together in a modern office with women and men',
+      url: siteImage(localImages.goToMarketHero),
+      alt: 'Diverse launch team collaborating around laptops and charts in a bright modern office',
+      objectPosition: 'center 45%',
     },
     secondary: {
       url: hiRes(photos.gtmStakeholders),
