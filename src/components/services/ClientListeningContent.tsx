@@ -7,6 +7,7 @@ import { ClientListeningDemo } from './clientListening/ClientListeningDemo'
 import { Button } from '../ui/Button'
 import { FadeIn } from '../ui/FadeIn'
 import { Section, SectionHeader } from '../ui/Section'
+import { ServiceCardLink } from './ServiceCardLink'
 
 type ClientListeningContentProps = {
   service: Service
@@ -189,14 +190,7 @@ export function ClientListeningContent({ service }: ClientListeningContentProps)
             <h2 className="headline-small mb-8">Related services</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               {related.map((s) => (
-                <Link
-                  key={s.slug}
-                  to={`/services/${s.slug}`}
-                  className="rounded-3xl border border-line p-6 transition-colors hover:bg-cream-dark/50"
-                >
-                  <h3 className="text-[1.0625rem] font-semibold">{s.title}</h3>
-                  <p className="mt-2 text-[0.9375rem] text-muted">{s.tagline}</p>
-                </Link>
+                <ServiceCardLink key={s.slug} service={s} variant="related" />
               ))}
             </div>
           </div>

@@ -229,7 +229,7 @@ export function SlideMock({ title, bullets }: { title: string; bullets: string[]
         <ul className="mt-4 space-y-2">
           {bullets.map((b) => (
             <li key={b} className="flex gap-2 text-[0.8125rem] text-cream/85">
-              <span className="text-cream/40">—</span>
+              <span className="text-cream/40">-</span>
               {b}
             </li>
           ))}

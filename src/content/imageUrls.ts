@@ -5,7 +5,7 @@ export function hiRes(photoId: string, width = 1800): string {
 
 export const SITE_ORIGIN = 'https://www.zoandzo.com.au'
 
-/** Local images in public/images/ — works on Vercel and GitHub Pages via BASE_URL. */
+/** Local images in public/images/ - works on Vercel and GitHub Pages via BASE_URL. */
 export function siteImage(filename: string) {
   return `${import.meta.env.BASE_URL}images/${filename}`
 }

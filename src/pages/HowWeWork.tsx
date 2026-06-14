@@ -1,13 +1,14 @@
-import { Link } from 'react-router-dom'
 import { services } from '../content/services'
 import { engagementFaq, engagementSteps } from '../content/howWeWork'
 import { engagementTypes, site } from '../content/site'
+import { ServiceCardLink } from '../components/services/ServiceCardLink'
 import { ArrowLink, Button } from '../components/ui/Button'
 import { FadeIn } from '../components/ui/FadeIn'
 import { Section, SectionHeader } from '../components/ui/Section'
 
 export function HowWeWork() {
   const servicePreview = services.filter((s) => s.slug !== 'prototype-development')
+  const prototypeService = services.find((s) => s.slug === 'prototype-development')
 
   return (
     <>
@@ -60,35 +61,14 @@ export function HowWeWork() {
         <div className="content-wide grid gap-4 sm:grid-cols-2">
           {servicePreview.map((service, i) => (
             <FadeIn key={service.slug} delay={i * 0.04}>
-              <Link
-                to={`/services/${service.slug}`}
-                className="group flex h-full flex-col rounded-3xl border border-line p-8 transition-all hover:bg-cream-dark/50"
-              >
-                <h3 className="text-[1.125rem] font-semibold text-ink">{service.title}</h3>
-                <p className="mt-2 flex-1 text-[0.9375rem] leading-relaxed text-muted">
-                  {service.tagline}
-                </p>
-                <span className="mt-4 text-[0.875rem] font-medium text-ink opacity-60 transition-opacity group-hover:opacity-100">
-                  Learn more →
-                </span>
-              </Link>
+              <ServiceCardLink service={service} variant="compact" />
             </FadeIn>
           ))}
-          <FadeIn delay={0.08}>
-            <Link
-              to="/services/prototype-development"
-              className="group flex h-full flex-col rounded-3xl bg-ink p-8 text-cream transition-opacity hover:opacity-95"
-            >
-              <h3 className="text-[1.125rem] font-semibold">Prototype Development</h3>
-              <p className="mt-2 flex-1 text-[0.9375rem] leading-relaxed text-cream/70">
-                See your idea working - before you commit to building it. Includes interactive
-                example prototypes.
-              </p>
-              <span className="mt-4 text-[0.875rem] font-medium text-cream/80 group-hover:text-cream">
-                Explore service + demos →
-              </span>
-            </Link>
-          </FadeIn>
+          {prototypeService && (
+            <FadeIn delay={0.08}>
+              <ServiceCardLink service={prototypeService} variant="compact" />
+            </FadeIn>
+          )}
         </div>
         <FadeIn className="mt-10 text-center">
           <ArrowLink to="/services">View all services</ArrowLink>

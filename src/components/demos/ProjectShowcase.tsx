@@ -63,7 +63,7 @@ export function ProjectShowcase({ demo, reversed = false }: ProjectShowcaseProps
             </p>
             <p className="mt-2 text-[1.0625rem] leading-relaxed text-ink">
               {demo.device === 'desktop'
-                ? 'The prototype below is fully interactive. Follow the guided walkthrough — it tells you exactly where to click, and why it mattered to the client.'
+                ? 'The prototype below is fully interactive. Follow the guided walkthrough - it tells you exactly where to click, and why it mattered to the client.'
                 : 'The phone below is fully interactive. Follow the guided walkthrough - it tells you exactly where to tap, and why it mattered to the client.'}
             </p>
           </div>

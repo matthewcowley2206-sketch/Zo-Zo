@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom'
 import { services } from '../content/services'
 import { site } from '../content/site'
+import { ServiceCardLink } from '../components/services/ServiceCardLink'
 import { FadeIn } from '../components/ui/FadeIn'
 import { Section } from '../components/ui/Section'
 import { Button } from '../components/ui/Button'
@@ -25,45 +25,11 @@ export function Services() {
 
       <Section theme="cream" size="compact" className="pb-28">
         <div className="content-wide space-y-4">
-          {services.map((service, i) => {
-            const isPrototype = service.slug === 'prototype-development'
-
-            return (
+          {services.map((service, i) => (
             <FadeIn key={service.slug} delay={i * 0.04}>
-              <Link
-                to={`/services/${service.slug}`}
-                className={`group block rounded-3xl border p-8 transition-all duration-300 sm:p-10 ${
-                  isPrototype
-                    ? 'border-ink bg-ink text-cream shadow-lg shadow-ink/10 hover:border-cream/20 hover:bg-nav hover:shadow-xl hover:shadow-ink/25'
-                    : 'border-line/60 bg-cream text-ink hover:border-ink/15 hover:bg-white hover:shadow-lg hover:shadow-ink/8'
-                }`}
-              >
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="max-w-[640px]">
-                    <h2 className={`headline-small ${isPrototype ? 'text-cream' : 'group-hover:text-ink'}`}>
-                      {service.title}
-                    </h2>
-                    <p className={`mt-3 text-[1.0625rem] ${isPrototype ? 'text-cream/75' : 'text-muted group-hover:text-ink/80'}`}>
-                      {service.tagline}
-                    </p>
-                    <p className={`mt-4 text-[1.0625rem] leading-[1.58] ${isPrototype ? 'text-cream/60' : 'text-muted group-hover:text-ink/70'}`}>
-                      {service.summary}
-                    </p>
-                  </div>
-                  <span
-                    className={`shrink-0 text-[0.9375rem] font-medium transition-opacity ${
-                      isPrototype
-                        ? 'text-cream/70 group-hover:text-cream'
-                        : 'text-ink/50 group-hover:text-ink'
-                    }`}
-                  >
-                    Learn more →
-                  </span>
-                </div>
-              </Link>
+              <ServiceCardLink service={service} variant="row" />
             </FadeIn>
-            )
-          })}
+          ))}
         </div>
 
         <FadeIn className="mt-16 text-center">

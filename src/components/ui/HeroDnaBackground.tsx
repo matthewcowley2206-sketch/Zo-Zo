@@ -11,7 +11,7 @@ const RADIUS = 113
 const STEPS = 168
 const RUNG_COUNT = 26
 const PERSPECTIVE = 920
-/** Extra helix length off-screen — more on the right so it continues past the viewport */
+/** Extra helix length off-screen - more on the right so it continues past the viewport */
 const EDGE_BLEED_LEFT = 0.34
 const EDGE_BLEED_RIGHT = 0.62
 const HORIZONTAL_WIDTH_SCALE = 1.22

@@ -77,7 +77,7 @@ const staticPageMeta: Record<string, Omit<PageSeo, 'path'>> = {
   '/pricing': {
     title: 'Pricing | Zo&Zo Advisory · Simple Starting Points',
     description:
-      'Typical starting points for Zo&Zo Advisory services — strategy, prototypes, client listening, operations, and more. Fixed quotes after scoping, ex GST.',
+      'Typical starting points for Zo&Zo Advisory services - strategy, prototypes, client listening, operations, and more. Fixed quotes after scoping, ex GST.',
     faq: pricingFaqs,
   },
   '/contact': {

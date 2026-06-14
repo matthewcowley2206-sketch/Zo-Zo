@@ -5,6 +5,7 @@ import { entitySummary, homeFaqs } from '../content/seo'
 import { services } from '../content/services'
 import { pillars, site } from '../content/site'
 import { DemoRenderer } from '../components/demos/DemoRenderer'
+import { ServiceCardLink } from '../components/services/ServiceCardLink'
 import { FaqSection } from '../components/seo/FaqSection'
 import { ArrowLink, Button } from '../components/ui/Button'
 import { FadeIn } from '../components/ui/FadeIn'
@@ -173,20 +174,7 @@ export function Home() {
         <div className="content-wide grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {services.map((service, i) => (
             <FadeIn key={service.slug} delay={i * 0.04}>
-              <Link
-                to={`/services/${service.slug}`}
-                className="group flex h-full flex-col rounded-3xl bg-cream-dark/60 p-8 transition-all duration-300 hover:bg-cream-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/25"
-              >
-                <h3 className="text-[1.25rem] font-semibold tracking-[-0.02em] text-ink">
-                  {service.title}
-                </h3>
-                <p className="mt-3 flex-1 text-[0.9375rem] leading-relaxed text-muted">
-                  {service.tagline}
-                </p>
-                <span className="mt-6 text-[0.875rem] font-medium text-ink opacity-70 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100">
-                  Learn more →
-                </span>
-              </Link>
+              <ServiceCardLink service={service} variant="tile" />
             </FadeIn>
           ))}
         </div>

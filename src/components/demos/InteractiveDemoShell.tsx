@@ -4,8 +4,45 @@ import {
   DemoAnnotationProvider,
 } from './DemoAnnotations'
 import { demoGuides } from './demoGuides'
-import { DemoGuideProvider, DemoGuideRail, DemoPhoneBeacon } from './DemoGuide'
+import {
+  DemoGuideProvider,
+  DemoGuideRail,
+  DemoPhoneBeacon,
+  useDemoGuide,
+} from './DemoGuide'
 import { DesktopFrame, DeviceFrame } from './DeviceFrame'
+
+function DemoFrameContent({
+  children,
+  accentColor,
+  isDesktop,
+}: {
+  children: ReactNode
+  accentColor: string
+  isDesktop: boolean
+}) {
+  const { restartKey } = useDemoGuide()
+
+  const content = (
+    <div key={restartKey} className="h-full min-h-0">
+      {children}
+    </div>
+  )
+
+  if (isDesktop) {
+    return (
+      <DesktopFrame accentColor={accentColor} showLabel>
+        {content}
+      </DesktopFrame>
+    )
+  }
+
+  return (
+    <DeviceFrame accentColor={accentColor} showLabel>
+      {content}
+    </DeviceFrame>
+  )
+}
 
 type InteractiveDemoShellProps = {
   demoId: keyof typeof demoGuides
@@ -35,15 +72,9 @@ export function InteractiveDemoShell({
           </div>
           <div className="order-2 lg:order-2">
             <DemoPhoneBeacon device={device}>
-              {isDesktop ? (
-                <DesktopFrame accentColor={accentColor} showLabel>
-                  {children}
-                </DesktopFrame>
-              ) : (
-                <DeviceFrame accentColor={accentColor} showLabel>
-                  {children}
-                </DeviceFrame>
-              )}
+              <DemoFrameContent accentColor={accentColor} isDesktop={isDesktop}>
+                {children}
+              </DemoFrameContent>
             </DemoPhoneBeacon>
           </div>
         </div>

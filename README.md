@@ -40,7 +40,7 @@ Then open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ## Contact form
 
-Submissions are emailed to **matt@zoandzo.com.au** with a copy to **phoenix8760@gmail.com** via [FormSubmit](https://formsubmit.co). The first time the form is used on the live site, FormSubmit sends a one-time activation link to matt@zoandzo.com.au — click it to enable delivery.
+Submissions are emailed to **matt@zoandzo.com.au** with a copy to **phoenix8760@gmail.com** via [FormSubmit](https://formsubmit.co). The first time the form is used on the live site, FormSubmit sends a one-time activation link to matt@zoandzo.com.au - click it to enable delivery.
 
 ## Pause the live site (Vercel maintenance mode)
 
@@ -67,14 +67,14 @@ The full site returns on the next deploy. GitHub Pages (`github.io/Zo-Zo`) is se
 The site includes:
 
 - **Per-page titles, descriptions, Open Graph, and Twitter cards** (via client-side meta on route change)
-- **JSON-LD structured data** — Organization, WebSite, WebPage, Service, FAQ, and Breadcrumb schemas
-- **`/sitemap.xml`** — auto-generated on each build (canonical domain: www.zoandzo.com.au)
-- **`/robots.txt`** — allows search and AI crawlers
-- **`/llms.txt`** — plain-language summary for AI answer engines
+- **JSON-LD structured data** - Organization, WebSite, WebPage, Service, FAQ, and Breadcrumb schemas
+- **`/sitemap.xml`** - auto-generated on each build (canonical domain: www.zoandzo.com.au)
+- **`/robots.txt`** - allows search and AI crawlers
+- **`/llms.txt`** - plain-language summary for AI answer engines
 - **Build-time Organization schema** baked into `index.html`
 
-### After deploy — recommended next steps
+### After deploy - recommended next steps
 
-1. **Google Search Console** — add `https://www.zoandzo.com.au` and submit `https://www.zoandzo.com.au/sitemap.xml`
-2. **Bing Webmaster Tools** — same sitemap URL
+1. **Google Search Console** - add `https://www.zoandzo.com.au` and submit `https://www.zoandzo.com.au/sitemap.xml`
+2. **Bing Webmaster Tools** - same sitemap URL
 3. Keep **LinkedIn / directory listings** aligned with the site description for entity consistency

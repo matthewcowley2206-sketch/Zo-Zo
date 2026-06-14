@@ -215,16 +215,16 @@ export const demoGuides: Record<string, DemoGuideConfig> = {
     title: 'Enquiry to quote',
     device: 'desktop',
     intro:
-      'This is a desk workflow prototype — not a chatbot. Follow the steps to turn a vague brief into a sendable quote.',
+      'This is a desk workflow prototype - not a chatbot. Follow the steps to turn a vague brief into a sendable quote.',
     completeMessage:
-      'Walkthrough complete. Try toggling phases or switching quote tiers — the preview updates instantly.',
+      'Walkthrough complete. Try toggling phases, switching tiers, or editing the client email before sending.',
     scopeNote:
-      'Simulated AI — production would connect to your templates, rate card, CRM, and approval rules. This prototype was enough for leadership to agree what to build first.',
+      'Simulated AI - production would connect to your templates, rate card, CRM, and approval rules. This prototype was enough for leadership to agree what to build first.',
     steps: [
       {
         id: 'enquiry',
         target: 'enquiry-card',
-        hint: 'Read the enquiry — vague brief, flexible budget, tight deadline.',
+        hint: 'Read the enquiry - vague brief, flexible budget, tight deadline.',
         recovery: 'Start on the New enquiry screen and review the message from Marcus.',
         annotation: {
           id: 'enquiry',
@@ -237,13 +237,13 @@ export const demoGuides: Record<string, DemoGuideConfig> = {
       {
         id: 'generate',
         target: 'generate-btn',
-        hint: 'Tap Turn into scope — watch structured output appear in seconds.',
+        hint: 'Tap Turn into scope - watch structured output appear in seconds.',
         recovery: 'From the enquiry screen, tap Turn into scope.',
         annotation: {
           id: 'generate',
           clientAsk: 'scope drafted from enquiry without starting from a blank doc.',
           ourSolution:
-            'one action that produces editable blocks — phases, assumptions, and questions — not a wall of AI text.',
+            'one action that produces editable blocks - phases, assumptions, and questions - not a wall of AI text.',
         },
       },
       {
@@ -253,33 +253,45 @@ export const demoGuides: Record<string, DemoGuideConfig> = {
         recovery: 'On the scope screen, tap Brand refresh to toggle it off.',
         annotation: {
           id: 'edit',
-          clientAsk: 'the team to adjust scope before pricing — not after the quote is sent.',
+          clientAsk: 'the team to adjust scope before pricing - not after the quote is sent.',
           ourSolution:
-            'phase toggles wired to the quote — leadership saw pricing shift in the same session.',
+            'phase toggles wired to the quote - leadership saw pricing shift in the same session.',
         },
       },
       {
         id: 'tier',
         target: 'tier-recommended',
-        hint: 'Pick Recommended — same scope, different packaging.',
+        hint: 'Pick Recommended - same scope, different packaging.',
         recovery: 'Tap Continue to quote options, then select Recommended.',
         annotation: {
           id: 'tier',
           clientAsk: 'three clear options instead of one take-it-or-leave-it number.',
           ourSolution:
-            'Essential / Recommended / Full tiers — mirrors how they actually sell, tested in one workshop.',
+            'Essential / Recommended / Full tiers - mirrors how they actually sell, tested in one workshop.',
+        },
+      },
+      {
+        id: 'email',
+        target: 'view-email-btn',
+        hint: 'View email - see the quote as Marcus would, ready to personalise.',
+        recovery: 'From the quote preview, tap View email.',
+        annotation: {
+          id: 'email',
+          clientAsk: 'to tweak the message before it goes out - not send a generic template.',
+          ourSolution:
+            'pre-filled client email with quote summary attached - edit subject and body before sending.',
         },
       },
       {
         id: 'send',
         target: 'send-preview-btn',
-        hint: 'Send the quote preview — the moment they would share with the client.',
-        recovery: 'Open the quote preview, then tap Send preview.',
+        hint: 'Personalise if you like, then send the preview.',
+        recovery: 'Open View email from the quote, then tap Send preview.',
         annotation: {
           id: 'send',
           clientAsk: 'a quote they could stand behind before integrating CRM, Xero, or e-sign.',
           ourSolution:
-            'sendable preview with line items and timeline — scoped CRM integration for phase two.',
+            'sendable preview with line items and timeline - scoped CRM integration for phase two.',
         },
       },
     ],

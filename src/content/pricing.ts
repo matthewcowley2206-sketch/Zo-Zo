@@ -76,7 +76,7 @@ export const pricingFaqs: PricingFaq[] = [
   {
     question: 'How do you decide the final price?',
     answer:
-      'Based on what you need delivered — not hours on a clock. You get a clear scope, a fixed quote, and deliverables you can hold us to.',
+      'Based on what you need delivered - not hours on a clock. You get a clear scope, a fixed quote, and deliverables you can hold us to.',
   },
   {
     question: 'Is the clarity call free?',

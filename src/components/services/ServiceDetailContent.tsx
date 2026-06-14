@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import type { Service } from '../../content/services'
 import { getRelatedServices } from '../../content/services'
 import { engagementTypes, site } from '../../content/site'
+import { ServiceCardLink } from './ServiceCardLink'
 import { Button } from '../ui/Button'
 import { FadeIn } from '../ui/FadeIn'
 import { Section, SectionHeader } from '../ui/Section'
@@ -148,14 +149,7 @@ export function ServiceDetailContent({ service }: ServiceDetailContentProps) {
             <h2 className="headline-small mb-8">Related services</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               {related.map((s) => (
-                <Link
-                  key={s.slug}
-                  to={`/services/${s.slug}`}
-                  className="rounded-3xl border border-line p-6 transition-colors hover:bg-cream-dark/50"
-                >
-                  <h3 className="text-[1.0625rem] font-semibold">{s.title}</h3>
-                  <p className="mt-2 text-[0.9375rem] text-muted">{s.tagline}</p>
-                </Link>
+                <ServiceCardLink key={s.slug} service={s} variant="related" />
               ))}
             </div>
           </div>

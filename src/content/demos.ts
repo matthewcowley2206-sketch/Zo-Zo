@@ -73,13 +73,13 @@ export const projectDemos: ProjectDemo[] = [
     sector: 'Creative & digital',
     headline: 'From inbox chaos to a quote you can stand behind.',
     summary:
-      'A scope-and-quote workflow prototype: paste a vague enquiry, generate editable scope blocks, pick a quote tier, and send a preview — before anyone opened Excel.',
+      'A scope-and-quote workflow prototype: paste a vague enquiry, generate editable scope blocks, pick a quote tier, and send a preview - before anyone opened Excel.',
     challenge:
-      'A growing brand studio was losing half a day on every hot lead — interpreting vague briefs, debating scope internally, then sending quotes everyone second-guessed.',
+      'A growing brand studio was losing half a day on every hot lead - interpreting vague briefs, debating scope internally, then sending quotes everyone second-guessed.',
     approach:
       'We mapped the scoping workflow with leadership, built a simulated AI draft experience, and tested three quote tiers in a single clickable prototype.',
     outcome:
-      'Aligned on scope and pricing before CRM or e-sign integration — and a validated brief for phase one build.',
+      'Aligned on scope and pricing before CRM or e-sign integration - and a validated brief for phase one build.',
     humanImage: hiRes(photos.demoAgency),
     humanImageAlt: 'Creative team reviewing strategy on a whiteboard in a bright studio',
     accentColor: '#0f766e',

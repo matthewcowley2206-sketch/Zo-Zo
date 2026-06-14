@@ -1,6 +1,6 @@
 # Zo&Zo Advisory
 
-> Sydney-based business advisory helping growing companies across Australia turn complexity into clarity — through strategy, client listening, operations, data and AI guidance, and working prototypes you can test before full development.
+> Sydney-based business advisory helping growing companies across Australia turn complexity into clarity - through strategy, client listening, operations, data and AI guidance, and working prototypes you can test before full development.
 
 ## About
 
@@ -13,18 +13,18 @@
 
 ## What we do
 
-Zo&Zo Advisory helps business owners who are juggling growth, operations, and big decisions. We combine practical strategy with working prototypes — clickable mock-ups you can share and test before committing to full development spend.
+Zo&Zo Advisory helps business owners who are juggling growth, operations, and big decisions. We combine practical strategy with working prototypes - clickable mock-ups you can share and test before committing to full development spend.
 
 ## Services
 
-- Prototype Development — clickable prototypes before full build
-- Strategy & Direction — clarity on priorities and plans teams can follow
-- Client Listening — structured listening, NPS/CSAT, insight that feeds decisions
-- Sales & Marketing — positioning, journey, and consistent messaging
-- Communication & Clarity — story-driven materials for change and launches
-- Data, AI & Insights — practical dashboards, automations, and AI roadmaps
-- Operations & Simplification — workflow mapping, automation, and SOPs
-- Go-to-Market — launch plans you can execute week by week
+- Prototype Development - clickable prototypes before full build
+- Strategy & Direction - clarity on priorities and plans teams can follow
+- Client Listening - structured listening, NPS/CSAT, insight that feeds decisions
+- Sales & Marketing - positioning, journey, and consistent messaging
+- Communication & Clarity - story-driven materials for change and launches
+- Data, AI & Insights - practical dashboards, automations, and AI roadmaps
+- Operations & Simplification - workflow mapping, automation, and SOPs
+- Go-to-Market - launch plans you can execute week by week
 
 ## Key pages
 
@@ -38,4 +38,4 @@ Zo&Zo Advisory helps business owners who are juggling growth, operations, and bi
 
 ## How to engage
 
-Book a free clarity call or send a message via the contact form. First conversation is about fit and the right next step — no pressure.
+Book a free clarity call or send a message via the contact form. First conversation is about fit and the right next step - no pressure.

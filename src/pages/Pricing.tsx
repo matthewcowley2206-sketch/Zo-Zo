@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { formatFromPrice, pricingFaqs, pricingRows } from '../content/pricing'
 import { site } from '../content/site'
 import { FaqSection } from '../components/seo/FaqSection'
+import { isPrototypeService } from '../components/services/ServiceCardLink'
 import { Button } from '../components/ui/Button'
 import { FadeIn } from '../components/ui/FadeIn'
 import { Section } from '../components/ui/Section'
@@ -17,7 +18,7 @@ export function Pricing() {
           </FadeIn>
           <FadeIn delay={0.15} className="mt-8 max-w-[640px]">
             <p className="body-large">
-              Every engagement is scoped to your outcome. These are typical starting points — not
+              Every engagement is scoped to your outcome. These are typical starting points - not
               menu prices. We quote a fixed amount before work begins.
             </p>
           </FadeIn>
@@ -42,7 +43,7 @@ export function Pricing() {
 
               <ul className="divide-y divide-line">
                 {pricingRows.map((row, index) => {
-                  const isPrototype = row.serviceSlug === 'prototype-development'
+                  const isPrototype = isPrototypeService(row.serviceSlug)
 
                   return (
                     <li key={row.serviceSlug}>
@@ -85,8 +86,8 @@ export function Pricing() {
             </div>
 
             <p className="mx-auto mt-8 max-w-[640px] text-center text-[0.9375rem] leading-relaxed text-muted">
-              Full programs — board strategy packs, multi-flow prototypes, embedded listening
-              loops, or multiple automations — are scoped individually. You always get a fixed quote
+              Full programs - board strategy packs, multi-flow prototypes, embedded listening
+              loops, or multiple automations - are scoped individually. You always get a fixed quote
               before we start.
             </p>
           </FadeIn>

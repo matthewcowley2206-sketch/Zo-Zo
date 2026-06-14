@@ -3,7 +3,7 @@ Allow: /
 
 Sitemap: https://www.zoandzo.com.au/sitemap.xml
 
-# AI crawlers — welcome to public marketing pages
+# AI crawlers - welcome to public marketing pages
 User-agent: GPTBot
 Allow: /
 

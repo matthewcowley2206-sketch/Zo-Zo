@@ -19,19 +19,23 @@ type Phase = {
   id: string
   label: string
   weeks: number
+  price: number
   included: boolean
 }
 
-type View = 'enquiry' | 'generating' | 'scope' | 'tiers' | 'quote'
+type View = 'enquiry' | 'generating' | 'scope' | 'tiers' | 'quote' | 'email'
 
 type TierId = 'essential' | 'recommended' | 'full'
 
 const defaultPhases: Phase[] = [
-  { id: 'discovery', label: 'Discovery & strategy', weeks: 2, included: true },
-  { id: 'brand', label: 'Brand refresh', weeks: 3, included: true },
-  { id: 'web', label: 'Web design & build', weeks: 5, included: true },
-  { id: 'handover', label: 'Launch & handover', weeks: 1, included: true },
+  { id: 'discovery', label: 'Discovery & strategy', weeks: 2, price: 4000, included: true },
+  { id: 'brand', label: 'Brand refresh', weeks: 3, price: 9000, included: true },
+  { id: 'web', label: 'Web design & build', weeks: 5, price: 12500, included: true },
+  { id: 'handover', label: 'Launch & handover', weeks: 1, price: 3000, included: true },
 ]
+
+const fullPartnershipExtras = 13500
+const minQuote = 14000
 
 const tiers: Record<
   TierId,
@@ -45,7 +49,7 @@ const tiers: Record<
   },
   recommended: {
     label: 'Recommended',
-    subtitle: 'Brand + web — balanced',
+    subtitle: 'Brand + web - balanced',
     basePrice: 28500,
     extras: ['Brand refresh', 'Content support', '2 rounds of revisions'],
   },
@@ -65,6 +69,49 @@ function formatPrice(amount: number) {
   }).format(amount)
 }
 
+function scopeSubtotal(phases: Phase[]) {
+  return phases.filter((p) => p.included).reduce((sum, p) => sum + p.price, 0)
+}
+
+function scopeWeeks(phases: Phase[]) {
+  return phases.filter((p) => p.included).reduce((sum, p) => sum + p.weeks, 0)
+}
+
+function calculateTierPrice(tierId: TierId, phases: Phase[]) {
+  const subtotal = scopeSubtotal(phases)
+  const brandPhase = phases.find((p) => p.id === 'brand')
+  const brandPrice = brandPhase?.included ? brandPhase.price : 0
+
+  switch (tierId) {
+    case 'essential':
+      return Math.max(subtotal - brandPrice, minQuote)
+    case 'recommended':
+      return Math.max(subtotal, minQuote)
+    case 'full':
+      return Math.max(subtotal + fullPartnershipExtras, minQuote)
+  }
+}
+
+function buildEmailDraft(tierLabel: string, total: number, weeks: number) {
+  return {
+    subject: `Your Brightline quote · ${tierLabel}`,
+    body: `Hi Marcus,
+
+Thanks for your enquiry about the website refresh and brand work. Based on our scope conversation, here's your quote summary:
+
+${tierLabel} · ${formatPrice(total)} ex GST
+Timeline · ${weeks} weeks · Target launch before EOFY
+
+You'll find the full breakdown in the preview link below. Happy to adjust scope if you'd like to discuss options.
+
+Preview link: https://quote.brightline.studio/marcus-harbour
+
+Best,
+Sarah
+Brightline Studio`,
+  }
+}
+
 function BrightlineApp() {
   const { show } = useDemoAnnotation()
   const { mode } = useDemoGuide()
@@ -73,11 +120,14 @@ function BrightlineApp() {
   const [selectedTier, setSelectedTier] = useState<TierId>('recommended')
   const [previewSent, setPreviewSent] = useState(false)
   const [enquiryRead, setEnquiryRead] = useState(false)
+  const [emailSubject, setEmailSubject] = useState('')
+  const [emailBody, setEmailBody] = useState('')
 
   const enquiryCard = useGuideActivate('enquiry-card')
   const generateBtn = useGuideActivate('generate-btn')
   const scopeToggle = useGuideActivate('scope-toggle')
   const tierRecommended = useGuideActivate('tier-recommended')
+  const viewEmailBtn = useGuideActivate('view-email-btn')
   const sendPreviewBtn = useGuideActivate('send-preview-btn')
 
   const exploreShow = (annotation: Parameters<typeof show>[0]) => {
@@ -85,19 +135,21 @@ function BrightlineApp() {
   }
 
   const includedPhases = phases.filter((p) => p.included)
-  const brandIncluded = phases.find((p) => p.id === 'brand')?.included ?? true
+  const subtotal = scopeSubtotal(phases)
+  const totalWeeks = scopeWeeks(phases)
 
-  const quoteTotal = useMemo(() => {
-    const tier = tiers[selectedTier]
-    let total = tier.basePrice
-    if (!brandIncluded && selectedTier !== 'essential') {
-      total -= 4500
-    }
-    if (includedPhases.length < 3) {
-      total -= 1200
-    }
-    return Math.max(total, 14000)
-  }, [selectedTier, brandIncluded, includedPhases.length])
+  const quoteTotal = useMemo(
+    () => calculateTierPrice(selectedTier, phases),
+    [selectedTier, phases],
+  )
+
+  const openEmail = () => {
+    const draft = buildEmailDraft(tiers[selectedTier].label, quoteTotal, totalWeeks)
+    setEmailSubject(draft.subject)
+    setEmailBody(draft.body)
+    viewEmailBtn.onGuideAction()
+    setView('email')
+  }
 
   useEffect(() => {
     if (view !== 'generating') return
@@ -106,8 +158,56 @@ function BrightlineApp() {
   }, [view])
 
   const togglePhase = (id: string) => {
-    setPhases((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, included: !p.included } : p)),
+    setPhases((prev) => {
+      const target = prev.find((p) => p.id === id)
+      if (!target) return prev
+      if (target.included && prev.filter((p) => p.included).length <= 1) return prev
+      return prev.map((p) => (p.id === id ? { ...p, included: !p.included } : p))
+    })
+  }
+
+  const renderPhaseRow = (phase: Phase, guideWrapped: boolean) => {
+    const row = (
+      <button
+        type="button"
+        onClick={() => {
+          togglePhase(phase.id)
+          if (phase.id === 'brand') scopeToggle.onGuideAction()
+        }}
+        className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-[0.8125rem] ring-1 transition-colors ${
+          phase.included
+            ? 'bg-teal-50 ring-teal-100 text-teal-950'
+            : 'bg-slate-100 ring-slate-200 text-slate-500'
+        }`}
+      >
+        <span
+          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 text-[0.625rem] font-bold leading-none ${
+            phase.included
+              ? 'border-teal-600 bg-teal-600 text-white'
+              : 'border-slate-300 bg-white text-transparent'
+          }`}
+          aria-hidden
+        >
+          ✓
+        </span>
+        <span className={`min-w-0 flex-1 ${phase.included ? '' : 'line-through'}`}>{phase.label}</span>
+        <span className="shrink-0 text-[0.75rem] text-slate-500">{phase.weeks} wks</span>
+        <span
+          className={`shrink-0 font-semibold tabular-nums ${
+            phase.included ? 'text-teal-900' : 'text-slate-400 line-through'
+          }`}
+        >
+          {formatPrice(phase.price)}
+        </span>
+      </button>
+    )
+
+    return guideWrapped ? (
+      <GuideTarget key={phase.id} id="scope-toggle">
+        {row}
+      </GuideTarget>
+    ) : (
+      <div key={phase.id}>{row}</div>
     )
   }
 
@@ -124,6 +224,7 @@ function BrightlineApp() {
             {view === 'scope' && 'Scope draft'}
             {view === 'tiers' && 'Quote options'}
             {view === 'quote' && 'Quote preview'}
+            {view === 'email' && 'Review email'}
           </h3>
         </div>
         <DemoPill color="green">Simulated</DemoPill>
@@ -153,7 +254,9 @@ function BrightlineApp() {
                 {includedPhases.map((phase) => (
                   <div key={phase.id} className="flex justify-between text-[0.8125rem]">
                     <span>{phase.label}</span>
-                    <span className="text-slate-500">{phase.weeks} wks</span>
+                    <span className="text-slate-500">
+                      {formatPrice(phase.price)} · {phase.weeks} wks
+                    </span>
                   </div>
                 ))}
                 {tier.extras.map((extra) => (
@@ -164,7 +267,82 @@ function BrightlineApp() {
                 ))}
               </div>
               <div className="mt-4 rounded-lg bg-teal-50 px-3 py-2 text-[0.75rem] text-teal-900">
-                Timeline · {includedPhases.reduce((sum, p) => sum + p.weeks, 0)} weeks · Target launch before EOFY
+                Timeline · {totalWeeks} weeks · Target launch before EOFY
+              </div>
+            </div>
+
+            <GuideTarget id="view-email-btn">
+              <DemoButton accentColor={accent} onClick={openEmail}>
+                View email
+              </DemoButton>
+            </GuideTarget>
+
+            <DemoButton accentColor={accent} variant="secondary" onClick={() => setView('tiers')}>
+              Change quote option
+            </DemoButton>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (view === 'email') {
+    const tier = tiers[selectedTier]
+
+    return (
+      <div className="flex h-full min-h-0 flex-col">
+        {header}
+        <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4">
+          <div className="mx-auto max-w-[520px] space-y-3">
+            <button
+              type="button"
+              onClick={() => setView('quote')}
+              className="text-[0.8125rem] font-medium text-teal-800 hover:text-teal-950"
+            >
+              ← Back to quote
+            </button>
+
+            <div className="overflow-hidden rounded-xl bg-white ring-1 ring-slate-200">
+              <div className="space-y-2 border-b border-slate-100 px-4 py-3 text-[0.75rem]">
+                <div className="flex gap-2">
+                  <span className="w-14 shrink-0 text-slate-500">From</span>
+                  <span className="text-slate-700">Sarah · quotes@brightline.studio</span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="w-14 shrink-0 text-slate-500">To</span>
+                  <span className="text-slate-700">Marcus · marcus@harbourgroup.com.au</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-14 shrink-0 text-slate-500">Subject</span>
+                  <input
+                    type="text"
+                    value={emailSubject}
+                    onChange={(e) => setEmailSubject(e.target.value)}
+                    className="min-w-0 flex-1 rounded-md border-0 bg-slate-50 px-2 py-1 text-[0.75rem] text-slate-800 ring-1 ring-slate-200 focus:ring-teal-500"
+                  />
+                </div>
+              </div>
+
+              <textarea
+                value={emailBody}
+                onChange={(e) => setEmailBody(e.target.value)}
+                rows={12}
+                className="w-full resize-none border-0 bg-white px-4 py-3 text-[0.8125rem] leading-relaxed text-slate-700 focus:outline-none focus:ring-0"
+                aria-label="Email message"
+              />
+
+              <div className="border-t border-slate-100 bg-slate-50 px-4 py-3">
+                <p className="text-[0.625rem] font-semibold uppercase tracking-wide text-slate-500">
+                  Attached quote summary
+                </p>
+                <div className="mt-2 rounded-lg bg-white px-3 py-2 ring-1 ring-slate-200">
+                  <p className="text-[0.8125rem] font-semibold text-ink">
+                    {tier.label} · {formatPrice(quoteTotal)} ex GST
+                  </p>
+                  <p className="mt-1 text-[0.75rem] text-slate-600">
+                    {includedPhases.map((p) => p.label).join(' · ')} · {totalWeeks} weeks
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -188,10 +366,6 @@ function BrightlineApp() {
                 </DemoButton>
               </GuideTarget>
             )}
-
-            <DemoButton accentColor={accent} variant="secondary" onClick={() => setView('tiers')}>
-              Change quote option
-            </DemoButton>
           </div>
         </div>
       </div>
@@ -204,11 +378,12 @@ function BrightlineApp() {
         {header}
         <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4">
           <p className="mb-3 text-[0.8125rem] text-slate-600">
-            Same scope — pick how you package it for the client.
+            Same scope - pick how you package it for the client.
           </p>
-          <div className="grid gap-2 sm:grid-cols-3">
+          <div className="grid grid-cols-3 gap-3">
             {(Object.keys(tiers) as TierId[]).map((id) => {
               const tier = tiers[id]
+              const tierPrice = calculateTierPrice(id, phases)
               const isRecommended = id === 'recommended'
               const card = (
                 <button
@@ -221,33 +396,47 @@ function BrightlineApp() {
                       exploreShow({
                         id: `tier-${id}`,
                         clientAsk: 'flexible packaging without rewriting scope from scratch.',
-                        ourSolution: `${tier.label} tier — same blocks, different line items and price anchor.`,
+                        ourSolution: `${tier.label} tier - same blocks, different line items and price anchor.`,
                       })
                     }
                   }}
-                  className={`rounded-xl bg-white p-3 text-left ring-1 transition-all hover:ring-teal-300 ${
+                  className={`flex h-full w-full flex-col rounded-xl bg-white p-3 text-left ring-1 transition-all hover:ring-teal-300 ${
                     selectedTier === id ? 'ring-2 ring-teal-600' : 'ring-slate-200'
-                  } ${isRecommended ? 'relative' : ''}`}
+                  }`}
                 >
-                  {isRecommended && (
-                    <span className="absolute -top-2 left-3 rounded-full bg-teal-600 px-2 py-0.5 text-[0.5625rem] font-bold uppercase text-white">
-                      Popular
-                    </span>
-                  )}
+                  <div className="mb-2 flex h-5 items-center">
+                    {isRecommended && (
+                      <span className="rounded-full bg-teal-600 px-2 py-0.5 text-[0.5625rem] font-bold uppercase text-white">
+                        Popular
+                      </span>
+                    )}
+                  </div>
                   <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-slate-500">
                     {tier.label}
                   </p>
-                  <p className="mt-1 text-[1.125rem] font-bold">{formatPrice(tier.basePrice)}</p>
-                  <p className="mt-1 text-[0.75rem] text-slate-600">{tier.subtitle}</p>
+                  <p className="mt-1 text-[1.125rem] font-bold tabular-nums">{formatPrice(tierPrice)}</p>
+                  <p className="mt-auto min-h-[2.75rem] text-[0.75rem] leading-snug text-slate-600">
+                    {tier.subtitle}
+                    {id !== 'recommended' && (
+                      <>
+                        <br />
+                        Based on your scope
+                      </>
+                    )}
+                  </p>
                 </button>
               )
 
-              return isRecommended ? (
-                <GuideTarget key={id} id="tier-recommended">
-                  {card}
-                </GuideTarget>
-              ) : (
-                <div key={id}>{card}</div>
+              return (
+                <div key={id} className="h-full min-w-0">
+                  {isRecommended ? (
+                    <GuideTarget id="tier-recommended" className="block h-full">
+                      {card}
+                    </GuideTarget>
+                  ) : (
+                    card
+                  )}
+                </div>
               )
             })}
           </div>
@@ -288,37 +477,25 @@ function BrightlineApp() {
             </div>
 
             <div className="rounded-xl bg-white p-3 ring-1 ring-slate-200">
-              <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-slate-500">
-                Suggested phases
-              </p>
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-slate-500">
+                  Suggested phases
+                </p>
+                <p className="text-[0.6875rem] text-slate-500">Tap to include or exclude</p>
+              </div>
               <div className="mt-2 space-y-2">
-                {phases.map((phase) => {
-                  const row = (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        togglePhase(phase.id)
-                        if (phase.id === 'brand') scopeToggle.onGuideAction()
-                      }}
-                      className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-[0.8125rem] ring-1 transition-colors ${
-                        phase.included
-                          ? 'bg-teal-50 ring-teal-100 text-teal-950'
-                          : 'bg-slate-100 ring-slate-200 text-slate-500 line-through'
-                      }`}
-                    >
-                      <span>{phase.label}</span>
-                      <span className="text-[0.75rem]">{phase.weeks} wks</span>
-                    </button>
-                  )
-
-                  return phase.id === 'brand' ? (
-                    <GuideTarget key={phase.id} id="scope-toggle">
-                      {row}
-                    </GuideTarget>
-                  ) : (
-                    <div key={phase.id}>{row}</div>
-                  )
-                })}
+                {phases.map((phase) => renderPhaseRow(phase, phase.id === 'brand'))}
+              </div>
+              <div className="mt-3 flex items-center justify-between rounded-lg bg-slate-800 px-3 py-2.5 text-white">
+                <div>
+                  <p className="text-[0.625rem] font-semibold uppercase tracking-wide text-white/70">
+                    Scope estimate
+                  </p>
+                  <p className="text-[0.75rem] text-white/80">
+                    {includedPhases.length} phase{includedPhases.length === 1 ? '' : 's'} · {totalWeeks} weeks
+                  </p>
+                </div>
+                <p className="text-[1.125rem] font-bold tabular-nums">{formatPrice(subtotal)}</p>
               </div>
             </div>
 
@@ -328,8 +505,13 @@ function BrightlineApp() {
                   In scope
                 </p>
                 <ul className="mt-2 space-y-1 text-[0.75rem] text-slate-700">
-                  <li>· Responsive site · CMS · Brand guidelines if selected</li>
-                  <li>· Stakeholder workshops · Launch support</li>
+                  {includedPhases.length > 0 ? (
+                    includedPhases.map((phase) => (
+                      <li key={phase.id}>· {phase.label}</li>
+                    ))
+                  ) : (
+                    <li>· Select at least one phase above</li>
+                  )}
                 </ul>
               </div>
               <div className="rounded-xl bg-white p-3 ring-1 ring-slate-200">
@@ -351,7 +533,11 @@ function BrightlineApp() {
               </p>
             </div>
 
-            <DemoButton accentColor={accent} onClick={() => setView('tiers')}>
+            <DemoButton
+              accentColor={accent}
+              onClick={() => subtotal > 0 && setView('tiers')}
+              className={subtotal === 0 ? 'opacity-50' : ''}
+            >
               Continue to quote options
             </DemoButton>
           </div>

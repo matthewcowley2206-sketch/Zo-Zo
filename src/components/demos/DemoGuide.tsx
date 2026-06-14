@@ -29,6 +29,7 @@ type DemoGuideContextValue = {
   activate: (target: string) => void
   skipToExplore: () => void
   restart: () => void
+  restartKey: number
 }
 
 const DemoGuideContext = createContext<DemoGuideContextValue | null>(null)
@@ -42,12 +43,13 @@ export function DemoGuideProvider({
   accentColor: string
   children: ReactNode
 }) {
-  const { show } = useDemoAnnotation()
+  const { show, dismiss } = useDemoAnnotation()
   const deviceRef = useRef<HTMLDivElement>(null)
   const [mode, setMode] = useState<GuideMode>('guided')
   const [stepIndex, setStepIndex] = useState(0)
   const [targetVisible, setTargetVisible] = useState(true)
   const [tick, setTick] = useState(0)
+  const [restartKey, setRestartKey] = useState(0)
 
   const totalSteps = config.steps.length
   const currentStep =
@@ -108,10 +110,12 @@ export function DemoGuideProvider({
   }, [totalSteps])
 
   const restart = useCallback(() => {
+    dismiss()
     setMode('guided')
     setStepIndex(0)
+    setRestartKey((key) => key + 1)
     bump()
-  }, [bump])
+  }, [bump, dismiss])
 
   const value = useMemo(
     () => ({
@@ -128,6 +132,7 @@ export function DemoGuideProvider({
       activate,
       skipToExplore,
       restart,
+      restartKey,
     }),
     [
       config,
@@ -141,6 +146,7 @@ export function DemoGuideProvider({
       activate,
       skipToExplore,
       restart,
+      restartKey,
     ],
   )
 
