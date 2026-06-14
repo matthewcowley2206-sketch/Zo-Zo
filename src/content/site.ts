@@ -4,6 +4,9 @@ export const site = {
   email: 'matt@zoandzo.com.au',
   contactCcEmail: 'phoenix8760@gmail.com',
   location: 'Sydney, NSW 2207 · Australia',
+  founderName: 'Matthew Cowley',
+  founderTitle: 'Founder',
+  sameAs: ['https://www.zoandzo.com.au'] as const,
   ctaLabel: 'Book a free clarity call',
 } as const
 

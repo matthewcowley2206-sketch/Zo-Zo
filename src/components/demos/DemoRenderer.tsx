@@ -1,17 +1,33 @@
-import type { ComponentType } from 'react'
+import { lazy, Suspense, type ComponentType, type LazyExoticComponent } from 'react'
 import type { ProjectDemo } from '../../content/demos'
-import { HorizonAirwaysDemo } from './HorizonAirwaysDemo'
-import { NorthgateLegalDemo } from './NorthgateLegalDemo'
-import { PhoenixCoffeeDemo } from './PhoenixCoffeeDemo'
 
-const demoComponents: Record<string, ComponentType> = {
-  'horizon-airways': HorizonAirwaysDemo,
-  'phoenix-coffee': PhoenixCoffeeDemo,
-  'northgate-legal': NorthgateLegalDemo,
+const demoComponents: Record<string, LazyExoticComponent<ComponentType>> = {
+  'horizon-airways': lazy(() =>
+    import('./HorizonAirwaysDemo').then((module) => ({ default: module.HorizonAirwaysDemo })),
+  ),
+  'phoenix-coffee': lazy(() =>
+    import('./PhoenixCoffeeDemo').then((module) => ({ default: module.PhoenixCoffeeDemo })),
+  ),
+  'northgate-legal': lazy(() =>
+    import('./NorthgateLegalDemo').then((module) => ({ default: module.NorthgateLegalDemo })),
+  ),
+}
+
+function DemoFallback() {
+  return (
+    <div className="flex min-h-[520px] items-center justify-center rounded-3xl bg-cream-dark/40 ring-1 ring-line">
+      <p className="text-[0.9375rem] text-muted">Loading interactive demo…</p>
+    </div>
+  )
 }
 
 export function DemoRenderer({ demoId }: { demoId: ProjectDemo['id'] }) {
   const Component = demoComponents[demoId]
   if (!Component) return null
-  return <Component />
+
+  return (
+    <Suspense fallback={<DemoFallback />}>
+      <Component />
+    </Suspense>
+  )
 }

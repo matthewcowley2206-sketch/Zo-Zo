@@ -1,9 +1,19 @@
 import { site } from '../content/site'
 import { Logo } from '../components/layout/Logo'
+import { PageMeta } from '../components/seo/PageMeta'
 
 export function Maintenance() {
   return (
-    <div className="flex min-h-screen flex-col bg-cream">
+    <>
+      <PageMeta
+        seo={{
+          title: 'Temporarily unavailable | Zo&Zo Advisory',
+          description: 'Zo&Zo Advisory is temporarily unavailable. Please check back soon or email matt@zoandzo.com.au.',
+          path: '/',
+          noindex: true,
+        }}
+      />
+      <div className="flex min-h-screen flex-col bg-cream">
       <header className="bg-nav px-6 py-5 sm:px-10">
         <Logo />
       </header>
@@ -27,6 +37,7 @@ export function Maintenance() {
           </p>
         </div>
       </main>
-    </div>
+      </div>
+    </>
   )
 }

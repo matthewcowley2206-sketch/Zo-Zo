@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom'
 import { humanImagery, projectDemos } from '../content/demos'
 import { engagementSteps } from '../content/howWeWork'
+import { entitySummary, homeFaqs } from '../content/seo'
 import { services } from '../content/services'
 import { pillars, site } from '../content/site'
 import { DemoRenderer } from '../components/demos/DemoRenderer'
+import { FaqSection } from '../components/seo/FaqSection'
 import { ArrowLink, Button } from '../components/ui/Button'
 import { FadeIn } from '../components/ui/FadeIn'
 import { Divider, Section, SectionHeader } from '../components/ui/Section'
@@ -240,6 +242,25 @@ export function Home() {
               More about Zo&Zo
             </ArrowLink>
           </FadeIn>
+        </div>
+      </Section>
+
+      <Section theme="cream" size="compact">
+        <div className="content-max max-w-[720px]">
+          <FadeIn>
+            <p className="eyebrow mb-4">What is Zo&Zo Advisory?</p>
+            <p className="body-large">{entitySummary}</p>
+          </FadeIn>
+        </div>
+      </Section>
+
+      <Section size="compact" className="pb-28 sm:pb-32">
+        <div className="content-wide">
+          <FaqSection
+            eyebrow="Quick answers"
+            title="Questions people ask before they reach out."
+            items={homeFaqs}
+          />
         </div>
       </Section>
 

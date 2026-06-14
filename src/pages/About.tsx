@@ -1,3 +1,4 @@
+import { entitySummary } from '../content/seo'
 import { site } from '../content/site'
 import { Button } from '../components/ui/Button'
 import { FadeIn } from '../components/ui/FadeIn'
@@ -19,6 +20,7 @@ export function About() {
               Zo&Zo Advisory was built for business owners who are juggling more than
               anyone realises - and just need someone to help make the path forward clearer.
             </p>
+            <p className="body-regular">{entitySummary}</p>
           </FadeIn>
         </div>
       </Section>

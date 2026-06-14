@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
+import { RouteSeo } from '../seo/RouteSeo'
 import { Footer } from './Footer'
 import { Navbar } from './Navbar'
 
@@ -23,6 +24,7 @@ function ScrollToTop() {
 export function Layout() {
   return (
     <div className="min-h-screen">
+      <RouteSeo />
       <ScrollToTop />
       <Navbar />
       <main id="main">

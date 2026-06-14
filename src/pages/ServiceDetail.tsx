@@ -1,18 +1,70 @@
+import { lazy, Suspense } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { getService } from '../content/services'
-import { ClientListeningContent } from '../components/services/ClientListeningContent'
-import { CommunicationDemo } from '../components/services/communication/CommunicationDemo'
-import { DataAiDemo } from '../components/services/dataAi/DataAiDemo'
-import { GoToMarketDemo } from '../components/services/goToMarket/GoToMarketDemo'
-import { OperationsDemo } from '../components/services/operations/OperationsDemo'
-import { PrototypeDevelopmentContent } from '../components/services/PrototypeDevelopmentContent'
-import { SalesMarketingDemo } from '../components/services/salesMarketing/SalesMarketingDemo'
-import { ServiceDetailContent } from '../components/services/ServiceDetailContent'
-import { ServiceExerciseContent } from '../components/services/ServiceExerciseContent'
-import { StrategyDirectionContent } from '../components/services/StrategyDirectionContent'
 import { serviceImagery } from '../content/serviceImagery'
 import { FadeIn } from '../components/ui/FadeIn'
 import { Section } from '../components/ui/Section'
+
+const PrototypeDevelopmentContent = lazy(() =>
+  import('../components/services/PrototypeDevelopmentContent').then((module) => ({
+    default: module.PrototypeDevelopmentContent,
+  })),
+)
+const StrategyDirectionContent = lazy(() =>
+  import('../components/services/StrategyDirectionContent').then((module) => ({
+    default: module.StrategyDirectionContent,
+  })),
+)
+const ClientListeningContent = lazy(() =>
+  import('../components/services/ClientListeningContent').then((module) => ({
+    default: module.ClientListeningContent,
+  })),
+)
+const ServiceExerciseContent = lazy(() =>
+  import('../components/services/ServiceExerciseContent').then((module) => ({
+    default: module.ServiceExerciseContent,
+  })),
+)
+const ServiceDetailContent = lazy(() =>
+  import('../components/services/ServiceDetailContent').then((module) => ({
+    default: module.ServiceDetailContent,
+  })),
+)
+const SalesMarketingDemo = lazy(() =>
+  import('../components/services/salesMarketing/SalesMarketingDemo').then((module) => ({
+    default: module.SalesMarketingDemo,
+  })),
+)
+const CommunicationDemo = lazy(() =>
+  import('../components/services/communication/CommunicationDemo').then((module) => ({
+    default: module.CommunicationDemo,
+  })),
+)
+const DataAiDemo = lazy(() =>
+  import('../components/services/dataAi/DataAiDemo').then((module) => ({
+    default: module.DataAiDemo,
+  })),
+)
+const OperationsDemo = lazy(() =>
+  import('../components/services/operations/OperationsDemo').then((module) => ({
+    default: module.OperationsDemo,
+  })),
+)
+const GoToMarketDemo = lazy(() =>
+  import('../components/services/goToMarket/GoToMarketDemo').then((module) => ({
+    default: module.GoToMarketDemo,
+  })),
+)
+
+function ServiceBodyFallback() {
+  return (
+    <Section theme="cream" size="compact">
+      <div className="content-max py-16 text-center">
+        <p className="text-[0.9375rem] text-muted">Loading service details…</p>
+      </div>
+    </Section>
+  )
+}
 
 export function ServiceDetail() {
   const { slug } = useParams<{ slug: string }>()
@@ -56,7 +108,7 @@ export function ServiceDetail() {
           <ServiceExerciseContent
             service={service}
             Demo={DataAiDemo}
-            exerciseCaption="Explore a sample dataset, ask a business question, and see how we surface insight - then what we would recommend and deliver."
+            exerciseCaption="Pick a business question and see how data insight and AI support connect - from the question through analysis to a practical recommendation."
             outcomesDescription="Clarity on the numbers that matter, time saved through practical automations, and an AI roadmap your team can follow."
             engagementDescription="Some clients need a clarity session and quick wins. Others want dashboards, training, and a full roadmap."
           />
@@ -104,6 +156,7 @@ export function ServiceDetail() {
                 {service.title}
               </h1>
               <p className="body-large mt-8 max-w-[640px]">{service.tagline}</p>
+              <p className="body-regular mt-4 max-w-[640px] text-muted">{service.summary}</p>
             </FadeIn>
             {heroImage && (
               <FadeIn delay={0.1}>
@@ -111,10 +164,10 @@ export function ServiceDetail() {
                   <img
                     src={heroImage.url}
                     alt={heroImage.alt}
-                    className="aspect-[5/4] w-full object-cover sm:aspect-[4/3]"
                     loading="eager"
                     decoding="async"
                     sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="aspect-[5/4] w-full object-cover sm:aspect-[4/3]"
                   />
                 </div>
               </FadeIn>
@@ -123,7 +176,7 @@ export function ServiceDetail() {
         </div>
       </Section>
 
-      {body}
+      <Suspense fallback={<ServiceBodyFallback />}>{body}</Suspense>
     </>
   )
 }

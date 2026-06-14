@@ -61,3 +61,21 @@ On **www.zoandzo.com.au** (Vercel), you can show a “Temporarily unavailable”
 2. **Redeploy** production
 
 The full site returns on the next deploy. GitHub Pages (`github.io/Zo-Zo`) is separate and is not affected by this setting.
+
+## SEO & AI discoverability
+
+The site includes:
+
+- **Per-page titles, descriptions, Open Graph, and Twitter cards** (via client-side meta on route change)
+- **JSON-LD structured data** — Organization, WebSite, WebPage, Service, FAQ, and Breadcrumb schemas
+- **`/sitemap.xml`** — auto-generated on each build (canonical domain: www.zoandzo.com.au)
+- **`/robots.txt`** — allows search and AI crawlers
+- **`/llms.txt`** — plain-language summary for AI answer engines
+- **Build-time Organization schema** baked into `index.html`
+- **Optional prerender** — run locally with `npm run build` (skipped in CI/Vercel where Puppeteer is not available)
+
+### After deploy — recommended next steps
+
+1. **Google Search Console** — add `https://www.zoandzo.com.au` and submit `https://www.zoandzo.com.au/sitemap.xml`
+2. **Bing Webmaster Tools** — same sitemap URL
+3. Keep **LinkedIn / directory listings** aligned with the site description for entity consistency
