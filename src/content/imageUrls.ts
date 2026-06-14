@@ -3,6 +3,22 @@ export function hiRes(photoId: string, width = 1800): string {
   return `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=${width}&q=85`
 }
 
+export const SITE_ORIGIN = 'https://www.zoandzo.com.au'
+
+/** Local images in public/images/ — works on Vercel and GitHub Pages via BASE_URL. */
+export function siteImage(filename: string) {
+  return `${import.meta.env.BASE_URL}images/${filename}`
+}
+
+/** Absolute URL for Open Graph / social previews (must be fully qualified). */
+export function absoluteSiteImage(filename: string) {
+  return `${SITE_ORIGIN}/images/${filename}`
+}
+
+export const localImages = {
+  homeHero: 'home-hero.jpg',
+} as const
+
 export const photos = {
   strategyTeam: 'photo-1522202176988-66273c2fd55f',
   strategyWhiteboard: 'photo-1553877522-43269d4ea984',
@@ -23,5 +39,4 @@ export const photos = {
   demoAirport: 'photo-1436491865332-7a61a109cc05',
   demoCafe: 'photo-1495474472287-4d71bcdd2085',
   demoLegal: 'photo-1551288049-bebda4e38f71',
-  homeHero: 'photo-1600880292203-757bb62b4baf',
 } as const

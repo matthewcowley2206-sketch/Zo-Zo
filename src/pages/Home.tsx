@@ -54,6 +54,7 @@ export function Home() {
                 src={humanImagery.hero}
                 alt={humanImagery.heroAlt}
                 className="aspect-[4/5] w-full object-cover sm:aspect-[3/4]"
+                style={{ objectPosition: humanImagery.heroObjectPosition }}
                 decoding="async"
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />

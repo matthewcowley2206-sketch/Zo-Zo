@@ -1,4 +1,4 @@
-import { hiRes, photos } from './imageUrls'
+import { hiRes, localImages, photos, siteImage } from './imageUrls'
 
 export type ProjectDemo = {
   id: string
@@ -73,7 +73,8 @@ export function getProjectDemo(id: string): ProjectDemo | undefined {
 }
 
 export const humanImagery = {
-  hero: hiRes(photos.homeHero, 2400),
+  hero: siteImage(localImages.homeHero),
   heroAlt:
-    'Two colleagues collaborating at a desk in a bright office - people working together, not screens alone',
+    'Diverse team collaborating around a table with laptops in a bright, modern workspace',
+  heroObjectPosition: '34% 35%',
 } as const

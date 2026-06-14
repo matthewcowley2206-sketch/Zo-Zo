@@ -1,11 +1,11 @@
 import { engagementFaq } from './howWeWork'
-import { hiRes, photos } from './imageUrls'
+import { absoluteSiteImage, localImages } from './imageUrls'
 import { services, type Service } from './services'
 import { site } from './site'
 
 export const SITE_URL = 'https://www.zoandzo.com.au'
 
-export const defaultOgImage = hiRes(photos.homeHero, 1200)
+export const defaultOgImage = absoluteSiteImage(localImages.homeHero)
 
 export type FaqItem = {
   question: string
