@@ -32,10 +32,19 @@ export function Home() {
                 and test ideas with working prototypes - not just slide decks.
               </p>
             </FadeIn>
-            <FadeIn delay={0.3} className="mt-10 flex flex-col items-center gap-4 sm:flex-row lg:justify-start">
-              <Button to="/contact">{site.ctaLabel}</Button>
-              <Button to="/services/prototype-development#demos" variant="ghost">
-                Try a prototype demo →
+            <FadeIn delay={0.3} className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-stretch lg:justify-start">
+              <Button to="/contact" className="min-h-12 w-full text-center sm:w-auto sm:whitespace-nowrap">
+                {site.ctaLabel}
+              </Button>
+              <Button
+                to="/services/prototype-development#demos"
+                variant="secondary"
+                className="min-h-12 w-full whitespace-nowrap sm:w-auto"
+              >
+                <span>Try a prototype demo</span>
+                <span aria-hidden className="shrink-0 text-[1.125rem] leading-none">
+                  ›
+                </span>
               </Button>
             </FadeIn>
           </div>
@@ -89,12 +98,12 @@ export function Home() {
           title="We do not just help you decide. We help you see it."
           description="Most advisors hand you a strategy and wish you luck. We go further - with working prototypes that let you click, share, and test before you spend."
         />
-        <div className="content-wide grid gap-6 sm:grid-cols-3">
+        <div className="content-wide grid items-stretch gap-6 sm:grid-cols-3">
           {pillars.map((pillar, i) => (
-            <FadeIn key={pillar.title} delay={i * 0.08}>
-              <div className="rounded-3xl border border-cream/10 bg-cream/[0.04] p-8 sm:p-10">
+            <FadeIn key={pillar.title} delay={i * 0.08} className="h-full">
+              <div className="flex h-full flex-col rounded-3xl border border-cream/10 bg-cream/[0.04] p-8 sm:p-10">
                 <h3 className="headline-small text-cream">{pillar.title}</h3>
-                <p className="mt-4 text-[1.0625rem] leading-relaxed text-cream/65">
+                <p className="mt-4 flex-1 text-[1.0625rem] leading-relaxed text-cream/65">
                   {pillar.description}
                 </p>
               </div>
