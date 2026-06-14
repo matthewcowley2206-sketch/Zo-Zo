@@ -9,6 +9,12 @@
       "email": "matt@zoandzo.com.au",
       "description": "Zo&Zo Advisory is a Sydney-based business advisory helping growing companies across Australia turn complexity into clarity. We combine strategy, client listening, operations, data and AI guidance, and working prototypes you can test before full development.",
       "slogan": "Turning Complexity into Clarity",
+      "knowsAbout": [
+        "Prototype Development",
+        "Business Strategy",
+        "Working Prototypes",
+        "Go-to-Market Planning"
+      ],
       "areaServed": { "@type": "Country", "name": "Australia" },
       "address": {
         "@type": "PostalAddress",

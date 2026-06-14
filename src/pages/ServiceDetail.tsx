@@ -151,7 +151,9 @@ export function ServiceDetail() {
           </FadeIn>
           <div className={heroImage ? 'grid items-end gap-10 lg:grid-cols-2 lg:gap-16' : ''}>
             <FadeIn delay={heroImage ? 0 : undefined} className={heroImage ? 'min-w-0' : undefined}>
-              <p className="eyebrow mb-6">Services</p>
+              <p className="eyebrow mb-6">
+                {service.slug === 'prototype-development' ? 'Prototype Development' : 'Services'}
+              </p>
               <h1 className={heroImage ? 'headline-hero-split' : 'headline-hero max-w-[900px]'}>
                 {service.title}
               </h1>

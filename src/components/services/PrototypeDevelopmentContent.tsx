@@ -17,6 +17,24 @@ export function PrototypeDevelopmentContent({ service }: PrototypeDevelopmentCon
   return (
     <>
       <Section theme="cream" size="compact">
+        <div className="content-max max-w-[720px]">
+          <FadeIn>
+            <h2 className="headline-small">Prototype development services</h2>
+            <p className="mt-4 body-regular">
+              Prototype development turns early ideas into something your team, board, or clients can
+              click through - before you commit to full software development. Zo&Zo Advisory specialises
+              in working prototypes for apps, customer journeys, dashboards, and internal workflows.
+            </p>
+            <p className="mt-4 body-regular">
+              Based in Sydney and working across Australia, we combine prototype development with
+              practical advisory - so you validate direction, align stakeholders, and leave with a
+              blueprint your dev team can build from.
+            </p>
+          </FadeIn>
+        </div>
+      </Section>
+
+      <Section theme="cream" size="compact">
         <div className="content-max grid gap-16 lg:grid-cols-2">
           <FadeIn>
             <h2 className="headline-small">Who this is for</h2>

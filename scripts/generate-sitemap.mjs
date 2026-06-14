@@ -20,11 +20,14 @@ const paths = [
   { loc: '/', priority: '1.0', changefreq: 'weekly' },
   { loc: '/how-we-work', priority: '0.8', changefreq: 'monthly' },
   { loc: '/services', priority: '0.9', changefreq: 'monthly' },
-  ...serviceSlugs.map((slug) => ({
-    loc: `/services/${slug}`,
-    priority: '0.85',
-    changefreq: 'monthly',
-  })),
+  { loc: '/services/prototype-development', priority: '0.95', changefreq: 'weekly' },
+  ...serviceSlugs
+    .filter((slug) => slug !== 'prototype-development')
+    .map((slug) => ({
+      loc: `/services/${slug}`,
+      priority: '0.85',
+      changefreq: 'monthly',
+    })),
   { loc: '/about', priority: '0.7', changefreq: 'monthly' },
   { loc: '/pricing', priority: '0.75', changefreq: 'monthly' },
   { loc: '/contact', priority: '0.8', changefreq: 'monthly' },

@@ -53,6 +53,21 @@ export const services: Service[] = [
       { number: '05', title: 'Hand over with clarity', description: 'You leave with a validated direction and a blueprint for development if you choose to build.' },
     ],
     faq: [
+      {
+        question: 'What is prototype development?',
+        answer:
+          'Prototype development is building a clickable, working mock-up of an idea - an app flow, dashboard, portal, or workflow - so you can test, share, and refine direction before committing to full software development.',
+      },
+      {
+        question: 'What does prototype development include at Zo&Zo?',
+        answer:
+          'Discovery to define what to test, a tailored clickable prototype, shareable mock-ups for stakeholders, feedback iteration, and a handover blueprint for your dev team if you choose to build.',
+      },
+      {
+        question: 'How much does prototype development cost?',
+        answer:
+          'Typical prototype development engagements start from $8,500 ex GST, scoped to your idea and key flows. You receive a fixed quote after a clarity call - see our pricing page for starting points.',
+      },
       { question: 'What is a working prototype?', answer: 'A clickable, interactive mock-up of an idea - built quickly so you can see and test it before committing to full development.' },
       { question: 'Is this the same as building the real product?', answer: 'No. Prototypes are built to learn and align - not to go live. Faster, cheaper, and designed to answer whether this is the right direction.' },
       { question: 'When does prototyping make sense?', answer: 'When the idea is new, stakes are high, stakeholders cannot agree from a deck alone, or you need feedback on something tangible.' },

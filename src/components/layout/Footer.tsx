@@ -19,6 +19,14 @@ export function Footer() {
               Explore
             </p>
             <ul className="space-y-2.5">
+              <li>
+                <Link
+                  to="/services/prototype-development"
+                  className="focus-ring rounded-sm text-[0.9375rem] font-medium text-ink transition-colors hover:text-muted"
+                >
+                  Prototype Development
+                </Link>
+              </li>
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <Link

@@ -21,6 +21,7 @@ export type PageSeo = {
   noindex?: boolean
   faq?: FaqItem[]
   service?: Service
+  primaryKeyword?: string
 }
 
 /** Plain-language entity summary for humans and answer engines. */
@@ -52,9 +53,9 @@ export const homeFaqs: FaqItem[] = [
 
 const staticPageMeta: Record<string, Omit<PageSeo, 'path'>> = {
   '/': {
-    title: 'Zo&Zo Advisory | Business Strategy & Working Prototypes · Sydney',
+    title: 'Prototype Development & Business Strategy · Zo&Zo Advisory · Sydney',
     description:
-      'Sydney-based business advisory for growing companies across Australia. Strategy, client listening, operations, and working prototypes you can test before full development.',
+      'Sydney-based prototype development and business advisory for growing companies across Australia. Clickable working prototypes, strategy, and clarity before full build.',
     ogType: 'website',
     faq: homeFaqs,
   },
@@ -65,9 +66,9 @@ const staticPageMeta: Record<string, Omit<PageSeo, 'path'>> = {
     faq: [...engagementFaq],
   },
   '/services': {
-    title: 'Advisory Services | Strategy, Prototypes & Client Insight · Zo&Zo',
+    title: 'Services | Prototype Development, Strategy & Client Insight · Zo&Zo',
     description:
-      'Explore Zo&Zo Advisory services: prototype development, strategy, client listening, sales and marketing, communication, data and AI, operations, and go-to-market.',
+      'Zo&Zo Advisory services including prototype development, strategy, client listening, sales and marketing, communication, data and AI, operations, and go-to-market.',
   },
   '/about': {
     title: 'About Zo&Zo Advisory | Sydney Business Strategy Partner',
@@ -90,7 +91,7 @@ const staticPageMeta: Record<string, Omit<PageSeo, 'path'>> = {
 export function getServiceSeo(service: Service): PageSeo {
   const descriptions: Record<string, string> = {
     'prototype-development':
-      'Build clickable working prototypes before full development. Test ideas, align stakeholders, and validate direction with Zo&Zo Advisory.',
+      'Prototype development for apps, workflows, dashboards, and customer journeys. Zo&Zo Advisory builds clickable working prototypes in Sydney and across Australia so you can test ideas before full software development.',
     strategy:
       'Strategy and direction for growing businesses. Cut through competing priorities and leave with a plan your team can actually follow.',
     'client-listening':
@@ -105,6 +106,18 @@ export function getServiceSeo(service: Service): PageSeo {
       'Operations simplification and workflow design. Map what happens today, automate the repetitive, and document how it works.',
     'go-to-market':
       'Go-to-market planning you can execute week by week. Sharpen the offer, define the audience, and test before you scale.',
+  }
+
+  if (service.slug === 'prototype-development') {
+    return {
+      title: 'Prototype Development Services | Sydney & Australia · Zo&Zo Advisory',
+      description: descriptions[service.slug],
+      path: `/services/${service.slug}`,
+      ogType: 'article',
+      faq: service.faq,
+      service,
+      primaryKeyword: 'prototype development',
+    }
   }
 
   return {
@@ -143,7 +156,8 @@ export const sitemapPaths = [
   '/',
   '/how-we-work',
   '/services',
-  ...services.map((service) => `/services/${service.slug}`),
+  '/services/prototype-development',
+  ...services.filter((service) => service.slug !== 'prototype-development').map((service) => `/services/${service.slug}`),
   '/about',
   '/pricing',
   '/contact',

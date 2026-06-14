@@ -79,7 +79,7 @@ export const serviceImagery: Partial<Record<string, ServiceImagerySet>> = {
   'prototype-development': {
     hero: {
       url: siteImage(localImages.prototypeDevelopmentHero),
-      alt: 'Team collaborating around a tablet while reviewing a digital prototype together',
+      alt: 'Prototype development team collaborating around a tablet while reviewing a clickable digital prototype',
       objectPosition: 'center center',
     },
     secondary: {

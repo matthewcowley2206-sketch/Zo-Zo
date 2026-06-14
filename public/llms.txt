@@ -17,7 +17,7 @@ Zo&Zo Advisory helps business owners who are juggling growth, operations, and bi
 
 ## Services
 
-- Prototype Development - clickable prototypes before full build
+- **Prototype Development** - clickable working prototypes before full build (https://www.zoandzo.com.au/services/prototype-development)
 - Strategy & Direction - clarity on priorities and plans teams can follow
 - Client Listening - structured listening, NPS/CSAT, insight that feeds decisions
 - Sales & Marketing - positioning, journey, and consistent messaging

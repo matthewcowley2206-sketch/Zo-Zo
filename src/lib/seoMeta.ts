@@ -29,7 +29,7 @@ function faqPageJsonLd(faq: FaqItem[]) {
 function serviceJsonLd(seo: PageSeo) {
   if (!seo.service) return null
 
-  return {
+  const base = {
     '@type': 'Service',
     name: seo.service.title,
     description: seo.service.summary,
@@ -44,6 +44,30 @@ function serviceJsonLd(seo: PageSeo) {
     },
     url: absoluteUrl(seo.path),
   }
+
+  if (seo.service.slug === 'prototype-development') {
+    return {
+      ...base,
+      serviceType: 'Prototype Development',
+      category: 'Business Consulting',
+      alternateName: ['Working prototype development', 'Clickable prototype services'],
+      offers: {
+        '@type': 'Offer',
+        price: '8500',
+        priceCurrency: 'AUD',
+        priceSpecification: {
+          '@type': 'PriceSpecification',
+          price: '8500',
+          priceCurrency: 'AUD',
+          valueAddedTaxIncluded: false,
+        },
+        availability: 'https://schema.org/InStock',
+        url: absoluteUrl('/pricing'),
+      },
+    }
+  }
+
+  return base
 }
 
 function breadcrumbJsonLd(seo: PageSeo) {
@@ -86,6 +110,12 @@ export function buildJsonLd(seo: PageSeo): Record<string, unknown> {
       email: site.email,
       description: entitySummary,
       slogan: site.tagline,
+      knowsAbout: [
+        'Prototype Development',
+        'Business Strategy',
+        'Working Prototypes',
+        'Go-to-Market Planning',
+      ],
       areaServed: {
         '@type': 'Country',
         name: 'Australia',
@@ -186,11 +216,16 @@ export function upsertJsonLd(id: string, data: Record<string, unknown>) {
 }
 
 export function getOpenGraphPayload(seo: PageSeo) {
+  const image =
+    seo.service?.slug === 'prototype-development'
+      ? absoluteUrl('/images/prototype-development-hero.jpg')
+      : defaultOgImage
+
   return {
     title: seo.title,
     description: seo.description,
     url: absoluteUrl(seo.path),
-    image: defaultOgImage,
+    image,
     type: seo.ogType ?? 'website',
     siteName: site.name,
     locale: 'en_AU',

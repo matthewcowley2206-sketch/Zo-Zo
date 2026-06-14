@@ -1,3 +1,19 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "redirects": [
+    {
+      "source": "/prototype-development",
+      "destination": "/services/prototype-development",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/services/prototype-development",
+      "destination": "/services/prototype-development/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
