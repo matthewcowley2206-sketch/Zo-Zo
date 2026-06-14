@@ -25,6 +25,8 @@ export function Contact() {
       await submitContactForm({
         firstName: String(data.get('firstName') ?? ''),
         lastName: String(data.get('lastName') ?? ''),
+        company: String(data.get('company') ?? ''),
+        roleTitle: String(data.get('roleTitle') ?? ''),
         email: String(data.get('email') ?? ''),
         mobile: String(data.get('mobile') ?? ''),
         message: String(data.get('message') ?? ''),
@@ -130,6 +132,30 @@ export function Contact() {
                       />
                     </label>
                   </div>
+                  <label className="block">
+                    <span className="mb-2 block text-[0.8125rem] font-medium text-muted">
+                      Company name
+                    </span>
+                    <input
+                      type="text"
+                      name="company"
+                      autoComplete="organization"
+                      disabled={submitting}
+                      className={fieldClassName}
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="mb-2 block text-[0.8125rem] font-medium text-muted">
+                      Role or title
+                    </span>
+                    <input
+                      type="text"
+                      name="roleTitle"
+                      autoComplete="organization-title"
+                      disabled={submitting}
+                      className={fieldClassName}
+                    />
+                  </label>
                   <label className="block">
                     <span className="mb-2 block text-[0.8125rem] font-medium text-muted">
                       Email

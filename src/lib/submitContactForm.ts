@@ -3,6 +3,8 @@ import { site } from '../content/site'
 export type ContactFormPayload = {
   firstName: string
   lastName: string
+  company: string
+  roleTitle: string
   email: string
   mobile: string
   message: string
@@ -29,6 +31,8 @@ export async function submitContactForm(payload: ContactFormPayload) {
       _replyto: payload.email,
       _cc: site.contactCcEmail,
       name,
+      company: payload.company || 'Not provided',
+      role: payload.roleTitle || 'Not provided',
       email: payload.email,
       phone: payload.mobile || 'Not provided',
       message: payload.message,
