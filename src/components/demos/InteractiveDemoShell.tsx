@@ -5,7 +5,7 @@ import {
 } from './DemoAnnotations'
 import { demoGuides } from './demoGuides'
 import { DemoGuideProvider, DemoGuideRail, DemoPhoneBeacon } from './DemoGuide'
-import { DeviceFrame } from './DeviceFrame'
+import { DesktopFrame, DeviceFrame } from './DeviceFrame'
 
 type InteractiveDemoShellProps = {
   demoId: keyof typeof demoGuides
@@ -19,19 +19,31 @@ export function InteractiveDemoShell({
   children,
 }: InteractiveDemoShellProps) {
   const config = demoGuides[demoId]
+  const device = config.device ?? 'phone'
+  const isDesktop = device === 'desktop'
 
   return (
     <DemoAnnotationProvider>
       <DemoGuideProvider config={config} accentColor={accentColor}>
-        <div className="mx-auto grid max-w-[920px] items-start gap-8 lg:grid-cols-[1fr_320px] lg:gap-10">
+        <div
+          className={`mx-auto grid max-w-[920px] items-start gap-8 lg:gap-10 ${
+            isDesktop ? 'lg:grid-cols-[1fr_680px]' : 'lg:grid-cols-[1fr_320px]'
+          }`}
+        >
           <div className="order-1 lg:order-1">
             <DemoGuideRail />
           </div>
           <div className="order-2 lg:order-2">
-            <DemoPhoneBeacon>
-              <DeviceFrame accentColor={accentColor} showLabel>
-                {children}
-              </DeviceFrame>
+            <DemoPhoneBeacon device={device}>
+              {isDesktop ? (
+                <DesktopFrame accentColor={accentColor} showLabel>
+                  {children}
+                </DesktopFrame>
+              ) : (
+                <DeviceFrame accentColor={accentColor} showLabel>
+                  {children}
+                </DeviceFrame>
+              )}
             </DemoPhoneBeacon>
           </div>
         </div>

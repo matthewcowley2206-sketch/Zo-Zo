@@ -15,6 +15,7 @@ export type DemoGuideConfig = {
   steps: GuideStep[]
   scopeNote: string
   completeMessage: string
+  device?: 'phone' | 'desktop'
 }
 
 export const demoGuides: Record<string, DemoGuideConfig> = {
@@ -205,6 +206,80 @@ export const demoGuides: Record<string, DemoGuideConfig> = {
           clientAsk: 'secure client-to-partner messaging without email chains.',
           ourSolution:
             'in-portal messaging tied to matter record - compliance reviewed the flow before build.',
+        },
+      },
+    ],
+  },
+  'brightline-studio': {
+    id: 'brightline-studio',
+    title: 'Enquiry to quote',
+    device: 'desktop',
+    intro:
+      'This is a desk workflow prototype — not a chatbot. Follow the steps to turn a vague brief into a sendable quote.',
+    completeMessage:
+      'Walkthrough complete. Try toggling phases or switching quote tiers — the preview updates instantly.',
+    scopeNote:
+      'Simulated AI — production would connect to your templates, rate card, CRM, and approval rules. This prototype was enough for leadership to agree what to build first.',
+    steps: [
+      {
+        id: 'enquiry',
+        target: 'enquiry-card',
+        hint: 'Read the enquiry — vague brief, flexible budget, tight deadline.',
+        recovery: 'Start on the New enquiry screen and review the message from Marcus.',
+        annotation: {
+          id: 'enquiry',
+          clientAsk:
+            'to stop losing half a day every time a hot lead lands in the inbox with a vague brief.',
+          ourSolution:
+            'a structured intake view that captures the messy enquiry before anyone opens a spreadsheet.',
+        },
+      },
+      {
+        id: 'generate',
+        target: 'generate-btn',
+        hint: 'Tap Turn into scope — watch structured output appear in seconds.',
+        recovery: 'From the enquiry screen, tap Turn into scope.',
+        annotation: {
+          id: 'generate',
+          clientAsk: 'scope drafted from enquiry without starting from a blank doc.',
+          ourSolution:
+            'one action that produces editable blocks — phases, assumptions, and questions — not a wall of AI text.',
+        },
+      },
+      {
+        id: 'edit',
+        target: 'scope-toggle',
+        hint: 'Toggle a phase off to show the quote is editable, not a black box.',
+        recovery: 'On the scope screen, tap Brand refresh to toggle it off.',
+        annotation: {
+          id: 'edit',
+          clientAsk: 'the team to adjust scope before pricing — not after the quote is sent.',
+          ourSolution:
+            'phase toggles wired to the quote — leadership saw pricing shift in the same session.',
+        },
+      },
+      {
+        id: 'tier',
+        target: 'tier-recommended',
+        hint: 'Pick Recommended — same scope, different packaging.',
+        recovery: 'Tap Continue to quote options, then select Recommended.',
+        annotation: {
+          id: 'tier',
+          clientAsk: 'three clear options instead of one take-it-or-leave-it number.',
+          ourSolution:
+            'Essential / Recommended / Full tiers — mirrors how they actually sell, tested in one workshop.',
+        },
+      },
+      {
+        id: 'send',
+        target: 'send-preview-btn',
+        hint: 'Send the quote preview — the moment they would share with the client.',
+        recovery: 'Open the quote preview, then tap Send preview.',
+        annotation: {
+          id: 'send',
+          clientAsk: 'a quote they could stand behind before integrating CRM, Xero, or e-sign.',
+          ourSolution:
+            'sendable preview with line items and timeline — scoped CRM integration for phase two.',
         },
       },
     ],

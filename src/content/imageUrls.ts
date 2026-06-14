@@ -43,4 +43,5 @@ export const photos = {
   demoAirport: 'photo-1436491865332-7a61a109cc05',
   demoCafe: 'photo-1495474472287-4d71bcdd2085',
   demoLegal: 'photo-1551288049-bebda4e38f71',
+  demoAgency: 'photo-1553877522-43269d4ea984',
 } as const

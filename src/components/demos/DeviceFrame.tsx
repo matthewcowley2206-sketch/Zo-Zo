@@ -7,6 +7,42 @@ type DeviceFrameProps = {
   height?: number
 }
 
+export function DesktopFrame({
+  children,
+  showLabel,
+  accentColor = '#1d1d1f',
+  height = 520,
+  url = 'app.brightline.studio',
+}: DeviceFrameProps & { url?: string }) {
+  return (
+    <div className="mx-auto w-full max-w-[680px]">
+      {showLabel && (
+        <p className="mb-3 text-center text-[0.75rem] font-medium uppercase tracking-[0.08em] text-muted-light">
+          Interactive prototype · click to explore
+        </p>
+      )}
+      <div
+        className="overflow-hidden rounded-xl bg-slate-800 p-1.5 shadow-2xl shadow-ink/20 ring-1 ring-ink/10"
+        style={{ boxShadow: `0 32px 64px -24px ${accentColor}40` }}
+      >
+        <div className="flex items-center gap-2 rounded-t-lg bg-slate-700/90 px-3 py-2">
+          <div className="flex gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-full bg-red-400/90" />
+            <span className="h-2.5 w-2.5 rounded-full bg-amber-400/90" />
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400/90" />
+          </div>
+          <div className="min-w-0 flex-1 rounded-md bg-slate-900/60 px-3 py-1 text-center text-[0.625rem] text-slate-400">
+            {url}
+          </div>
+        </div>
+        <div className="overflow-hidden rounded-b-lg bg-white" style={{ height }}>
+          {children}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function DeviceFrame({
   children,
   showLabel,

@@ -11,6 +11,9 @@ const demoComponents: Record<string, LazyExoticComponent<ComponentType>> = {
   'northgate-legal': lazy(() =>
     import('./NorthgateLegalDemo').then((module) => ({ default: module.NorthgateLegalDemo })),
   ),
+  'brightline-studio': lazy(() =>
+    import('./BrightlineStudioDemo').then((module) => ({ default: module.BrightlineStudioDemo })),
+  ),
 }
 
 function DemoFallback() {

@@ -290,7 +290,9 @@ export function DemoGuideRail() {
             ↓
           </motion.span>
           {mode === 'guided'
-            ? 'Tap the glowing area inside the phone'
+            ? config.device === 'desktop'
+              ? 'Click the glowing area inside the prototype'
+              : 'Tap the glowing area inside the phone'
             : 'Explore freely - notes still appear on key taps'}
         </p>
 
@@ -318,7 +320,13 @@ export function DemoGuideRail() {
   )
 }
 
-export function DemoPhoneBeacon({ children }: { children: ReactNode }) {
+export function DemoPhoneBeacon({
+  children,
+  device = 'phone',
+}: {
+  children: ReactNode
+  device?: 'phone' | 'desktop'
+}) {
   const { deviceRef, mode, accentColor } = useDemoGuide()
   const [inView, setInView] = useState(false)
   const [pulse, setPulse] = useState(true)
@@ -347,12 +355,16 @@ export function DemoPhoneBeacon({ children }: { children: ReactNode }) {
     }
   }, [deviceRef])
 
+  const beaconRadius = device === 'desktop' ? 'rounded-2xl' : 'rounded-[2.75rem]'
+
   return (
     <div
       ref={deviceRef}
-      className={`relative mx-auto w-full max-w-[320px] transition-shadow duration-500 ${
+      className={`relative mx-auto w-full transition-shadow duration-500 ${
+        device === 'desktop' ? 'max-w-[680px]' : 'max-w-[320px]'
+      } ${
         pulse && inView && mode === 'guided'
-          ? 'demo-phone-beacon rounded-[2.75rem]'
+          ? `demo-phone-beacon ${beaconRadius}`
           : ''
       }`}
       style={
