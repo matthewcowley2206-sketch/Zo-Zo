@@ -72,7 +72,6 @@ The site includes:
 - **`/robots.txt`** — allows search and AI crawlers
 - **`/llms.txt`** — plain-language summary for AI answer engines
 - **Build-time Organization schema** baked into `index.html`
-- **Optional prerender** — run locally with `npm run build` (skipped in CI/Vercel where Puppeteer is not available)
 
 ### After deploy — recommended next steps
 
