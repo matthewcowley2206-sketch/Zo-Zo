@@ -1,4 +1,5 @@
 import { engagementFaq } from './howWeWork'
+import { pricingFaqs } from './pricing'
 import { absoluteSiteImage, localImages } from './imageUrls'
 import { services, type Service } from './services'
 import { site } from './site'
@@ -73,6 +74,12 @@ const staticPageMeta: Record<string, Omit<PageSeo, 'path'>> = {
     description:
       'Zo&Zo Advisory turns big-business thinking into practical results for growing companies. Founded by Matthew Cowley, Sydney-based and Australia-wide.',
   },
+  '/pricing': {
+    title: 'Pricing | Zo&Zo Advisory · Simple Starting Points',
+    description:
+      'Typical starting points for Zo&Zo Advisory services — strategy, prototypes, client listening, operations, and more. Fixed quotes after scoping, ex GST.',
+    faq: pricingFaqs,
+  },
   '/contact': {
     title: 'Contact Zo&Zo Advisory | Book a Free Clarity Call',
     description:
@@ -138,5 +145,6 @@ export const sitemapPaths = [
   '/services',
   ...services.map((service) => `/services/${service.slug}`),
   '/about',
+  '/pricing',
   '/contact',
 ]

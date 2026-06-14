@@ -57,6 +57,7 @@ function breadcrumbJsonLd(seo: PageSeo) {
       '/how-we-work': 'How we work',
       '/services': 'Services',
       '/about': 'About',
+      '/pricing': 'Pricing',
       '/contact': 'Contact',
     }
     items.push({ name: labels[seo.path] ?? site.name, path: seo.path })
