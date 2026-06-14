@@ -5,7 +5,7 @@ type ButtonProps = {
   children: ReactNode
   to?: string
   href?: string
-  variant?: 'primary' | 'secondary' | 'ghost'
+  variant?: 'primary' | 'secondary' | 'secondarySolid' | 'ghost'
   className?: string
   external?: boolean
   type?: 'button' | 'submit'
@@ -17,6 +17,8 @@ const variants = {
     'bg-ink text-cream hover:bg-ink-soft active:scale-[0.98]',
   secondary:
     'bg-transparent text-ink ring-1 ring-ink/20 hover:ring-ink/40 active:scale-[0.98]',
+  secondarySolid:
+    'bg-cream text-ink ring-1 ring-ink/20 hover:bg-cream-dark hover:ring-ink/40 active:scale-[0.98]',
   ghost:
     'bg-transparent text-ink hover:text-muted active:scale-[0.98] px-0 ring-0',
 }

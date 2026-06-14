@@ -38,7 +38,7 @@ export function Home() {
               </Button>
               <Button
                 to="/services/prototype-development#demos"
-                variant="secondary"
+                variant="secondarySolid"
                 className="min-h-12 w-full whitespace-nowrap sm:w-auto"
               >
                 <span>Try a prototype demo</span>
