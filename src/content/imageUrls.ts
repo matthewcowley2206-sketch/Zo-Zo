@@ -17,6 +17,7 @@ export function absoluteSiteImage(filename: string) {
 
 export const localImages = {
   homeHero: 'home-hero.jpg',
+  prototypeDevelopmentHero: 'prototype-development-hero.jpg',
 } as const
 
 export const photos = {

@@ -1,4 +1,4 @@
-import { hiRes, photos } from './imageUrls'
+import { hiRes, localImages, photos, siteImage } from './imageUrls'
 
 export type ServiceImage = {
   url: string
@@ -76,8 +76,9 @@ export const serviceImagery: Partial<Record<string, ServiceImagerySet>> = {
   },
   'prototype-development': {
     hero: {
-      url: hiRes(photos.prototypeReview),
-      alt: 'Team reviewing a prototype together on screen',
+      url: siteImage(localImages.prototypeDevelopmentHero),
+      alt: 'Team collaborating around a tablet while reviewing a digital prototype together',
+      objectPosition: 'center center',
     },
     secondary: {
       url: hiRes(photos.opsAlignment),

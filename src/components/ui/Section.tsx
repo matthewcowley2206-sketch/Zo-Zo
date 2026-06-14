@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { HeroDnaBackground } from './HeroDnaBackground'
 import { FadeIn } from './FadeIn'
 
 type SectionProps = {
@@ -28,9 +29,15 @@ export function Section({
   theme = 'light',
   size = 'default',
 }: SectionProps) {
+  const isHero = size === 'hero'
+
   return (
-    <section id={id} className={`section-pad ${themes[theme]} ${sizes[size]} ${className}`}>
-      {children}
+    <section
+      id={id}
+      className={`section-pad relative isolate overflow-hidden ${themes[theme]} ${sizes[size]} ${className}`}
+    >
+      {isHero && <HeroDnaBackground theme={theme} />}
+      <div className={isHero ? 'hero-circuit-content' : undefined}>{children}</div>
     </section>
   )
 }

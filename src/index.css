@@ -94,6 +94,93 @@
     @apply pt-28 sm:pt-32;
   }
 
+  .hero-circuit-bg,
+  .hero-dna-bg {
+    z-index: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: -50vw;
+    pointer-events: none;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 42%,
+      rgba(0, 0, 0, 0.35) 56%,
+      black 68%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 42%,
+      rgba(0, 0, 0, 0.35) 56%,
+      black 68%
+    );
+  }
+
+  .hero-circuit-content {
+    @apply relative isolate;
+    z-index: 1;
+  }
+
+  .hero-circuit-content > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-dna-scene {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 29%;
+    height: 69%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 960px;
+    perspective-origin: 50% 55%;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 7%,
+      black 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 7%,
+      black 100%
+    );
+  }
+
+  .hero-dna-rotator {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transform-origin: center center;
+    animation: hero-dna-spin-x 155.1s linear infinite;
+  }
+
+  .hero-dna-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  @keyframes hero-dna-spin-x {
+    from {
+      transform: rotateX(0deg);
+    }
+    to {
+      transform: rotateX(360deg);
+    }
+  }
+
   .focus-ring {
     @apply outline-none focus-visible:ring-2 focus-visible:ring-ink/35 focus-visible:ring-offset-2 focus-visible:ring-offset-cream;
   }
@@ -150,6 +237,13 @@
     .demo-guide-pulse,
     .demo-guide-pulse-delayed,
     .demo-phone-beacon {
+      animation: none;
+    }
+
+    .hero-circuit-path,
+    .hero-circuit-node,
+    .hero-circuit-layer,
+    .hero-dna-rotator {
       animation: none;
     }
   }

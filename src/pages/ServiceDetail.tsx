@@ -168,6 +168,11 @@ export function ServiceDetail() {
                     decoding="async"
                     sizes="(max-width: 1024px) 100vw, 50vw"
                     className="aspect-[5/4] w-full object-cover sm:aspect-[4/3]"
+                    style={
+                      heroImage.objectPosition
+                        ? { objectPosition: heroImage.objectPosition }
+                        : undefined
+                    }
                   />
                 </div>
               </FadeIn>
