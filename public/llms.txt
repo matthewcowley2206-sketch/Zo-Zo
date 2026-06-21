@@ -1,6 +1,6 @@
 # Zo&Zo Advisory
 
-> Sydney-based business advisory helping growing companies across Australia turn complexity into clarity - through strategy, client listening, operations, data and AI guidance, and working prototypes you can test before full development.
+> Sydney-based advisory helping leaders across Australia move from uncertainty to confidence - through client insight, strategy, structure, working prototypes, and practical AI guidance.
 
 ## About
 
@@ -13,28 +13,27 @@
 
 ## What we do
 
-Zo&Zo Advisory helps business owners who are juggling growth, operations, and big decisions. We combine practical strategy with working prototypes - clickable mock-ups you can share and test before committing to full development spend.
+Zo&Zo Advisory helps leaders who need clearer decisions - not slide decks or software builds for their own sake. We combine understanding, structure, evidence, and scoped prototypes when seeing or testing an idea matters before major investment.
 
-## Services
+## Service themes
 
-- **Prototype Development** - clickable working prototypes before full build (https://www.zoandzo.com.au/services/prototype-development)
-- Strategy & Direction - clarity on priorities and plans teams can follow
-- Client Listening - structured listening, NPS/CSAT, insight that feeds decisions
-- Sales & Marketing - positioning, journey, and consistent messaging
-- Communication & Clarity - story-driven materials for change and launches
-- Data, AI & Insights - practical dashboards, automations, and AI roadmaps
-- Operations & Simplification - workflow mapping, automation, and SOPs
-- Go-to-Market - launch plans you can execute week by week
+Capabilities are grouped into problem-oriented themes:
+
+- **Opportunity & Insight** - structured discovery and client listening so you decide from evidence, not assumptions (https://www.zoandzo.com.au/services/client-listening)
+- **Strategy & Structure** - strategic direction, communication clarity, and operations simplification so teams can follow (https://www.zoandzo.com.au/services/strategy)
+- **Test Before You Invest** - clickable working prototypes to validate ideas before significant spend (https://www.zoandzo.com.au/services/prototype-development)
+- **Prototype & AI Advisory** - decision-ready prototypes plus practical data and AI guidance when insight needs tooling, not hype (https://www.zoandzo.com.au/services/prototype-development; Data, AI & Insights: https://www.zoandzo.com.au/services/data-ai)
+- **Growth & Go-to-Market** - positioning, launch planning, sales enablement, and commercial activation in one coherent path (https://www.zoandzo.com.au/services/growth-gtm)
 
 ## Key pages
 
 - Home: https://www.zoandzo.com.au/
 - How we work: https://www.zoandzo.com.au/how-we-work
 - Services: https://www.zoandzo.com.au/services
-- Prototype development: https://www.zoandzo.com.au/services/prototype-development
-- Contact: https://www.zoandzo.com.au/contact
+- Work: https://www.zoandzo.com.au/work
 - About: https://www.zoandzo.com.au/about
 - Pricing: https://www.zoandzo.com.au/pricing
+- Contact: https://www.zoandzo.com.au/contact
 
 ## How to engage
 
