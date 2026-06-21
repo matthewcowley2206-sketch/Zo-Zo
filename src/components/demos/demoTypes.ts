@@ -51,9 +51,14 @@ export type DemoGuideConfig = {
   assistant?: DemoAssistantConfig
 }
 
+export type RecommendationQuadrant = 'quick-win' | 'strategic' | 'long-term'
+
 export type DemoRecommendation = {
   id: string
   title: string
   description: string
   impact?: string
+  impactScore?: number
+  effortScore?: number
+  quadrant?: RecommendationQuadrant
 }

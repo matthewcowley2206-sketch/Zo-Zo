@@ -4,6 +4,8 @@ type DemoExecutiveBriefProps = {
   risks: string[]
   opportunities: string[]
   recommendedActions: string[]
+  leadershipPriorities?: string[]
+  compact?: boolean
 }
 
 export function DemoExecutiveBrief({
@@ -12,17 +14,48 @@ export function DemoExecutiveBrief({
   risks,
   opportunities,
   recommendedActions,
+  leadershipPriorities = [],
+  compact = false,
 }: DemoExecutiveBriefProps) {
   return (
-    <div className="space-y-3 rounded-xl bg-white p-4 ring-1 ring-slate-200">
-      <p className="text-[0.625rem] font-semibold uppercase tracking-wide text-slate-400">
-        Executive brief
-      </p>
+    <div
+      className={`space-y-3 rounded-xl bg-white ring-1 ring-slate-200 ${
+        compact ? 'p-3' : 'p-4'
+      }`}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-[0.625rem] font-semibold uppercase tracking-wide text-slate-400">
+          Executive brief
+        </p>
+        {!compact && (
+          <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[0.5625rem] font-semibold uppercase text-slate-500">
+            Q3 review ready
+          </span>
+        )}
+      </div>
 
       <section>
         <h4 className="text-[0.6875rem] font-semibold uppercase text-slate-500">Executive summary</h4>
         <p className="mt-1 text-[0.8125rem] leading-relaxed text-slate-700">{summary}</p>
       </section>
+
+      {leadershipPriorities.length > 0 && (
+        <section className="rounded-lg bg-slate-900 p-3 text-white">
+          <h4 className="text-[0.6875rem] font-semibold uppercase text-slate-400">
+            Leadership priorities
+          </h4>
+          <ol className="mt-2 space-y-2">
+            {leadershipPriorities.map((item, i) => (
+              <li key={item} className="flex gap-2 text-[0.75rem] leading-relaxed">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/15 text-[0.625rem] font-bold">
+                  {i + 1}
+                </span>
+                {item}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
 
       <BriefList title="Key themes" items={keyThemes} />
       <BriefList title="Risks" items={risks} tone="rose" />

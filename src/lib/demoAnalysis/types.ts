@@ -1,5 +1,9 @@
 import type { DemoRecommendation } from '../../components/demos/demoTypes'
 
+export type IndustryContext = 'law' | 'accounting' | 'consulting' | 'professional-services'
+
+export type RecommendationQuadrant = 'quick-win' | 'strategic' | 'long-term'
+
 export type DiagnosisCause = {
   id: string
   name: string
@@ -24,6 +28,7 @@ export type PhoenixDiagnosisResult = {
     downtimeAvoided: string
     staffConfidence: string
     maintenanceCompliance: string
+    estimatedAnnualSavings: string
   }
   processingMessages: string[]
 }
@@ -39,9 +44,12 @@ export type NorthgateThemeResult = {
   supportingQuotes: string[]
   rootCauses: string[]
   recommendedActions: string[]
+  expectedOutcomes: string[]
 }
 
 export type NorthgateAnalysisResult = {
+  industry: IndustryContext
+  rawExcerpts: string[]
   themes: NorthgateThemeResult[]
   risks: string[]
   opportunities: string[]
@@ -70,6 +78,7 @@ export type NorthgateAnalysisResult = {
     risks: string[]
     opportunities: string[]
     recommendedActions: string[]
+    leadershipPriorities: string[]
   }
   processingMessages: string[]
 }

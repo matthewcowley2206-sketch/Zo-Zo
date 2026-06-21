@@ -208,15 +208,16 @@ export function Home() {
 
       <Section>
         <SectionHeader
-          eyebrow="Flagship demonstration"
-          title="Client listening that drives decisions."
-          description="Paste feedback or try a sample. See themes, risks, and an executive brief generated from what you provide."
+          eyebrow="Flagship capability"
+          title="Client Listening Intelligence"
+          description="Paste stakeholder feedback and see how it becomes executive-ready insight, leadership priorities and recommended actions."
         />
         <FadeIn className="content-wide">
           <div className="rounded-3xl bg-white px-6 py-10 sm:px-10 sm:py-14 ring-1 ring-line">
             <p className="mb-8 text-center text-[0.9375rem] text-muted">
-              {northgateDemo.clientName} demonstrates Zo&Zo&apos;s Client Listening capability -
-              turning voice of customer into prioritised action before analytics investment.
+              Illustrated using {northgateDemo.clientName}, a placeholder professional services firm.
+              Select your industry, paste feedback or try a sample - the executive insight changes
+              based on what you provide.
             </p>
             <DemoRenderer demoId={northgateDemo.id} />
             <p className="mt-8 flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-center">

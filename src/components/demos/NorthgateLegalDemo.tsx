@@ -3,25 +3,34 @@ import { useDemoAnnotation } from './DemoAnnotations'
 import { GuideTarget, useDemoGuide, useGuideActivate } from './DemoGuide'
 import { northgateInsightCategories } from './demoGuides'
 import { analyseNorthgateFeedback } from '../../lib/demoAnalysis/northgateFeedback'
-import { northgateFeedbackSamples } from '../../lib/demoAnalysis/northgateSamples'
-import type { NorthgateAnalysisResult } from '../../lib/demoAnalysis/types'
+import {
+  matchNorthgateFreeTextQuery,
+  northgateSuggestedQuestions,
+  resolveNorthgateAssistantQuestion,
+} from '../../lib/demoAnalysis/northgateAssistantResolver'
+import { getSamplesForIndustry } from '../../lib/demoAnalysis/northgateSamples'
+import type { IndustryContext, NorthgateAnalysisResult } from '../../lib/demoAnalysis/types'
 import { DemoButton, DemoPill } from './DeviceFrame'
 import { InteractiveDemoShell } from './InteractiveDemoShell'
 import { DemoAiAssistant } from './shared/DemoAiAssistant'
-import { DemoExecutiveBrief } from './shared/DemoExecutiveBrief'
+import { DemoFeedbackTransformation } from './shared/DemoFeedbackTransformation'
+import { DemoIndustrySelector } from './shared/DemoIndustrySelector'
 import { DemoInsightExplorer } from './shared/DemoInsightExplorer'
 import { DemoInsightTransparency } from './shared/DemoInsightTransparency'
 import { DemoJourneyPicker } from './shared/DemoJourneyPicker'
 import { DemoOutcomePreview } from './shared/DemoOutcomePreview'
 import { DemoOutcomeReveal } from './shared/DemoOutcomeReveal'
+import { DemoPipelineHeader } from './shared/DemoPipelineHeader'
+import { DemoPriorityMatrix } from './shared/DemoPriorityMatrix'
 import { DemoProcessingSequence } from './shared/DemoProcessingSequence'
 import { DemoRecommendationPanel } from './shared/DemoRecommendationPanel'
 import { DemoServiceClosingPanel } from './shared/DemoServiceClosingPanel'
 
 const accent = '#1e3a5f'
+const capabilitySubtitle = 'Client Listening Intelligence · Example: Northgate Legal'
 
 type Tab = 'dashboard' | 'insights' | 'groups'
-type ListeningView = 'input' | 'processing' | 'topInsight' | 'brief' | 'outcome'
+type ListeningView = 'input' | 'processing' | 'topInsight' | 'decisionSupport' | 'outcome'
 type LeadershipView = 'findings' | 'processing' | 'brief' | 'outcome'
 type PracticeView = 'select' | 'sentiment' | 'actions' | 'outcome'
 
@@ -85,7 +94,7 @@ const practiceActions = [
 
 function NorthgateHeader({
   title,
-  subtitle = 'Northgate Legal · Client listening',
+  subtitle = capabilitySubtitle,
   right,
 }: {
   title: string
@@ -153,6 +162,7 @@ function NorthgateApp() {
   const [leadershipView, setLeadershipView] = useState<LeadershipView>('findings')
   const [practiceView, setPracticeView] = useState<PracticeView>('select')
   const [feedbackText, setFeedbackText] = useState('')
+  const [industry, setIndustry] = useState<IndustryContext>('law')
   const [analysisResult, setAnalysisResult] = useState<NorthgateAnalysisResult | null>(null)
   const [activeTheme, setActiveTheme] = useState('responsiveness')
   const [selectedGroup, setSelectedGroup] = useState(practiceGroups[0])
@@ -187,32 +197,31 @@ function NorthgateApp() {
     selectJourney(id)
     resetJourneyState()
     if (id === 'listening') {
-      setFeedbackText(northgateFeedbackSamples[0].text)
+      setFeedbackText(getSamplesForIndustry('law')[0].text)
     }
   }
 
-  if (awaitingJourney) {
-    return (
-      <NorthgateShell title="Choose a scenario" subtitle="Client listening platform">
-        <DemoJourneyPicker
-          journeys={config.journeys ?? []}
-          accentColor={accent}
-          onSelect={handleSelectJourney}
-        />
-        {config.assistant && (
-          <DemoAiAssistant config={config.assistant} accentColor={accent} compact />
-        )}
-      </NorthgateShell>
-    )
-  }
-
   const runFeedbackAnalysis = () => {
-    const result = analyseNorthgateFeedback(feedbackText)
+    const result = analyseNorthgateFeedback(feedbackText, industry)
     setAnalysisResult(result)
     setActiveTheme(result.themes[0].id)
     runAnalysis.onGuideAction()
     setListeningView('processing')
   }
+
+  const northgateAssistant = (
+    <DemoAiAssistant
+      title="Decision support assistant"
+      placeholder="Ask about priorities, risks, or quick wins…"
+      suggestions={northgateSuggestedQuestions}
+      resolveQuestion={(id) => resolveNorthgateAssistantQuestion(id, analysisResult)}
+      resolveFreeText={(q) => matchNorthgateFreeTextQuery(q, analysisResult)}
+      accentColor={accent}
+      compact={listeningView === 'input'}
+    />
+  )
+
+  const industrySamples = getSamplesForIndustry(industry)
 
   const insightCategories = analysisResult
     ? analysisResult.themes.map((t) => ({
@@ -226,13 +235,28 @@ function NorthgateApp() {
         supportingQuotes: t.supportingQuotes,
         rootCauses: t.rootCauses,
         recommendedActions: t.recommendedActions,
+        expectedOutcomes: t.expectedOutcomes,
       }))
     : northgateInsightCategories
+
+  if (awaitingJourney) {
+    return (
+      <NorthgateShell title="Choose a scenario" subtitle={capabilitySubtitle}>
+        <DemoJourneyPicker
+          journeys={config.journeys ?? []}
+          accentColor={accent}
+          onSelect={handleSelectJourney}
+        />
+        {northgateAssistant}
+      </NorthgateShell>
+    )
+  }
 
   if (mode !== 'explore' && activeJourney?.id === 'listening') {
     if (listeningView === 'processing' && analysisResult) {
       return (
-        <NorthgateShell title="Analysing feedback" subtitle="AI insight engine">
+        <NorthgateShell title="Analysing feedback" subtitle={capabilitySubtitle}>
+          <DemoPipelineHeader activeStage="analysis" accentColor={accent} />
           <DemoProcessingSequence
             messages={analysisResult.processingMessages}
             accentColor={accent}
@@ -245,7 +269,8 @@ function NorthgateApp() {
     if (listeningView === 'topInsight' && analysisResult) {
       const { topInsight, outcomePreview, transparency } = analysisResult
       return (
-        <NorthgateShell title="Top insight" subtitle="Analysis complete" onBack={() => setListeningView('input')}>
+        <NorthgateShell title="Analysis complete" subtitle={capabilitySubtitle} onBack={() => setListeningView('input')}>
+          <DemoPipelineHeader activeStage="analysis" accentColor={accent} />
           <div className="rounded-xl bg-violet-50 p-3 ring-1 ring-violet-100">
             <p className="text-[0.625rem] font-semibold uppercase text-violet-700">Top insight</p>
             <p className="mt-1 text-[0.9375rem] font-semibold text-violet-950">
@@ -278,44 +303,57 @@ function NorthgateApp() {
             highlightTargetId={`theme-${analysisResult.themes[0].id}`}
             accentColor={accent}
             drillDown
+            connected
           />
+          {northgateAssistant}
           <GuideTarget id="top-insight-continue">
             <DemoButton
               accentColor={accent}
               onClick={() => {
                 topInsightContinue.onGuideAction()
-                setListeningView('brief')
+                setListeningView('decisionSupport')
               }}
             >
-              Generate executive brief
+              View executive insight
             </DemoButton>
           </GuideTarget>
         </NorthgateShell>
       )
     }
 
-    if (listeningView === 'brief' && analysisResult) {
+    if (listeningView === 'decisionSupport' && analysisResult) {
       const primaryId = analysisResult.recommendations[0]?.id ?? 'responsiveness'
       return (
-        <NorthgateShell title="Executive brief" subtitle="Leadership-ready" onBack={() => setListeningView('topInsight')}>
-          <DemoExecutiveBrief {...analysisResult.executiveBrief} />
+        <NorthgateShell title="Executive insight" subtitle={capabilitySubtitle} onBack={() => setListeningView('topInsight')}>
+          <DemoPipelineHeader activeStage="insight" accentColor={accent} />
+          <DemoFeedbackTransformation
+            rawExcerpts={analysisResult.rawExcerpts}
+            brief={analysisResult.executiveBrief}
+            accentColor={accent}
+          />
+          <DemoPriorityMatrix
+            recommendations={analysisResult.recommendations}
+            accentColor={accent}
+          />
           <DemoRecommendationPanel
             recommendations={analysisResult.recommendations}
             accentColor={accent}
             highlightTargetId={`action-${primaryId}`}
             selectedId={selectedAction ?? undefined}
+            title="Select your first action"
             onSelect={(id) => {
               setSelectedAction(id)
               setListeningView('outcome')
             }}
           />
+          {northgateAssistant}
         </NorthgateShell>
       )
     }
 
     if (listeningView === 'outcome') {
       return (
-        <NorthgateShell title="Analysis complete" subtitle="Client listening review">
+        <NorthgateShell title="Action selected" subtitle={capabilitySubtitle}>
           <DemoOutcomeReveal
             outcome={activeJourney.outcome}
             accentColor={accent}
@@ -332,10 +370,12 @@ function NorthgateApp() {
     }
 
     return (
-      <NorthgateShell title="Analyse feedback" subtitle="Paste or try a sample">
+      <NorthgateShell title="Analyse feedback" subtitle={capabilitySubtitle}>
+        <DemoPipelineHeader activeStage="input" accentColor={accent} />
+        <DemoIndustrySelector value={industry} onChange={setIndustry} accentColor={accent} />
         <p className="text-[0.8125rem] text-slate-600">
-          Paste client feedback, interview notes, or survey comments. Analysis runs in your browser -
-          nothing is uploaded.
+          Paste stakeholder feedback, interview notes, or survey comments. Analysis runs in your
+          browser - nothing is uploaded.
         </p>
         <textarea
           value={feedbackText}
@@ -346,10 +386,10 @@ function NorthgateApp() {
         />
         <div className="space-y-1.5">
           <p className="text-[0.625rem] font-semibold uppercase tracking-wide text-slate-400">
-            Try a sample
+            Try a sample for your industry
           </p>
           <div className="flex flex-wrap gap-1.5">
-            {northgateFeedbackSamples.map((sample) => (
+            {industrySamples.map((sample) => (
               <button
                 key={sample.id}
                 type="button"
@@ -368,6 +408,7 @@ function NorthgateApp() {
             </DemoButton>
           </GuideTarget>
         )}
+        {northgateAssistant}
       </NorthgateShell>
     )
   }
@@ -402,7 +443,11 @@ function NorthgateApp() {
           onBack={() => setLeadershipView('findings')}
         >
           {brief ? (
-            <DemoExecutiveBrief {...brief} />
+            <DemoFeedbackTransformation
+              rawExcerpts={analysisResult?.rawExcerpts ?? ['Executive stakeholder session notes…']}
+              brief={brief}
+              accentColor={accent}
+            />
           ) : (
             <div className="rounded-xl bg-white p-4 ring-1 ring-slate-200">
               <p className="text-[0.625rem] font-semibold uppercase text-slate-400">Executive summary</p>
@@ -476,8 +521,8 @@ function NorthgateApp() {
             onClick={() => {
               generateBrief.onGuideAction()
               if (!analysisResult) {
-                const sample = northgateFeedbackSamples.find((s) => s.id === 'executive')!
-                setAnalysisResult(analyseNorthgateFeedback(sample.text))
+                const sample = getSamplesForIndustry(industry).find((s) => s.id === 'executive')!
+                setAnalysisResult(analyseNorthgateFeedback(sample.text, industry))
               }
               setLeadershipView('processing')
             }}
@@ -681,9 +726,7 @@ function NorthgateApp() {
                   </div>
                 ))}
               </div>
-              {config.assistant && (
-                <DemoAiAssistant config={config.assistant} accentColor={accent} />
-              )}
+              {northgateAssistant}
             </>
           )}
           {tab === 'insights' && (
@@ -700,6 +743,7 @@ function NorthgateApp() {
               }}
               accentColor={accent}
               drillDown={!!analysisResult}
+              connected={!!analysisResult}
             />
           )}
           {tab === 'groups' &&

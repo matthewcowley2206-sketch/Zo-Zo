@@ -324,8 +324,8 @@ export const northgateJourneys: DemoJourney[] = [
       {
         id: 'insight',
         target: 'top-insight-continue',
-        hint: 'Review the top insight and outcome preview.',
-        recovery: 'Scroll to the outcome preview and tap Generate executive brief.',
+        hint: 'Review the analysis summary, then view executive insight.',
+        recovery: 'Tap View executive insight to see the transformation from raw feedback.',
         annotation: {
           id: 'top-insight',
           clientAsk: 'evidence of value within minutes, not weeks of analysis.',
@@ -336,13 +336,13 @@ export const northgateJourneys: DemoJourney[] = [
       {
         id: 'brief',
         target: 'action-responsiveness',
-        hint: 'Review the executive brief and prioritise an action.',
-        recovery: 'Choose the top recommended action from the brief.',
+        hint: 'Review the transformation from raw feedback to executive insight, then choose an action.',
+        recovery: 'Scroll to the priority matrix and select a recommended action.',
         annotation: {
           id: 'exec-brief',
           clientAsk: 'a brief the managing partner can act on immediately.',
           ourSolution:
-            'executive brief with themes, risks, opportunities, and prioritised actions.',
+            'raw-to-executive transformation with leadership priorities and a priority matrix.',
         },
       },
       {
@@ -787,10 +787,10 @@ export const demoGuides: Record<string, DemoGuideConfig> = {
   },
   'northgate-legal': {
     id: 'northgate-legal',
-    title: 'Client listening & insight',
+    title: 'Client Listening Intelligence',
     device: 'desktop',
     intro:
-      'Choose a scenario inside the prototype, then follow the guided workflow. Each step shows what the firm asked for.',
+      'Choose a scenario inside the prototype, then follow the guided workflow. Illustrated using Northgate Legal as a placeholder firm.',
     completeMessage:
       'Journey complete. Try another scenario, ask the AI assistant, or explore insight categories freely.',
     scopeNote:

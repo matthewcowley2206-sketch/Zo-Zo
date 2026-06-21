@@ -39,10 +39,10 @@ export const projectDemos: ProjectDemo[] = [
     id: 'northgate-legal',
     clientName: 'Northgate Legal',
     sector: 'Professional services',
-    themeLabel: 'Opportunity & Insight',
-    headline: 'Client listening that turns feedback into strategic intelligence.',
+    themeLabel: 'Client Listening Intelligence',
+    headline: 'Turn stakeholder feedback into executive-ready insight.',
     summary:
-      'Paste feedback or try a sample scenario - dynamic theme extraction, executive briefs, and prioritised actions that demonstrate Client Listening before analytics investment.',
+      'Select your industry, paste feedback or try a sample - dynamic theme extraction, leadership priorities, and prioritised actions that demonstrate Client Listening Intelligence before analytics investment.',
     challenge:
       'Partners had completed client listening but struggled to turn interview data into priorities leadership could act on - spreadsheets and slide decks were not moving decisions.',
     approach:

@@ -7,6 +7,7 @@ type DemoRecommendationPanelProps = {
   highlightTargetId: string
   onSelect: (id: string) => void
   selectedId?: string
+  title?: string
 }
 
 export function DemoRecommendationPanel({
@@ -15,11 +16,12 @@ export function DemoRecommendationPanel({
   highlightTargetId,
   onSelect,
   selectedId,
+  title = 'Step 4 · Recommended actions',
 }: DemoRecommendationPanelProps) {
   return (
     <div className="space-y-2">
       <p className="text-[0.625rem] font-semibold uppercase tracking-wide text-slate-400">
-        Step 4 · Recommended actions
+        {title}
       </p>
       {recommendations.map((rec) => (
         <RecommendationCard

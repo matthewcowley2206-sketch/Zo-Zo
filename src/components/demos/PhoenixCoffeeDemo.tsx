@@ -9,6 +9,11 @@ import {
 } from './DeviceFrame'
 import { InteractiveDemoShell } from './InteractiveDemoShell'
 import { analysePhoenixSymptoms, phoenixSymptomExamples } from '../../lib/demoAnalysis/phoenixDiagnosis'
+import {
+  matchPhoenixFreeTextQuery,
+  phoenixSuggestedQuestions,
+  resolvePhoenixAssistantQuestion,
+} from '../../lib/demoAnalysis/phoenixAssistantResolver'
 import type { PhoenixDiagnosisResult } from '../../lib/demoAnalysis/types'
 import { DemoAiAssistant } from './shared/DemoAiAssistant'
 import { DemoBusinessImpactPanel } from './shared/DemoBusinessImpactPanel'
@@ -132,7 +137,14 @@ function PhoenixApp() {
           />
           {config.assistant && (
             <div className="mt-4">
-              <DemoAiAssistant config={config.assistant} accentColor={accent} compact />
+              <DemoAiAssistant
+                title="Operations decision support"
+                suggestions={phoenixSuggestedQuestions}
+                resolveQuestion={(id) => resolvePhoenixAssistantQuestion(id, diagnosisResult)}
+                resolveFreeText={(q) => matchPhoenixFreeTextQuery(q, diagnosisResult)}
+                accentColor={accent}
+                compact
+              />
             </div>
           )}
         </DemoScreen>
@@ -146,6 +158,18 @@ function PhoenixApp() {
     runDiagnosis.onGuideAction()
     setBreakdownView('processing')
   }
+
+  const phoenixAssistant = (
+    <DemoAiAssistant
+      title="Operations decision support"
+      placeholder="Ask about causes, downtime, or maintenance…"
+      suggestions={phoenixSuggestedQuestions}
+      resolveQuestion={(id) => resolvePhoenixAssistantQuestion(id, diagnosisResult)}
+      resolveFreeText={(q) => matchPhoenixFreeTextQuery(q, diagnosisResult)}
+      accentColor={accent}
+      compact={breakdownView === 'symptoms'}
+    />
+  )
 
   if (mode !== 'explore' && activeJourney?.id === 'breakdown') {
     if (breakdownView === 'processing' && diagnosisResult) {
@@ -197,6 +221,7 @@ function PhoenixApp() {
                 View recommended actions
               </DemoButton>
             </GuideTarget>
+            {phoenixAssistant}
           </div>
         </DemoScreen>
       )
@@ -235,8 +260,14 @@ function PhoenixApp() {
               { label: 'Downtime avoided', value: impact.downtimeAvoided },
               { label: 'Staff confidence', value: impact.staffConfidence },
               { label: 'Maintenance compliance', value: impact.maintenanceCompliance },
+              {
+                label: 'Estimated annual savings',
+                value: impact.estimatedAnnualSavings,
+                emphasis: true,
+              },
             ]}
           />
+          {phoenixAssistant}
           <div className="mt-4">
             <DemoOutcomeReveal
               outcome={{
@@ -290,6 +321,7 @@ function PhoenixApp() {
               </DemoButton>
             </GuideTarget>
           )}
+          {phoenixAssistant}
         </div>
       </DemoScreen>
     )
@@ -545,9 +577,13 @@ function PhoenixApp() {
           )}
           {tab === 'support' && (
             <div className="space-y-3">
-              {config.assistant && (
-                <DemoAiAssistant config={config.assistant} accentColor={accent} />
-              )}
+              <DemoAiAssistant
+                title="Operations decision support"
+                suggestions={phoenixSuggestedQuestions}
+                resolveQuestion={(id) => resolvePhoenixAssistantQuestion(id, diagnosisResult)}
+                resolveFreeText={(q) => matchPhoenixFreeTextQuery(q, diagnosisResult)}
+                accentColor={accent}
+              />
               <button
                 type="button"
                 onClick={() => {
