@@ -61,9 +61,9 @@ const staticPageMeta: Record<string, Omit<PageSeo, 'path'>> = {
     faq: homeFaqs,
   },
   '/how-we-work': {
-    title: 'How We Work | Zo&Zo Advisory',
+    title: 'How We Work · The Zo&Zo Method · Zo&Zo Advisory',
     description:
-      'Five steps from first conversation to moving forward. Free clarity call, honest fit check, and scoped engagements with deliverables you can hold us to.',
+      'Understand, Structure, Prototype, Decide - how Zo&Zo helps leaders move from uncertainty to confidence. Advisory partner, not a software development agency. Free clarity call to start.',
     faq: [...engagementFaq],
   },
   '/services': {
@@ -72,9 +72,9 @@ const staticPageMeta: Record<string, Omit<PageSeo, 'path'>> = {
       'Four ways Zo&Zo helps leaders: understand customers, shape strategy, test ideas before investment, and grow with confidence. Client listening, strategy, prototypes, data & AI, and go-to-market.',
   },
   '/about': {
-    title: 'About Zo&Zo Advisory | Sydney Business Strategy Partner',
+    title: 'About Zo&Zo Advisory · Practical Leadership Advisory · Sydney',
     description:
-      'Zo&Zo Advisory turns big-business thinking into practical results for growing companies. Founded by Matthew Cowley, Sydney-based and Australia-wide.',
+      'Zo&Zo Advisory combines client insight, strategy, communication, data and AI thinking, and working prototypes to help leaders make clearer decisions - not a consulting firm or software agency.',
   },
   '/pricing': {
     title: 'Pricing | Zo&Zo Advisory · Simple Starting Points',
@@ -86,6 +86,11 @@ const staticPageMeta: Record<string, Omit<PageSeo, 'path'>> = {
     title: 'Contact Zo&Zo Advisory | Book a Free Clarity Call',
     description:
       'Start the conversation with Zo&Zo Advisory. Book a free initial consultation or send a message - Sydney-based, working across Australia and online worldwide.',
+  },
+  '/work': {
+    title: 'Our Work · Proof of Method · Zo&Zo Advisory',
+    description:
+      'Example work showing how Zo&Zo makes ideas tangible and supports better decisions - test-before-you-invest prototypes, strategy, and growth validation. Placeholder names where needed.',
   },
 }
 
@@ -168,6 +173,7 @@ export const sitemapPaths = [
     )
     .map((service) => `/services/${service.slug}`),
   '/about',
+  '/work',
   '/pricing',
   '/contact',
 ]

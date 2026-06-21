@@ -81,10 +81,11 @@ function breadcrumbJsonLd(seo: PageSeo) {
     items.push({ name: 'Services', path: '/services' })
     items.push({ name: seo.service?.title ?? 'Service', path: seo.path })
   } else if (seo.path !== '/') {
-    const labels: Record<string, string> = {
+    const     labels: Record<string, string> = {
       '/how-we-work': 'How we work',
       '/services': 'Services',
       '/about': 'About',
+      '/work': 'Our work',
       '/pricing': 'Pricing',
       '/contact': 'Contact',
     }

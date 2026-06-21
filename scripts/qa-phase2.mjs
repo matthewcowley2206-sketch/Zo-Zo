@@ -5,7 +5,7 @@ const base = 'http://localhost:5173'
 const routes = [
   { path: '/services', expect: 'Start with the problem' },
   { path: '/pricing', expect: 'Simple starting points' },
-  { path: '/how-we-work', expect: 'We start by understanding' },
+  { path: '/how-we-work', expect: 'Good decisions need more than ideas' },
   { path: '/services/client-listening', expect: 'Client Listening' },
   { path: '/services/prototype-development', expect: 'Test Before You Invest' },
   { path: '/services/growth-gtm', expect: 'Growth & Go-to-Market' },

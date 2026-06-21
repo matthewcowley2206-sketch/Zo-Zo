@@ -29,6 +29,7 @@ const paths = [
       changefreq: 'monthly',
     })),
   { loc: '/about', priority: '0.7', changefreq: 'monthly' },
+  { loc: '/work', priority: '0.8', changefreq: 'monthly' },
   { loc: '/pricing', priority: '0.75', changefreq: 'monthly' },
   { loc: '/contact', priority: '0.8', changefreq: 'monthly' },
 ]

@@ -34,7 +34,10 @@ export function ProjectShowcase({ demo, reversed = false }: ProjectShowcaseProps
 
         <div className={reversed ? 'lg:[direction:ltr]' : ''}>
           <FadeIn delay={0.08}>
-            <p className="eyebrow mb-4">Prototype demo</p>
+            <p className="mb-2 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-muted-light">
+              {demo.themeLabel}
+            </p>
+            <p className="eyebrow mb-4">Example work</p>
             <h2 className="headline-small">{demo.headline}</h2>
             <p className="mt-5 body-regular">{demo.summary}</p>
             <dl className="mt-8 space-y-5">

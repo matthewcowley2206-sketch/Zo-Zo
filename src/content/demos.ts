@@ -4,6 +4,7 @@ export type ProjectDemo = {
   id: string
   clientName: string
   sector: string
+  themeLabel: string
   headline: string
   summary: string
   challenge: string
@@ -20,6 +21,7 @@ export const projectDemos: ProjectDemo[] = [
     id: 'horizon-airways',
     clientName: 'Horizon Airways',
     sector: 'Aviation',
+    themeLabel: 'Test Before You Invest',
     headline: 'Loyalty, booking, and check-in - in one app you can actually test.',
     summary:
       'A working mobile prototype for Horizon Miles: tier status, award booking, miles redemption, check-in, and lounge access - simplified from a global airline loyalty replatform.',
@@ -37,6 +39,7 @@ export const projectDemos: ProjectDemo[] = [
     id: 'phoenix-coffee',
     clientName: 'Phoenix Coffee',
     sector: 'Hospitality',
+    themeLabel: 'Growth & Go-to-Market',
     headline: 'Order, customise, and reward - a coffee experience you can actually try.',
     summary:
       'A mobile ordering prototype with loyalty tiers, scheduled pickup, favourites, and rewards redemption - tested with store managers before launch investment.',
@@ -54,6 +57,7 @@ export const projectDemos: ProjectDemo[] = [
     id: 'northgate-legal',
     clientName: 'Northgate Legal',
     sector: 'Professional services',
+    themeLabel: 'Strategy & Structure',
     headline: 'A client portal teams could evaluate in context - not in a meeting deck.',
     summary:
       'A client portal prototype with matter tracking, secure messaging, document upload, and invoice visibility - built so partners could navigate it themselves.',
@@ -71,6 +75,7 @@ export const projectDemos: ProjectDemo[] = [
     id: 'brightline-studio',
     clientName: 'Brightline Studio',
     sector: 'Creative & digital',
+    themeLabel: 'Prototype & AI Advisory',
     headline: 'From inbox chaos to a quote you can stand behind.',
     summary:
       'A scope-and-quote workflow prototype: paste a vague enquiry, generate editable scope blocks, pick a quote tier, and send a preview - before anyone opened Excel.',
