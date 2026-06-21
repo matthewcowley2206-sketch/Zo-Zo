@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom'
-import { formatFromPrice, pricingFaqs, pricingRows } from '../content/pricing'
+import { formatFromPrice, pricingFaqs, pricingThemeGroups } from '../content/pricingThemes'
 import { site } from '../content/site'
 import { FaqSection } from '../components/seo/FaqSection'
-import { isPrototypeService } from '../components/services/ServiceCardLink'
 import { Button } from '../components/ui/Button'
 import { FadeIn } from '../components/ui/FadeIn'
 import { Section } from '../components/ui/Section'
@@ -18,36 +17,33 @@ export function Pricing() {
           </FadeIn>
           <FadeIn delay={0.15} className="mt-8 max-w-[640px]">
             <p className="body-large">
-              Every engagement is scoped to your outcome. These are typical starting points - not
-              menu prices. We quote a fixed amount before work begins.
+              Every engagement is scoped to your outcome. These are typical starting points by
+              problem area - not menu prices. We quote a fixed amount before work begins.
             </p>
           </FadeIn>
         </div>
       </Section>
 
       <Section theme="cream" size="compact">
-        <div className="content-wide">
-          <FadeIn>
-            <div className="overflow-hidden rounded-3xl border border-line bg-white">
-              <div className="hidden border-b border-line bg-cream-dark/40 px-6 py-4 sm:grid sm:grid-cols-[minmax(0,1.1fr)_120px_minmax(0,1fr)] sm:gap-8 sm:px-8">
-                <p className="text-[0.75rem] font-semibold uppercase tracking-[0.06em] text-muted-light">
-                  Service
-                </p>
-                <p className="text-[0.75rem] font-semibold uppercase tracking-[0.06em] text-muted-light">
-                  From
-                </p>
-                <p className="text-[0.75rem] font-semibold uppercase tracking-[0.06em] text-muted-light">
-                  Typical outcome
-                </p>
-              </div>
+        <div className="content-wide space-y-8">
+          {pricingThemeGroups.map((group, groupIndex) => (
+            <FadeIn key={group.themeId} delay={groupIndex * 0.05}>
+              <div className="overflow-hidden rounded-3xl border border-line bg-white">
+                <div className="border-b border-line bg-cream-dark/40 px-6 py-5 sm:px-8">
+                  <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-muted-light">
+                    {group.uncertaintyLabel}
+                  </p>
+                  <h2 className="mt-2 text-[1.25rem] font-semibold tracking-[-0.02em] text-ink">
+                    {group.themeTitle}
+                  </h2>
+                </div>
 
-              <ul className="divide-y divide-line">
-                {pricingRows.map((row, index) => {
-                  const isPrototype = isPrototypeService(row.serviceSlug)
+                <ul className="divide-y divide-line">
+                  {group.modules.map((module) => {
+                    const isPrototype = module.slug === 'prototype-development'
 
-                  return (
-                    <li key={row.serviceSlug}>
-                      <FadeIn delay={index * 0.03}>
+                    return (
+                      <li key={module.slug}>
                         <div
                           className={`grid gap-3 px-6 py-6 sm:grid-cols-[minmax(0,1.1fr)_120px_minmax(0,1fr)] sm:items-center sm:gap-8 sm:px-8 ${
                             isPrototype ? 'bg-ink text-cream' : ''
@@ -55,12 +51,12 @@ export function Pricing() {
                         >
                           <div>
                             <Link
-                              to={`/services/${row.serviceSlug}`}
+                              to={module.href}
                               className={`text-[1.0625rem] font-semibold transition-opacity hover:opacity-80 ${
                                 isPrototype ? 'text-cream' : 'text-ink'
                               }`}
                             >
-                              {row.serviceTitle}
+                              {module.title}
                             </Link>
                           </div>
                           <p
@@ -68,27 +64,29 @@ export function Pricing() {
                               isPrototype ? 'text-cream' : 'text-ink'
                             }`}
                           >
-                            {formatFromPrice(row.fromAmount)}
+                            {formatFromPrice(module.fromAmount)}
                           </p>
                           <p
                             className={`text-[0.9375rem] leading-relaxed ${
                               isPrototype ? 'text-cream/75' : 'text-muted'
                             }`}
                           >
-                            {row.outcome}
+                            {module.outcome}
                           </p>
                         </div>
-                      </FadeIn>
-                    </li>
-                  )
-                })}
-              </ul>
-            </div>
+                      </li>
+                    )
+                  })}
+                </ul>
+              </div>
+            </FadeIn>
+          ))}
 
-            <p className="mx-auto mt-8 max-w-[640px] text-center text-[0.9375rem] leading-relaxed text-muted">
-              Full programs - board strategy packs, multi-flow prototypes, embedded listening
-              loops, or multiple automations - are scoped individually. You always get a fixed quote
-              before we start.
+          <FadeIn>
+            <p className="mx-auto max-w-[640px] text-center text-[0.9375rem] leading-relaxed text-muted">
+              Full programs - board strategy packs, multi-flow prototypes, embedded listening loops,
+              or multiple automations - are scoped individually. You always get a fixed quote before
+              we start.
             </p>
           </FadeIn>
         </div>

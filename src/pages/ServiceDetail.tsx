@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
+import { legacyServiceRedirects } from '../content/redirects'
 import { getService } from '../content/services'
 import { serviceImagery } from '../content/serviceImagery'
 import { FadeIn } from '../components/ui/FadeIn'
@@ -68,6 +69,11 @@ function ServiceBodyFallback() {
 
 export function ServiceDetail() {
   const { slug } = useParams<{ slug: string }>()
+
+  if (slug && legacyServiceRedirects[slug]) {
+    return <Navigate to={`/services/${legacyServiceRedirects[slug]}`} replace />
+  }
+
   const service = slug ? getService(slug) : undefined
 
   if (!service) {
@@ -132,6 +138,16 @@ export function ServiceDetail() {
             engagementDescription="Some clients need offer clarity and a launch sequence. Others want the full strategy pack, profiles, and test plan."
           />
         )
+      case 'growth-gtm':
+        return (
+          <ServiceExerciseContent
+            service={service}
+            Demo={GoToMarketDemo}
+            exerciseCaption="Six building blocks for growth - positioning, audience, messaging, launch plan, sales enablement, and test-and-learn. Tap each to see what we deliver."
+            outcomesDescription="Positioning, a go-to-market plan you can run, and sales and marketing aligned on one story."
+            engagementDescription="One integrated engagement - from positioning through launch and commercial activation."
+          />
+        )
       default:
         return <ServiceDetailContent service={service} />
     }
@@ -152,7 +168,11 @@ export function ServiceDetail() {
           <div className={heroImage ? 'grid items-end gap-10 lg:grid-cols-2 lg:gap-16' : ''}>
             <FadeIn delay={heroImage ? 0 : undefined} className={heroImage ? 'min-w-0' : undefined}>
               <p className="eyebrow mb-6">
-                {service.slug === 'prototype-development' ? 'Prototype Development' : 'Services'}
+                {service.slug === 'prototype-development'
+                  ? 'Test Before You Invest'
+                  : service.slug === 'growth-gtm'
+                    ? 'Growth & Go-to-Market'
+                    : 'Services'}
               </p>
               <h1 className={heroImage ? 'headline-hero-split' : 'headline-hero max-w-[900px]'}>
                 {service.title}

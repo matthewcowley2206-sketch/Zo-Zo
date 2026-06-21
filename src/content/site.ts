@@ -1,6 +1,9 @@
+import { positioning } from './method'
+
 export const site = {
   name: 'Zo&Zo Advisory',
-  tagline: 'Turning Complexity into Clarity',
+  positioning,
+  tagline: positioning.secondaryTagline,
   email: 'matt@zoandzo.com.au',
   contactCcEmail: 'phoenix8760@gmail.com',
   location: 'Sydney, NSW 2207 · Australia',
@@ -8,6 +11,7 @@ export const site = {
   founderTitle: 'Founder',
   sameAs: ['https://www.zoandzo.com.au'] as const,
   ctaLabel: 'Book a free clarity call',
+  secondaryCtaLabel: 'See how we work',
 } as const
 
 export const navLinks = [

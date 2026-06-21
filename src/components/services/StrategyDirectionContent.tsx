@@ -141,7 +141,7 @@ export function StrategyDirectionContent({ service }: StrategyDirectionContentPr
                   to="/services/prototype-development"
                   className="underline underline-offset-2 hover:text-cream"
                 >
-                  Explore Prototype Development →
+                  Explore Test Before You Invest →
                 </Link>
               </p>
             </div>

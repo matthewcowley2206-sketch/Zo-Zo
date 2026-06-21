@@ -4,6 +4,16 @@
       "source": "/prototype-development",
       "destination": "/services/prototype-development",
       "permanent": true
+    },
+    {
+      "source": "/services/sales-marketing",
+      "destination": "/services/growth-gtm",
+      "permanent": true
+    },
+    {
+      "source": "/services/go-to-market",
+      "destination": "/services/growth-gtm",
+      "permanent": true
     }
   ],
   "rewrites": [

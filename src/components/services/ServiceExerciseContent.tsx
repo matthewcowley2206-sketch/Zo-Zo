@@ -153,7 +153,7 @@ export function ServiceExerciseContent({
                   to="/services/prototype-development"
                   className="underline underline-offset-2 hover:text-cream"
                 >
-                  Explore Prototype Development →
+                  Explore Test Before You Invest →
                 </Link>
               </p>
             </div>

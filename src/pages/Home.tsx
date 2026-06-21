@@ -1,11 +1,16 @@
 import { Link } from 'react-router-dom'
 import { humanImagery, projectDemos } from '../content/demos'
-import { engagementSteps } from '../content/howWeWork'
+import {
+  methodSteps,
+  positioning,
+  prototypeProofLine,
+  serviceThemes,
+  tensionPoints,
+} from '../content/method'
 import { entitySummary, homeFaqs } from '../content/seo'
-import { services } from '../content/services'
-import { pillars, site } from '../content/site'
+import { site } from '../content/site'
 import { DemoRenderer } from '../components/demos/DemoRenderer'
-import { ServiceCardLink } from '../components/services/ServiceCardLink'
+import { ServiceThemeCard } from '../components/services/ServiceThemeCard'
 import { FaqSection } from '../components/seo/FaqSection'
 import { ArrowLink, Button } from '../components/ui/Button'
 import { FadeIn } from '../components/ui/FadeIn'
@@ -13,6 +18,7 @@ import { Divider, Section, SectionHeader } from '../components/ui/Section'
 
 export function Home() {
   const featuredDemo = projectDemos[0]
+  const clientListeningTheme = serviceThemes.find((theme) => theme.featured)
 
   return (
     <>
@@ -23,14 +29,19 @@ export function Home() {
               <p className="eyebrow mb-6">Zo&Zo Advisory · Sydney · Australia-wide</p>
             </FadeIn>
             <FadeIn delay={0.1}>
-              <h1 className="headline-hero-split text-ink">
-                See your idea working - before you commit to building it.
-              </h1>
+              <h1 className="headline-hero-split text-ink">{positioning.headline}</h1>
+            </FadeIn>
+            <FadeIn delay={0.15}>
+              <p className="mt-4 text-[1.125rem] font-medium tracking-[-0.01em] text-ink/70">
+                {positioning.secondaryTagline}
+              </p>
             </FadeIn>
             <FadeIn delay={0.2}>
-              <p className="body-large mt-6 max-w-[560px] lg:mx-0 mx-auto">
-                We help growing business owners cut through noise, make confident decisions,
-                and test ideas with working prototypes - not just slide decks.
+              <p className="body-large mt-6 max-w-[560px] lg:mx-0 mx-auto md:hidden">
+                {positioning.subheadMobile}
+              </p>
+              <p className="body-large mt-6 mx-auto hidden max-w-[560px] md:mx-0 md:block">
+                {positioning.subhead}
               </p>
             </FadeIn>
             <FadeIn delay={0.3} className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-stretch lg:justify-start">
@@ -38,11 +49,11 @@ export function Home() {
                 {site.ctaLabel}
               </Button>
               <Button
-                to="/services/prototype-development#demos"
+                to="/how-we-work"
                 variant="secondarySolid"
                 className="min-h-12 w-full whitespace-nowrap sm:w-auto"
               >
-                <span>Try a prototype demo</span>
+                <span>{site.secondaryCtaLabel}</span>
                 <span aria-hidden className="shrink-0 text-[1.125rem] leading-none">
                   ›
                 </span>
@@ -71,23 +82,20 @@ export function Home() {
         <div className="content-max">
           <FadeIn>
             <h2 className="headline-section max-w-[800px]">
-              Running a business is equal parts vision, pressure, and guesswork.
+              Uncertainty is expensive. Clarity is how you move forward.
             </h2>
           </FadeIn>
-          <FadeIn delay={0.1} className="mt-8 max-w-[640px] space-y-5">
-            <p className="body-large text-ink/90">
-              You are not short on ideas. You are short on time.
-            </p>
-            <p className="body-regular">
-              Between leading your team, managing operations, and chasing growth,
-              strategy keeps sliding to the bottom of the list. You are not stuck
-              because you lack vision - you are stuck because there is too much to
-              hold in your head at once.
-            </p>
-            <p className="text-[1.125rem] font-medium text-ink">
-              That is exactly where we come in.
-            </p>
-          </FadeIn>
+          <div className="mt-10 grid gap-6 sm:grid-cols-2">
+            {tensionPoints.map((point, i) => (
+              <FadeIn key={point.title} delay={i * 0.06}>
+                <div className="h-full rounded-3xl border border-line/60 bg-cream p-7 sm:p-8">
+                  <h3 className="headline-small">{point.title}</h3>
+                  <p className="body-regular mt-3">{point.text}</p>
+                  <p className="mt-4 text-[0.875rem] font-medium text-ink/70">{point.outcome}</p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
         </div>
       </Section>
 
@@ -96,85 +104,82 @@ export function Home() {
       <Section theme="dark">
         <SectionHeader
           theme="dark"
-          eyebrow="What makes us different"
-          title="We do not just help you decide. We help you see it."
-          description="Most advisors hand you a strategy and wish you luck. We go further - with working prototypes that let you click, share, and test before you spend."
+          eyebrow="How we help"
+          title="Understand → Structure → Prototype → Decide"
+          description="Our method reduces uncertainty at each step - so you can commit to what matters with evidence, not guesswork."
         />
-        <div className="content-wide grid items-stretch gap-6 sm:grid-cols-3">
-          {pillars.map((pillar, i) => (
-            <FadeIn key={pillar.title} delay={i * 0.08} className="h-full">
-              <div className="flex h-full flex-col rounded-3xl border border-cream/10 bg-cream/[0.04] p-8 sm:p-10">
-                <h3 className="headline-small text-cream">{pillar.title}</h3>
+        <div className="content-wide grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {methodSteps.map((step, i) => (
+            <FadeIn key={step.id} delay={i * 0.08} className="h-full">
+              <div className="flex h-full flex-col rounded-3xl border border-cream/10 bg-cream/[0.04] p-8 sm:p-9">
+                <span className="text-[0.8125rem] font-medium tabular-nums text-cream/45">
+                  {step.number}
+                </span>
+                <h3 className="headline-small mt-3 text-cream">{step.title}</h3>
                 <p className="mt-4 flex-1 text-[1.0625rem] leading-relaxed text-cream/65">
-                  {pillar.description}
+                  {step.description}
                 </p>
+                <p className="mt-5 text-[0.8125rem] leading-relaxed text-cream/45">{step.uncertainty}</p>
               </div>
             </FadeIn>
           ))}
         </div>
         <FadeIn className="mt-14 text-center">
-          <ArrowLink to="/services/prototype-development" className="!text-cream hover:!text-cream/70">
-            Explore Prototype Development
+          <ArrowLink to="/how-we-work" className="!text-cream hover:!text-cream/70">
+            {site.secondaryCtaLabel}
           </ArrowLink>
         </FadeIn>
       </Section>
 
-      <Section theme="cream">
-        <SectionHeader
-          eyebrow="Prototype Development"
-          title="Click through a real example."
-          description={`${featuredDemo.clientName} is a placeholder for an aviation engagement. Try the check-in flow below - or explore the full Prototype Development service.`}
-        />
-        <FadeIn className="content-wide">
-          <div className="rounded-3xl bg-cream px-6 py-10 sm:px-10 sm:py-14 ring-1 ring-line">
-            <DemoRenderer demoId={featuredDemo.id} />
-            <p className="mt-8 flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-center">
-              <ArrowLink to="/services/prototype-development#horizon-airways">See all prototype demos</ArrowLink>
-              <span className="hidden text-muted-light sm:inline">·</span>
-              <ArrowLink to="/services/prototype-development">About this service</ArrowLink>
-            </p>
-          </div>
-        </FadeIn>
-      </Section>
-
-      <Section>
-        <SectionHeader
-          eyebrow="How we work"
-          title="We understand your business first - then recommend what fits."
-          description="Every engagement starts with listening, not pitching. We learn how you operate, identify what matters, and discuss which services apply."
-        />
-        <div className="content-wide space-y-0">
-          {engagementSteps.slice(0, 3).map((step, i) => (
-            <FadeIn key={step.number} delay={i * 0.05}>
-              <div className="grid gap-4 border-b border-line py-8 sm:grid-cols-[80px_1fr_2fr] sm:gap-8 sm:py-10">
-                <span className="text-[0.8125rem] font-medium tabular-nums text-muted-light">
-                  {step.number}
-                </span>
-                <h3 className="headline-small">{step.title}</h3>
-                <p className="body-regular sm:max-w-[480px]">{step.description}</p>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
-        <FadeIn className="mt-12 text-center">
-          <Button to="/how-we-work" variant="secondary">
-            How we work
-          </Button>
-        </FadeIn>
-      </Section>
+      {clientListeningTheme ? (
+        <>
+          <Divider />
+          <Section theme="cream">
+            <div className="content-wide grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+              <FadeIn>
+                <p className="eyebrow mb-4">Flagship capability</p>
+                <h2 className="headline-section">{clientListeningTheme.title}</h2>
+                <p className="body-large mt-5">{clientListeningTheme.summary}</p>
+                <p className="mt-4 text-[0.9375rem] font-medium text-ink/70">
+                  {clientListeningTheme.uncertaintyLabel}
+                </p>
+                <div className="mt-8">
+                  <Button to={clientListeningTheme.primaryHref}>Explore Client Listening</Button>
+                </div>
+              </FadeIn>
+              <FadeIn delay={0.1}>
+                <div className="rounded-3xl bg-white p-8 ring-1 ring-line sm:p-10">
+                  <p className="eyebrow mb-4">What you get</p>
+                  <ul className="mt-5 space-y-3">
+                    {clientListeningTheme.modules.map((module) => (
+                      <li key={module.label} className="text-[0.9375rem] text-ink/85">
+                        · {module.label}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="body-regular mt-6 text-muted">
+                    Structured conversations, honest insight, and leadership-ready findings - so
+                    decisions are grounded in what customers and stakeholders actually think.
+                  </p>
+                </div>
+              </FadeIn>
+            </div>
+          </Section>
+        </>
+      ) : null}
 
       <Divider />
 
       <Section>
         <SectionHeader
           eyebrow="Services"
-          title="Where we help most."
-          description="Pick the area that feels messiest right now. We will meet you there."
+          title="Four ways we reduce uncertainty."
+          description="Each theme connects to practical modules - pick where the pressure is highest, and we will meet you there."
         />
-        <div className="content-wide grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map((service, i) => (
-            <FadeIn key={service.slug} delay={i * 0.04}>
-              <ServiceCardLink service={service} variant="tile" />
+        <div className="content-wide grid gap-4 sm:grid-cols-2">
+          {serviceThemes.map((theme, i) => (
+            <FadeIn key={theme.id} delay={i * 0.06}>
+              <ServiceThemeCard theme={theme} />
             </FadeIn>
           ))}
         </div>
@@ -186,6 +191,32 @@ export function Home() {
       <Divider />
 
       <Section theme="cream">
+        <SectionHeader
+          eyebrow="Proof, not promises"
+          title="See ideas working before you commit."
+          description={prototypeProofLine}
+        />
+        <FadeIn className="content-wide">
+          <div className="rounded-3xl bg-cream px-6 py-10 sm:px-10 sm:py-14 ring-1 ring-line">
+            <p className="mb-8 text-center text-[0.9375rem] text-muted">
+              {featuredDemo.clientName} is a placeholder for an aviation engagement. Try the
+              check-in flow below.
+            </p>
+            <DemoRenderer demoId={featuredDemo.id} />
+            <p className="mt-8 flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-center">
+              <ArrowLink to="/services/prototype-development#horizon-airways">
+                See all prototype demos
+              </ArrowLink>
+              <span className="hidden text-muted-light sm:inline">·</span>
+              <ArrowLink to="/services/prototype-development">About Test Before You Invest</ArrowLink>
+              <span className="hidden text-muted-light sm:inline">·</span>
+              <ArrowLink to="/services/data-ai">Data, AI & Insights</ArrowLink>
+            </p>
+          </div>
+        </FadeIn>
+      </Section>
+
+      <Section>
         <SectionHeader
           eyebrow="Our work"
           title="Three prototypes. Three industries."
@@ -267,8 +298,8 @@ export function Home() {
           <FadeIn>
             <h2 className="headline-section">Start the conversation.</h2>
             <p className="body-large mx-auto mt-5 max-w-[520px]">
-              Sydney-based. Working across Australia and online worldwide.
-              Book a free initial consultation - we will help you figure out if we are the right fit.
+              Sydney-based. Working across Australia and online worldwide. Book a free clarity call
+              - we will help you figure out if we are the right fit.
             </p>
             <div className="mt-10 flex flex-col items-center gap-4">
               <Button to="/contact">{site.ctaLabel}</Button>

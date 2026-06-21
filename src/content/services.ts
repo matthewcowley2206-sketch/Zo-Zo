@@ -28,10 +28,10 @@ export type Service = {
 export const services: Service[] = [
   {
     slug: 'prototype-development',
-    title: 'Prototype Development',
-    tagline: 'See your idea working - before you commit to building it.',
+    title: 'Test Before You Invest',
+    tagline: 'Validate ideas and reduce uncertainty before you commit serious spend.',
     summary:
-      'We build clickable, working mock-ups of your idea - an app, customer journey, dashboard, or workflow - so you can test, share, and decide before spending on full development.',
+      'We build working prototypes you can click through - apps, customer journeys, dashboards, or workflows - so leaders can test assumptions, gather feedback, and decide with evidence. Not a software development agency.',
     whoFor:
       'Leaders with a new idea, high stakes, or stakeholders who need to see it working - not just read about it in a deck.',
     includes: [
@@ -80,7 +80,7 @@ export const services: Service[] = [
       'Shared understanding across stakeholders',
       'A clear blueprint if you choose to build',
     ],
-    relatedSlugs: ['strategy', 'go-to-market'],
+    relatedSlugs: ['strategy', 'growth-gtm'],
   },
   {
     slug: 'strategy',
@@ -110,7 +110,7 @@ export const services: Service[] = [
     faq: [
       { question: 'How is this different from a business plan?', answer: 'Shorter, sharper, and built to use - not sit in a drawer. Most clients leave with a one-page direction and a 90-day plan they actually follow.' },
       { question: 'Do I need a full strategy project?', answer: 'Not always. Some clients need a clarity session and a strategy-on-a-page. Others want a deeper pack for their board. We scope to fit.' },
-      { question: 'Can strategy include prototyping?', answer: 'Yes. When direction needs more than words, we can build working mock-ups so your team sees where you are headed. See Prototype Development.' },
+      { question: 'Can strategy include prototyping?', answer: 'Yes. When direction needs more than words, we can build working mock-ups so your team sees where you are headed. See Test Before You Invest.' },
     ],
     outcomes: [
       'A clear direction everyone understands',
@@ -203,7 +203,7 @@ export const services: Service[] = [
       'A go-to-market plan your team can follow',
       'Sales and marketing pulling in the same direction',
     ],
-    relatedSlugs: ['go-to-market', 'communication'],
+    relatedSlugs: ['growth-gtm', 'communication'],
   },
   {
     slug: 'communication',
@@ -242,7 +242,7 @@ export const services: Service[] = [
       'Client narratives and materials ready for board, team, or clients',
       'Less confusion and faster alignment during change',
     ],
-    relatedSlugs: ['strategy', 'sales-marketing'],
+    relatedSlugs: ['strategy', 'growth-gtm'],
   },
   {
     slug: 'data-ai',
@@ -347,7 +347,7 @@ export const services: Service[] = [
     ],
     faq: [
       { question: 'We are launching something new. Where do we start?', answer: 'Usually with the offer and audience - get those sharp before you spend on channels.' },
-      { question: 'Can you prototype the customer experience?', answer: 'Yes. Seeing the offer in action before launch is one of the most valuable things we do. See Prototype Development.' },
+      { question: 'Can you prototype the customer experience?', answer: 'Yes. Seeing the offer in action before launch is one of the most valuable things we do. See Test Before You Invest.' },
       { question: 'Do you guarantee sales?', answer: 'No - but we give you a clear plan, sharp messaging, and a way to learn fast instead of guessing.' },
     ],
     outcomes: [
@@ -355,11 +355,65 @@ export const services: Service[] = [
       'Messaging that explains your offer clearly',
       'A test-and-learn approach that reduces launch risk',
     ],
-    relatedSlugs: ['prototype-development', 'sales-marketing'],
+    relatedSlugs: ['prototype-development', 'growth-gtm'],
     prototypeNote:
       'Launch plans land better when people can see the offer in action. We build mock-ups to test messaging, flows, and positioning before go-live.',
   },
+  {
+    slug: 'growth-gtm',
+    title: 'Growth & Go-to-Market',
+    tagline: 'Position, launch, and grow with confidence - not guesswork.',
+    summary:
+      'One coherent path from positioning to launch: sharpen your offer, reach the right audience, equip your team, and activate commercially - without separate sales and GTM tracks fighting each other.',
+    whoFor:
+      'Leaders who need clarity on messaging, audience, and a launch plan the team can actually execute.',
+    includes: [
+      'Positioning statement and value proposition in plain English',
+      'Go-to-market strategy pack and week-by-week launch plan',
+      'Customer journey map - where you win and where you lose people',
+      'Content plan and channel approach that fits your capacity',
+      'Sales pitch packs and enablement so teams say the same thing',
+      'Test-and-learn roadmap to reduce launch risk',
+    ],
+    approachTitle: 'One growth story. One plan.',
+    approachDescription:
+      'We merged what used to be separate sales, marketing, and go-to-market work into a single engagement - because clients should not have to choose between overlapping services.',
+    processSteps: [
+      { number: '01', title: 'Clarify your value', description: 'Why customers choose you - sharp positioning, not marketing jargon.' },
+      { number: '02', title: 'Define the audience', description: 'Segments, profiles, and where to find the right people.' },
+      { number: '03', title: 'Build the plan', description: 'Channels, content, cadence, and launch sequence you can run.' },
+      { number: '04', title: 'Equip the team', description: 'Pitch packs, messaging, and tools so sales and marketing align.' },
+      { number: '05', title: 'Test, learn, and scale', description: 'Small bets first - double down on what converts.' },
+    ],
+    faq: [
+      {
+        question: 'How is Growth & Go-to-Market different from separate sales and marketing help?',
+        answer:
+          'It is one integrated offer. Positioning, journey, launch plan, and sales enablement belong together - we scope one engagement instead of sending you to two service pages.',
+      },
+      {
+        question: 'Do you run campaigns for us?',
+        answer:
+          'We focus on clarity, strategy, and structure - the plan and messaging your team or partners can execute.',
+      },
+      {
+        question: 'Can you prototype the customer experience before launch?',
+        answer:
+          'Yes. When seeing the offer in action matters, we connect this work with Test Before You Invest.',
+      },
+    ],
+    outcomes: [
+      'Positioning and messaging your team can repeat',
+      'A go-to-market plan you can execute week by week',
+      'Sales and marketing pulling in the same direction',
+    ],
+    relatedSlugs: ['prototype-development', 'communication'],
+    prototypeNote:
+      'Launch messaging lands better when stakeholders can click through the experience. We can prototype flows alongside GTM work.',
+  },
 ]
+
+import { legacyServiceRedirects } from './redirects'
 
 export function getService(slug: string): Service | undefined {
   return services.find((s) => s.slug === slug)
@@ -369,6 +423,9 @@ export function getRelatedServices(slug: string): Service[] {
   const service = getService(slug)
   if (!service) return []
   return service.relatedSlugs
-    .map((s) => getService(s))
+    .map((relatedSlug) => {
+      const resolvedSlug = legacyServiceRedirects[relatedSlug] ?? relatedSlug
+      return getService(resolvedSlug)
+    })
     .filter((s): s is Service => s !== undefined)
 }

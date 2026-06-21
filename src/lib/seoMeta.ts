@@ -48,9 +48,13 @@ function serviceJsonLd(seo: PageSeo) {
   if (seo.service.slug === 'prototype-development') {
     return {
       ...base,
-      serviceType: 'Prototype Development',
+      serviceType: 'Test Before You Invest',
       category: 'Business Consulting',
-      alternateName: ['Working prototype development', 'Clickable prototype services'],
+      alternateName: [
+        'Working prototype development',
+        'Prototype development for decision support',
+        'Clickable prototype services',
+      ],
       offers: {
         '@type': 'Offer',
         price: '8500',
@@ -111,10 +115,11 @@ export function buildJsonLd(seo: PageSeo): Record<string, unknown> {
       description: entitySummary,
       slogan: site.tagline,
       knowsAbout: [
-        'Prototype Development',
-        'Business Strategy',
+        'Test Before You Invest',
         'Working Prototypes',
-        'Go-to-Market Planning',
+        'Business Strategy',
+        'Client Listening',
+        'Growth and Go-to-Market',
       ],
       areaServed: {
         '@type': 'Country',

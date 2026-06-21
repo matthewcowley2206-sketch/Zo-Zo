@@ -1,6 +1,7 @@
 import { engagementFaq } from './howWeWork'
 import { pricingFaqs } from './pricing'
 import { absoluteSiteImage, localImages } from './imageUrls'
+import { legacyServiceRedirects } from './redirects'
 import { services, type Service } from './services'
 import { site } from './site'
 
@@ -26,13 +27,13 @@ export type PageSeo = {
 
 /** Plain-language entity summary for humans and answer engines. */
 export const entitySummary =
-  'Zo&Zo Advisory is a Sydney-based business advisory helping growing companies across Australia turn complexity into clarity. We combine strategy, client listening, operations, data and AI guidance, and working prototypes you can click through before committing to full development.'
+  'Zo&Zo Advisory is a Sydney-based business advisory helping leaders across Australia move from uncertainty to confidence. We help you define the right problem, understand customers and stakeholders, shape strategy, design practical solutions, and test ideas before major investment — so you can decide what to do next with evidence, not guesswork.'
 
 export const homeFaqs: FaqItem[] = [
   {
     question: 'What does Zo&Zo Advisory do?',
     answer:
-      'We help growing business owners make clearer decisions and test ideas with working prototypes. Services include strategy and direction, client listening, sales and marketing clarity, communication, data and AI, operations simplification, go-to-market planning, and prototype development.',
+      'We help leaders move from uncertainty to confidence through a practical method: Understand what is really going on, Structure the opportunity, Prototype ideas before major investment, and Decide with evidence. Capabilities include Client Listening, strategy and operations, test-before-you-invest prototypes, Data & AI advisory, and Growth & Go-to-Market.',
   },
   {
     question: 'Who is Zo&Zo Advisory for?',
@@ -42,7 +43,7 @@ export const homeFaqs: FaqItem[] = [
   {
     question: 'What makes Zo&Zo different from other advisors?',
     answer:
-      'We do not stop at slide decks. Where it matters, we build working prototypes so you can click, share, and test before serious development spend - alongside strategy, listening, and operational clarity.',
+      'We are not a software development agency. We reduce uncertainty with structure and insight first - and where it matters, build working prototypes and practical AI-enabled tools so you can test before you commit serious spend.',
   },
   {
     question: 'How do I start working with Zo&Zo?',
@@ -53,9 +54,9 @@ export const homeFaqs: FaqItem[] = [
 
 const staticPageMeta: Record<string, Omit<PageSeo, 'path'>> = {
   '/': {
-    title: 'Prototype Development & Business Strategy · Zo&Zo Advisory · Sydney',
+    title: 'Business Advisory · Uncertainty to Confidence · Zo&Zo · Sydney',
     description:
-      'Sydney-based prototype development and business advisory for growing companies across Australia. Clickable working prototypes, strategy, and clarity before full build.',
+      'Zo&Zo Advisory helps leaders define the right problem, understand customers, shape strategy, design practical solutions, and test ideas before investment. Sydney-based, Australia-wide.',
     ogType: 'website',
     faq: homeFaqs,
   },
@@ -66,9 +67,9 @@ const staticPageMeta: Record<string, Omit<PageSeo, 'path'>> = {
     faq: [...engagementFaq],
   },
   '/services': {
-    title: 'Services | Prototype Development, Strategy & Client Insight · Zo&Zo',
+    title: 'Services · Reduce Uncertainty · Zo&Zo Advisory · Sydney',
     description:
-      'Zo&Zo Advisory services including prototype development, strategy, client listening, sales and marketing, communication, data and AI, operations, and go-to-market.',
+      'Four ways Zo&Zo helps leaders: understand customers, shape strategy, test ideas before investment, and grow with confidence. Client listening, strategy, prototypes, data & AI, and go-to-market.',
   },
   '/about': {
     title: 'About Zo&Zo Advisory | Sydney Business Strategy Partner',
@@ -78,7 +79,7 @@ const staticPageMeta: Record<string, Omit<PageSeo, 'path'>> = {
   '/pricing': {
     title: 'Pricing | Zo&Zo Advisory · Simple Starting Points',
     description:
-      'Typical starting points for Zo&Zo Advisory services - strategy, prototypes, client listening, operations, and more. Fixed quotes after scoping, ex GST.',
+      'Typical starting points by problem area - client listening, strategy, test-before-you-invest prototypes, data & AI, and Growth & Go-to-Market from $5,500. Fixed quotes after scoping, ex GST.',
     faq: pricingFaqs,
   },
   '/contact': {
@@ -91,7 +92,7 @@ const staticPageMeta: Record<string, Omit<PageSeo, 'path'>> = {
 export function getServiceSeo(service: Service): PageSeo {
   const descriptions: Record<string, string> = {
     'prototype-development':
-      'Prototype development for apps, workflows, dashboards, and customer journeys. Zo&Zo Advisory builds clickable working prototypes in Sydney and across Australia so you can test ideas before full software development.',
+      'Test before you invest with working prototypes for apps, workflows, dashboards, and customer journeys. Zo&Zo builds clickable prototypes in Sydney and across Australia so leaders can validate ideas before major spend - not a software development agency.',
     strategy:
       'Strategy and direction for growing businesses. Cut through competing priorities and leave with a plan your team can actually follow.',
     'client-listening':
@@ -106,17 +107,19 @@ export function getServiceSeo(service: Service): PageSeo {
       'Operations simplification and workflow design. Map what happens today, automate the repetitive, and document how it works.',
     'go-to-market':
       'Go-to-market planning you can execute week by week. Sharpen the offer, define the audience, and test before you scale.',
+    'growth-gtm':
+      'Growth and go-to-market advisory in one engagement. Positioning, customer journey, launch plan, and sales enablement from $5,500 ex GST.',
   }
 
   if (service.slug === 'prototype-development') {
     return {
-      title: 'Prototype Development Services | Sydney & Australia · Zo&Zo Advisory',
+      title: 'Test Before You Invest · Working Prototypes · Zo&Zo Advisory · Sydney',
       description: descriptions[service.slug],
       path: `/services/${service.slug}`,
       ogType: 'article',
       faq: service.faq,
       service,
-      primaryKeyword: 'prototype development',
+      primaryKeyword: 'test before you invest',
     }
   }
 
@@ -157,7 +160,13 @@ export const sitemapPaths = [
   '/how-we-work',
   '/services',
   '/services/prototype-development',
-  ...services.filter((service) => service.slug !== 'prototype-development').map((service) => `/services/${service.slug}`),
+  ...services
+    .filter(
+      (service) =>
+        service.slug !== 'prototype-development' &&
+        !Object.keys(legacyServiceRedirects).includes(service.slug),
+    )
+    .map((service) => `/services/${service.slug}`),
   '/about',
   '/pricing',
   '/contact',

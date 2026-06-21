@@ -1,15 +1,12 @@
-import { services } from '../content/services'
+import { serviceThemes } from '../content/method'
 import { engagementFaq, engagementSteps } from '../content/howWeWork'
 import { engagementTypes, site } from '../content/site'
-import { ServiceCardLink } from '../components/services/ServiceCardLink'
+import { ServiceThemeCard } from '../components/services/ServiceThemeCard'
 import { ArrowLink, Button } from '../components/ui/Button'
 import { FadeIn } from '../components/ui/FadeIn'
 import { Section, SectionHeader } from '../components/ui/Section'
 
 export function HowWeWork() {
-  const servicePreview = services.filter((s) => s.slug !== 'prototype-development')
-  const prototypeService = services.find((s) => s.slug === 'prototype-development')
-
   return (
     <>
       <Section size="hero" className="hero-offset">
@@ -56,19 +53,14 @@ export function HowWeWork() {
         <SectionHeader
           eyebrow="Our services"
           title="Once we understand you, we recommend what applies."
-          description="You might need one service. You might need a few. Here is what we offer - explore any that resonate."
+          description="You might need one theme. You might need a few. Start with the problem that feels most urgent."
         />
         <div className="content-wide grid gap-4 sm:grid-cols-2">
-          {servicePreview.map((service, i) => (
-            <FadeIn key={service.slug} delay={i * 0.04}>
-              <ServiceCardLink service={service} variant="compact" />
+          {serviceThemes.map((theme, i) => (
+            <FadeIn key={theme.id} delay={i * 0.04}>
+              <ServiceThemeCard theme={theme} />
             </FadeIn>
           ))}
-          {prototypeService && (
-            <FadeIn delay={0.08}>
-              <ServiceCardLink service={prototypeService} variant="compact" />
-            </FadeIn>
-          )}
         </div>
         <FadeIn className="mt-10 text-center">
           <ArrowLink to="/services">View all services</ArrowLink>

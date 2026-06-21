@@ -24,7 +24,7 @@ export function Footer() {
                   to="/services/prototype-development"
                   className="focus-ring rounded-sm text-[0.9375rem] font-medium text-ink transition-colors hover:text-muted"
                 >
-                  Prototype Development
+                  Test Before You Invest
                 </Link>
               </li>
               {navLinks.map((link) => (

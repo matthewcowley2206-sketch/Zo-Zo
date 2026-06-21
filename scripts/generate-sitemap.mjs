@@ -5,15 +5,15 @@ import { fileURLToPath } from 'node:url'
 const SITE_URL = 'https://www.zoandzo.com.au'
 const lastmod = new Date().toISOString().slice(0, 10)
 
+/** Canonical service URLs — legacy merged slugs redirect and are excluded. */
 const serviceSlugs = [
   'prototype-development',
   'strategy',
   'client-listening',
-  'sales-marketing',
   'communication',
   'data-ai',
   'operations',
-  'go-to-market',
+  'growth-gtm',
 ]
 
 const paths = [
@@ -25,7 +25,7 @@ const paths = [
     .filter((slug) => slug !== 'prototype-development')
     .map((slug) => ({
       loc: `/services/${slug}`,
-      priority: '0.85',
+      priority: slug === 'growth-gtm' ? '0.9' : '0.85',
       changefreq: 'monthly',
     })),
   { loc: '/about', priority: '0.7', changefreq: 'monthly' },

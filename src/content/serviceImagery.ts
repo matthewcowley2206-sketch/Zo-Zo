@@ -98,4 +98,15 @@ export const serviceImagery: Partial<Record<string, ServiceImagerySet>> = {
       alt: 'Stakeholders aligning on launch priorities in conversation',
     },
   },
+  'growth-gtm': {
+    hero: {
+      url: siteImage(localImages.goToMarketHero),
+      alt: 'Diverse launch team collaborating around laptops and charts in a bright modern office',
+      objectPosition: 'center 45%',
+    },
+    secondary: {
+      url: hiRes(photos.gtmStakeholders),
+      alt: 'Stakeholders aligning on launch priorities in conversation',
+    },
+  },
 }

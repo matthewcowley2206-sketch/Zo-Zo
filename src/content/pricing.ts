@@ -12,10 +12,10 @@ export type PricingRow = {
   outcome: string
 }
 
-const pricingBySlug: Record<string, { fromAmount: number; outcome: string }> = {
+export const pricingBySlug: Record<string, { fromAmount: number; outcome: string }> = {
   'prototype-development': {
     fromAmount: 8500,
-    outcome: 'A working prototype of your key idea or flow',
+    outcome: 'A working prototype to validate your idea and support a confident decision',
   },
   strategy: {
     fromAmount: 4500,
@@ -44,6 +44,10 @@ const pricingBySlug: Record<string, { fromAmount: number; outcome: string }> = {
   'go-to-market': {
     fromAmount: 6000,
     outcome: 'GTM strategy pack, audience profiles, and a week-by-week launch plan',
+  },
+  'growth-gtm': {
+    fromAmount: 5500,
+    outcome: 'Positioning, GTM plan, customer journey, and sales-ready messaging in one engagement',
   },
 }
 
