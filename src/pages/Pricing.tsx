@@ -1,6 +1,13 @@
 import { Link } from 'react-router-dom'
 import { formatFromPrice, pricingFaqs, pricingThemeGroups } from '../content/pricingThemes'
 import { site } from '../content/site'
+import { TbyiCapabilityHeader } from '../components/services/TbyiCapabilityHeader'
+import {
+  isTestBeforeYouInvest,
+  tbyiCapabilityBodyClasses,
+  tbyiCapabilityLinkClasses,
+  tbyiCapabilityTitleClasses,
+} from '../lib/testBeforeYouInvest'
 import { FaqSection } from '../components/seo/FaqSection'
 import { Button } from '../components/ui/Button'
 import { FadeIn } from '../components/ui/FadeIn'
@@ -17,8 +24,9 @@ export function Pricing() {
           </FadeIn>
           <FadeIn delay={0.15} className="mt-8 max-w-[640px]">
             <p className="body-large">
-              Every engagement is scoped to your outcome. These are typical starting points by
-              problem area - not menu prices. We quote a fixed amount before work begins.
+              Every engagement is scoped to your outcome. Typical investment levels below are
+              starting points by problem area - not menu prices. We quote a fixed amount before work
+              begins.
             </p>
           </FadeIn>
         </div>
@@ -40,35 +48,46 @@ export function Pricing() {
 
                 <ul className="divide-y divide-line">
                   {group.modules.map((module) => {
-                    const isPrototype = module.slug === 'prototype-development'
+                    const isTbyi = isTestBeforeYouInvest({ slug: module.slug, label: module.title })
 
                     return (
                       <li key={module.slug}>
                         <div
                           className={`grid gap-3 px-6 py-6 sm:grid-cols-[minmax(0,1.1fr)_120px_minmax(0,1fr)] sm:items-center sm:gap-8 sm:px-8 ${
-                            isPrototype ? 'bg-ink text-cream' : ''
+                            isTbyi ? tbyiCapabilityLinkClasses : ''
                           }`}
                         >
                           <div>
-                            <Link
-                              to={module.href}
-                              className={`text-[1.0625rem] font-semibold transition-opacity hover:opacity-80 ${
-                                isPrototype ? 'text-cream' : 'text-ink'
-                              }`}
-                            >
-                              {module.title}
-                            </Link>
+                            {isTbyi ? (
+                              <Link
+                                to={module.href}
+                                className="block transition-opacity hover:opacity-90"
+                              >
+                                <TbyiCapabilityHeader
+                                  title={module.title}
+                                  titleClassName={tbyiCapabilityTitleClasses}
+                                  badgeClassName="mt-2"
+                                />
+                              </Link>
+                            ) : (
+                              <Link
+                                to={module.href}
+                                className="text-[1.0625rem] font-semibold text-ink transition-opacity hover:opacity-80"
+                              >
+                                {module.title}
+                              </Link>
+                            )}
                           </div>
                           <p
                             className={`text-[1.0625rem] font-semibold tabular-nums ${
-                              isPrototype ? 'text-cream' : 'text-ink'
+                              isTbyi ? 'text-cream' : 'text-ink'
                             }`}
                           >
                             {formatFromPrice(module.fromAmount)}
                           </p>
                           <p
                             className={`text-[0.9375rem] leading-relaxed ${
-                              isPrototype ? 'text-cream/75' : 'text-muted'
+                              isTbyi ? tbyiCapabilityBodyClasses : 'text-muted'
                             }`}
                           >
                             {module.outcome}

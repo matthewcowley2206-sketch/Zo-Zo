@@ -58,14 +58,18 @@ export function About() {
         <div className="content-max max-w-[720px]">
           <FadeIn className="space-y-6">
             <div>
-              <p className="text-[1.0625rem] font-semibold text-ink">Matthew Cowley</p>
-              <p className="mt-1 text-[0.875rem] text-muted">Founder, Zo&Zo Advisory</p>
+              <p className="text-[1.0625rem] font-semibold text-ink">{site.principalAdvisorTitle}</p>
+              <p className="mt-1 text-[0.875rem] text-muted">{site.name}</p>
             </div>
             <p className="body-regular">
+              {site.name} is led by a Principal Advisor with more than 20 years&apos; experience
+              across commercial strategy, customer insight, sales, growth, aviation, professional
+              services and advisory work.
+            </p>
+            <p className="body-regular">
               After years working with large organisations to streamline processes, make sense of
-              data, and deliver go-to-market strategies, I saw how much of that experience could
-              help growing businesses - if it was translated into something flexible, practical,
-              and human.
+              data, and deliver go-to-market strategies, that experience is translated into
+              something flexible, practical, and human for growing businesses.
             </p>
             <p className="body-regular">
               That is what we do at Zo&Zo Advisory. We ask the right questions, listen properly, and
@@ -86,7 +90,7 @@ export function About() {
             <blockquote className="headline-section text-cream max-w-[800px] mx-auto">
               &ldquo;Clarity creates momentum - and momentum changes everything.&rdquo;
             </blockquote>
-            <p className="mt-6 text-[1.0625rem] text-cream/60">Matthew Cowley · {site.name}</p>
+            <p className="mt-6 text-[1.0625rem] text-cream/60">{site.name}</p>
           </FadeIn>
         </div>
       </Section>

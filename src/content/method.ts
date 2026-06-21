@@ -12,6 +12,7 @@ export const methodSteps = [
     number: '01',
     id: 'understand',
     title: 'Understand',
+    href: '/services/client-listening',
     description:
       'Clarify what is really happening — define the right problem, understand the customer, stakeholder or business challenge.',
     uncertainty:
@@ -21,6 +22,7 @@ export const methodSteps = [
     number: '02',
     id: 'structure',
     title: 'Structure',
+    href: '/services/strategy',
     description:
       'Create clarity around the opportunity, map workflows, design practical approaches and establish priorities your team can follow.',
     uncertainty:
@@ -30,6 +32,7 @@ export const methodSteps = [
     number: '03',
     id: 'prototype',
     title: 'Prototype',
+    href: '/services/prototype-development',
     description:
       'Test ideas before major investment - concepts, workflows, AI-enabled tools, dashboards, customer experiences, or internal solutions.',
     uncertainty:
@@ -39,6 +42,7 @@ export const methodSteps = [
     number: '04',
     id: 'decide',
     title: 'Decide',
+    href: '/services/growth-gtm',
     description:
       'Use evidence, feedback, and insight to make confident decisions about next steps.',
     uncertainty:

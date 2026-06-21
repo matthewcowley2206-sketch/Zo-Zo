@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { navLinks, site } from '../../content/site'
+import { tbyiSignaturePillClasses } from '../../lib/testBeforeYouInvest'
 import { Logo } from './Logo'
 
 export function Footer() {
@@ -22,7 +23,7 @@ export function Footer() {
               <li>
                 <Link
                   to="/services/prototype-development"
-                  className="focus-ring rounded-sm text-[0.9375rem] font-medium text-ink transition-colors hover:text-muted"
+                  className={`focus-ring rounded-lg px-2.5 py-1.5 text-[0.9375rem] font-semibold transition-colors ${tbyiSignaturePillClasses}`}
                 >
                   Test Before You Invest
                 </Link>

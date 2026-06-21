@@ -12,7 +12,7 @@ A modern, Apple-inspired marketing site for [Zo&Zo Advisory](https://www.zoandzo
 | `/services/:slug` | Full service detail (comprehensive layout for every service) |
 | `/services/prototype-development` | Prototype Development + interactive demo showcase |
 | `/work` | Redirects to `/services/prototype-development#demos` |
-| `/about` | About Matthew + Zo&Zo |
+| `/about` | About Zo&Zo Advisory |
 | `/contact` | Contact form + details |
 
 ## Live site (GitHub Pages)
@@ -40,7 +40,7 @@ Then open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ## Contact form
 
-Submissions are emailed to **matt@zoandzo.com.au** with a copy to **phoenix8760@gmail.com** via [FormSubmit](https://formsubmit.co). The first time the form is used on the live site, FormSubmit sends a one-time activation link to matt@zoandzo.com.au - click it to enable delivery.
+Submissions are emailed via [FormSubmit](https://formsubmit.co) to **matt@zoandzo.com.au**, with a copy to the CC address in `src/content/site.ts`.
 
 ## Pause the live site (Vercel maintenance mode)
 

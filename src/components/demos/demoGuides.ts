@@ -1,21 +1,231 @@
-import type { DemoAnnotationContent } from './DemoAnnotations'
+import type { DemoAssistantConfig, DemoGuideConfig, DemoJourney } from './demoTypes'
 
-export type GuideStep = {
-  id: string
-  target: string
-  hint: string
-  recovery?: string
-  annotation?: DemoAnnotationContent
-}
+export type {
+  DemoAssistantConfig,
+  DemoAssistantPrompt,
+  DemoGuideConfig,
+  DemoJourney,
+  DemoOutcome,
+  GuideStep,
+} from './demoTypes'
 
-export type DemoGuideConfig = {
-  id: string
-  title: string
-  intro: string
-  steps: GuideStep[]
-  scopeNote: string
-  completeMessage: string
-  device?: 'phone' | 'desktop'
+export const phoenixJourneys: DemoJourney[] = [
+  {
+    id: 'breakdown',
+    title: 'Machine breakdown',
+    persona: 'Store manager',
+    scenario: 'My coffee machine has stopped working.',
+    processingMessages: [
+      'Reviewing symptoms…',
+      'Cross-checking service history…',
+      'Generating diagnosis…',
+    ],
+    steps: [
+      {
+        id: 'symptom',
+        target: 'symptom-slow-bitter',
+        hint: 'Select the symptom that matches — slow extraction and bitter taste.',
+        recovery: 'Tap the symptom card describing slow extraction and bitter taste.',
+        annotation: {
+          id: 'symptom-pick',
+          clientAsk:
+            'staff to diagnose common faults without calling a technician every time.',
+          ourSolution:
+            'guided symptom capture that mirrors how baristas actually describe problems on shift.',
+        },
+      },
+      {
+        id: 'diagnose',
+        target: 'run-diagnosis-btn',
+        hint: 'Run AI diagnosis on the symptoms you selected.',
+        recovery: 'Tap Run AI diagnosis below the selected symptoms.',
+        annotation: {
+          id: 'ai-diagnose',
+          clientAsk: 'likely causes before anyone opens the machine or calls service.',
+          ourSolution:
+            'simulated AI analysis using machine model, usage, and symptom pattern — tested with store managers first.',
+        },
+      },
+      {
+        id: 'action',
+        target: 'action-descale',
+        hint: 'Choose the recommended descale action.',
+        recovery: 'After diagnosis, tap Run descale cycle (recommended).',
+        annotation: {
+          id: 'action-pick',
+          clientAsk: 'clear next steps staff can follow without a manual.',
+          ourSolution:
+            'ranked actions with estimated time and cost — avoids unnecessary callouts.',
+        },
+      },
+      {
+        id: 'outcome',
+        target: 'outcome-continue',
+        hint: 'Review the outcome — likely cause identified and callout avoided.',
+        recovery: 'Scroll to the outcome summary, then tap Continue exploring.',
+        annotation: {
+          id: 'outcome-breakdown',
+          clientAsk: 'proof that self-service troubleshooting saves money and downtime.',
+          ourSolution:
+            'before/after outcome with estimated technician cost avoided — leadership saw ROI in one session.',
+        },
+      },
+    ],
+    outcome: {
+      beforeLabel: 'Before',
+      beforeValue: 'Unknown fault · technician booked',
+      afterLabel: 'After',
+      afterValue: 'Scale buildup identified · descale scheduled',
+      headline: 'Likely cause identified without a service call.',
+      metric: 'Est. $180 callout avoided',
+    },
+  },
+  {
+    id: 'learn',
+    title: 'Learn my machine',
+    persona: 'New barista',
+    scenario: 'I want to understand my machine better.',
+    steps: [
+      {
+        id: 'boiler',
+        target: 'part-boiler',
+        hint: 'Tap the boiler on the machine diagram.',
+        recovery: 'Open the machine explorer and tap the Boiler component.',
+        annotation: {
+          id: 'part-boiler',
+          clientAsk: 'new staff to learn components without shadowing a senior barista for weeks.',
+          ourSolution:
+            'interactive diagram with plain-language guidance per component — validated in one store pilot.',
+        },
+      },
+      {
+        id: 'guidance',
+        target: 'part-guidance-next',
+        hint: 'Continue to explore another component.',
+        recovery: 'Tap Next component after reading the boiler guidance.',
+      },
+      {
+        id: 'grouphead',
+        target: 'part-grouphead',
+        hint: 'Tap the group head to see cleaning guidance.',
+        recovery: 'Tap Group head on the diagram.',
+        annotation: {
+          id: 'part-grouphead',
+          clientAsk: 'maintenance tasks tied to the part that actually needs attention.',
+          ourSolution:
+            'component-level cleaning steps and common faults — reduces training time and inconsistency.',
+        },
+      },
+      {
+        id: 'done',
+        target: 'explorer-done',
+        hint: 'Finish the explorer tour.',
+        recovery: 'Tap Finish tour when you have reviewed two components.',
+        annotation: {
+          id: 'explorer-done',
+          clientAsk: 'confidence that staff understand the machine before peak service.',
+          ourSolution:
+            'guided exploration with progress tracking — store managers requested this before rollout.',
+        },
+      },
+    ],
+    outcome: {
+      beforeLabel: 'Before',
+      beforeValue: 'Relies on senior staff for every question',
+      afterLabel: 'After',
+      afterValue: 'Understands boiler, group head, and cleaning cycles',
+      headline: 'Greater confidence operating the machine.',
+      metric: 'Training time reduced ~40%',
+    },
+  },
+  {
+    id: 'maintenance',
+    title: 'Preventative maintenance',
+    persona: 'Operations lead',
+    scenario: 'I want to avoid future downtime.',
+    processingMessages: [
+      'Reviewing service history…',
+      'Checking filter and cleaning cycles…',
+      'Generating recommendations…',
+    ],
+    steps: [
+      {
+        id: 'dashboard',
+        target: 'maint-dashboard',
+        hint: 'Review the maintenance dashboard — last service and upcoming tasks.',
+        recovery: 'Open the Maintenance tab and review status cards.',
+        annotation: {
+          id: 'maint-dash',
+          clientAsk: 'one view of service status across six stores without spreadsheets.',
+          ourSolution:
+            'maintenance dashboard with last service, cleaning status, and filter life — ops validated layout first.',
+        },
+      },
+      {
+        id: 'ai-rec',
+        target: 'maint-ai-rec',
+        hint: 'Review the AI maintenance recommendation.',
+        recovery: 'Scroll to AI recommendation and tap View plan.',
+        annotation: {
+          id: 'maint-ai',
+          clientAsk: 'proactive alerts before machines fail on Saturday morning rush.',
+          ourSolution:
+            'AI recommendations based on usage patterns and service intervals — tested with ops lead.',
+        },
+      },
+      {
+        id: 'schedule',
+        target: 'maint-schedule',
+        hint: 'Schedule the recommended descale.',
+        recovery: 'Tap Schedule descale on the maintenance plan.',
+      },
+      {
+        id: 'outcome',
+        target: 'outcome-continue',
+        hint: 'See the risk reduction outcome and cumulative savings.',
+        recovery: 'Review the outcome panel, then tap Continue exploring.',
+        annotation: {
+          id: 'outcome-maint',
+          clientAsk: 'proof that preventative maintenance pays for itself.',
+          ourSolution:
+            'cumulative callouts avoided tracker — leadership approved pilot budget from this view alone.',
+        },
+      },
+    ],
+    outcome: {
+      beforeLabel: 'Before',
+      beforeValue: 'Reactive repairs · 3 callouts this quarter',
+      afterLabel: 'After',
+      afterValue: 'Descale scheduled · risk score improved',
+      headline: 'Reduced risk of future failures.',
+      metric: 'Est. $2,450 callouts avoided YTD',
+    },
+  },
+]
+
+export const phoenixAssistant: DemoAssistantConfig = {
+  title: 'AI troubleshooting assistant',
+  placeholder: 'Ask about symptoms, maintenance, or machine parts.',
+  prompts: [
+    {
+      id: 'slow-bitter',
+      label: 'Slow + bitter extraction',
+      response:
+        'Likely scale buildup in the boiler or group head. Run a descale cycle first — 85% of similar cases resolve without a technician. Estimated time: 25 minutes.',
+    },
+    {
+      id: 'no-steam',
+      label: 'No steam pressure',
+      response:
+        'Check water level and steam wand blockage. If pressure gauge reads below 1 bar after refill, schedule steam system inspection — do not force the pump.',
+    },
+    {
+      id: 'next-service',
+      label: 'When is next service due?',
+      response:
+        'Surry Hills machine: descale due in 4 days based on shot count. Filter replacement due in 12 days. Scheduling now avoids weekend downtime risk.',
+    },
+  ],
 }
 
 export const demoGuides: Record<string, DemoGuideConfig> = {
@@ -91,63 +301,17 @@ export const demoGuides: Record<string, DemoGuideConfig> = {
   },
   'phoenix-coffee': {
     id: 'phoenix-coffee',
-    title: 'Order & loyalty',
+    title: 'AI troubleshooting & ops support',
     intro:
-      'Tap through a real order flow inside the phone. Each step shows what the client asked for.',
+      'Choose a scenario inside the phone, then follow the guided workflow. Each step shows what the client asked for.',
     completeMessage:
-      'Order flow complete. Try Rewards and Account tabs - or reorder from home.',
+      'Journey complete. Try another scenario, ask the AI assistant, or explore the machine diagram freely.',
     scopeNote:
-      'Built to validate ordering, loyalty, and pickup flows across six stores. Production ties into POS, kitchen displays, and inventory - this prototype settled the UX first.',
-    steps: [
-      {
-        id: 'reorder',
-        target: 'usual-btn',
-        hint: 'Your home shows tier, points, and next reward - tap Your usual to reorder.',
-        recovery: 'On Home, review your points and next reward, then tap Your usual.',
-        annotation: {
-          id: 'reorder',
-          clientAsk: 'regulars to see points, next reward, and reorder in under two taps.',
-          ourSolution:
-            'home screen with tier, points progress, next reward, and one-tap favourite - tested with store managers before build.',
-        },
-      },
-      {
-        id: 'customise',
-        target: 'add-order-btn',
-        hint: 'Add your drink to the order.',
-        recovery: 'Pick size and milk first, then tap Add to order.',
-        annotation: {
-          id: 'custom',
-          clientAsk: 'customisation without overwhelming casual orderers.',
-          ourSolution:
-            'progressive options - size first, then milk, then extras. Reduced cart abandon in testing.',
-        },
-      },
-      {
-        id: 'schedule',
-        target: 'schedule-btn',
-        hint: 'Schedule pickup for the morning commute.',
-        recovery: 'From your cart, tap Pickup time · schedule ahead.',
-        annotation: {
-          id: 'schedule',
-          clientAsk: 'order-ahead with schedule pickup for the morning commute crowd.',
-          ourSolution:
-            'schedule picker on checkout - killed same-day-only MVP after one user test.',
-        },
-      },
-      {
-        id: 'place',
-        target: 'place-order-btn',
-        hint: 'Place the order and see loyalty update.',
-        recovery: 'Return to your cart, then tap Place order.',
-        annotation: {
-          id: 'order',
-          clientAsk: 'confirmation that shows points earned and tier progress after order.',
-          ourSolution:
-            'order confirmation with scheduled pickup, points earned, and progress to next reward.',
-        },
-      },
-    ],
+      'Built to validate AI-assisted troubleshooting and preventative maintenance across six stores. Production connects to IoT sensors, service logs, and technician dispatch — this prototype settled the experience first.',
+    device: 'phone',
+    steps: [],
+    journeys: phoenixJourneys,
+    assistant: phoenixAssistant,
   },
   'northgate-legal': {
     id: 'northgate-legal',

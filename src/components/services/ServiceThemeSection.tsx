@@ -1,7 +1,15 @@
 import { Link } from 'react-router-dom'
 import type { ServiceTheme } from '../../content/method'
-import { formatFromPrice, pricingBySlug } from '../../content/pricing'
+import { formatTypicalInvestment, pricingBySlug } from '../../content/pricing'
+import {
+  isTestBeforeYouInvest,
+  standardCapabilityCardClasses,
+  tbyiCapabilityBodyClasses,
+  tbyiCapabilityLinkClasses,
+  tbyiCapabilityTitleClasses,
+} from '../../lib/testBeforeYouInvest'
 import { ArrowLink } from '../ui/Button'
+import { TbyiCapabilityHeader } from './TbyiCapabilityHeader'
 
 type ServiceThemeSectionProps = {
   theme: ServiceTheme
@@ -10,7 +18,7 @@ type ServiceThemeSectionProps = {
 
 export function ServiceThemeSection({ theme, index }: ServiceThemeSectionProps) {
   const primaryPricing = pricingBySlug[theme.primaryHref.replace('/services/', '')]
-  const isDark = theme.featured
+  const isDark = Boolean(theme.featured)
 
   return (
     <article
@@ -54,7 +62,11 @@ export function ServiceThemeSection({ theme, index }: ServiceThemeSectionProps) 
           >
             Problem
           </dt>
-          <dd className={`mt-2 text-[0.9375rem] leading-relaxed ${isDark ? 'text-cream/80' : 'text-ink/85'}`}>
+          <dd
+            className={`mt-2 text-[0.9375rem] leading-relaxed ${
+              isDark ? 'text-cream/80' : 'text-ink/85'
+            }`}
+          >
             {theme.problem}
           </dd>
         </div>
@@ -66,7 +78,11 @@ export function ServiceThemeSection({ theme, index }: ServiceThemeSectionProps) 
           >
             Outcome
           </dt>
-          <dd className={`mt-2 text-[0.9375rem] leading-relaxed ${isDark ? 'text-cream/80' : 'text-ink/85'}`}>
+          <dd
+            className={`mt-2 text-[0.9375rem] leading-relaxed ${
+              isDark ? 'text-cream/80' : 'text-ink/85'
+            }`}
+          >
             {theme.outcome}
           </dd>
         </div>
@@ -78,7 +94,11 @@ export function ServiceThemeSection({ theme, index }: ServiceThemeSectionProps) 
           >
             How we help
           </dt>
-          <dd className={`mt-2 text-[0.9375rem] leading-relaxed ${isDark ? 'text-cream/80' : 'text-ink/85'}`}>
+          <dd
+            className={`mt-2 text-[0.9375rem] leading-relaxed ${
+              isDark ? 'text-cream/80' : 'text-ink/85'
+            }`}
+          >
             {theme.howWeHelp}
           </dd>
         </div>
@@ -92,36 +112,53 @@ export function ServiceThemeSection({ theme, index }: ServiceThemeSectionProps) 
         >
           Capabilities
         </p>
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {theme.modules.map((module) => (
-            <li key={`${module.label}-${module.href}`}>
-              <Link
-                to={module.href}
-                className={`group block rounded-2xl border px-4 py-4 transition ${
-                  isDark
-                    ? 'border-cream/15 bg-cream/[0.04] hover:border-cream/30 hover:bg-cream/[0.08]'
-                    : 'border-line/60 bg-cream/40 hover:border-ink/15 hover:bg-cream'
-                }`}
-              >
-                <span
-                  className={`text-[0.9375rem] font-medium ${
-                    isDark ? 'text-cream group-hover:text-cream' : 'text-ink'
+        <ul className="grid items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {theme.modules.map((module) => {
+            const isTbyi = isTestBeforeYouInvest({ href: module.href, label: module.label })
+
+            return (
+              <li key={`${module.label}-${module.href}`} className="h-full">
+                <Link
+                  to={module.href}
+                  className={`group flex h-full flex-col rounded-2xl border px-4 py-4 transition ${
+                    isTbyi
+                      ? tbyiCapabilityLinkClasses
+                      : standardCapabilityCardClasses(isDark)
                   }`}
                 >
-                  {module.label}
-                </span>
-                {module.supportingLine ? (
-                  <span
-                    className={`mt-1 block text-[0.8125rem] leading-relaxed ${
-                      isDark ? 'text-cream/55' : 'text-muted'
-                    }`}
-                  >
-                    {module.supportingLine}
-                  </span>
-                ) : null}
-              </Link>
-            </li>
-          ))}
+                  {isTbyi ? (
+                    <TbyiCapabilityHeader
+                      title={module.label}
+                      titleClassName={tbyiCapabilityTitleClasses}
+                    />
+                  ) : (
+                    <span
+                      className={`text-[0.9375rem] font-medium ${
+                        isDark ? 'text-cream group-hover:text-cream' : 'text-ink'
+                      }`}
+                    >
+                      {module.label}
+                    </span>
+                  )}
+                  {module.supportingLine ? (
+                    <span
+                      className={`mt-1 block flex-1 text-[0.8125rem] leading-relaxed ${
+                        isTbyi
+                          ? tbyiCapabilityBodyClasses
+                          : isDark
+                            ? 'text-cream/55'
+                            : 'text-muted'
+                      }`}
+                    >
+                      {module.supportingLine}
+                    </span>
+                  ) : (
+                    <span className="mt-1 block flex-1" aria-hidden="true" />
+                  )}
+                </Link>
+              </li>
+            )
+          })}
         </ul>
       </div>
 
@@ -133,11 +170,7 @@ export function ServiceThemeSection({ theme, index }: ServiceThemeSectionProps) 
         <div>
           {primaryPricing ? (
             <p className={`text-[0.875rem] ${isDark ? 'text-cream/60' : 'text-muted'}`}>
-              Typical engagements from{' '}
-              <span className={`font-semibold ${isDark ? 'text-cream' : 'text-ink'}`}>
-                {formatFromPrice(primaryPricing.fromAmount)}
-              </span>{' '}
-              ex GST
+              {formatTypicalInvestment(primaryPricing.fromAmount)}
             </p>
           ) : null}
         </div>

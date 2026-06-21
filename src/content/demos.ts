@@ -39,16 +39,16 @@ export const projectDemos: ProjectDemo[] = [
     id: 'phoenix-coffee',
     clientName: 'Phoenix Coffee',
     sector: 'Hospitality',
-    themeLabel: 'Growth & Go-to-Market',
-    headline: 'Order, customise, and reward - a coffee experience you can actually try.',
+    themeLabel: 'Test Before You Invest',
+    headline: 'AI troubleshooting and ops support — before you invest in the platform.',
     summary:
-      'A mobile ordering prototype with loyalty tiers, scheduled pickup, favourites, and rewards redemption - tested with store managers before launch investment.',
+      'An interactive ops prototype with guided fault diagnosis, machine explorer, preventative maintenance, and AI assistant — tested with store managers across six locations before build.',
     challenge:
-      'A growing coffee brand wanted to launch digital ordering but needed to validate flows and offers with real interactions first.',
+      'A growing coffee chain faced costly machine downtime and inconsistent troubleshooting — but leadership needed to validate the experience before integrating IoT, service logs, and technician dispatch.',
     approach:
-      'We designed and built a working order flow - menu, customisation, cart, and loyalty progress - ready to click through and share.',
+      'We built three guided journeys inside a working mobile prototype: breakdown diagnosis, machine learning, and preventative maintenance — each ending with a measurable business outcome.',
     outcome:
-      'A validated customer journey and a sharper go-to-market plan, without building the wrong product first.',
+      'Leadership saw estimated callout savings and validated the self-service model — with confidence to invest in production integration.',
     humanImage: hiRes(photos.demoCafe),
     humanImageAlt: 'Barista pouring latte art in a warm cafe',
     accentColor: '#92400e',

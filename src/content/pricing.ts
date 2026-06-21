@@ -71,6 +71,11 @@ export function formatFromPrice(amount: number): string {
   }).format(amount)
 }
 
+/** Advisory-led pricing line for theme sections and callouts. */
+export function formatTypicalInvestment(amount: number): string {
+  return `Typical investment from ${formatFromPrice(amount)} ex GST`
+}
+
 export const pricingFaqs: PricingFaq[] = [
   {
     question: 'Are these fixed prices?',

@@ -18,8 +18,10 @@ type FormSubmitResponse = {
 export async function submitContactForm(payload: ContactFormPayload) {
   const name = `${payload.firstName} ${payload.lastName}`.trim()
 
-  const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(site.email)}`, {
-    method: 'POST',
+  const response = await fetch(
+    `https://formsubmit.co/ajax/${encodeURIComponent(site.email)}`,
+    {
+      method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -44,7 +46,7 @@ export async function submitContactForm(payload: ContactFormPayload) {
   if (!response.ok || result.success !== 'true') {
     throw new Error(
       result.message ??
-        'Unable to send your message right now. Please email matt@zoandzo.com.au directly.',
+        `Unable to send your message right now. Please email ${site.email} directly.`,
     )
   }
 

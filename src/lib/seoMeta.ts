@@ -135,8 +135,8 @@ export function buildJsonLd(seo: PageSeo): Record<string, unknown> {
       },
       founder: {
         '@type': 'Person',
-        name: site.founderName,
-        jobTitle: site.founderTitle,
+        name: site.principalAdvisorName,
+        jobTitle: site.principalAdvisorTitle,
       },
       sameAs: site.sameAs,
     },

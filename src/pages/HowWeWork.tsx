@@ -10,6 +10,7 @@ import {
 } from '../content/howWeWork'
 import { serviceThemes } from '../content/method'
 import { site } from '../content/site'
+import { MethodStepCard } from '../components/method/MethodStepCard'
 import { ServiceThemeCard } from '../components/services/ServiceThemeCard'
 import { ArrowLink, Button } from '../components/ui/Button'
 import { FadeIn } from '../components/ui/FadeIn'
@@ -41,18 +42,7 @@ export function HowWeWork() {
         <div className="content-wide grid gap-6 sm:grid-cols-2">
           {methodSteps.map((step, i) => (
             <FadeIn key={step.id} delay={i * 0.06} className="h-full">
-              <div className="flex h-full flex-col rounded-3xl border border-cream/10 bg-cream/[0.04] p-8 sm:p-9">
-                <span className="text-[0.8125rem] font-medium tabular-nums text-cream/45">
-                  {step.number}
-                </span>
-                <h2 className="headline-small mt-3 text-cream">{step.title}</h2>
-                <p className="mt-4 flex-1 text-[1.0625rem] leading-relaxed text-cream/70">
-                  {step.description}
-                </p>
-                <p className="mt-5 text-[0.8125rem] leading-relaxed text-cream/45">
-                  {step.uncertainty}
-                </p>
-              </div>
+              <MethodStepCard step={step} titleAs="h2" bodyClassName="text-cream/70" />
             </FadeIn>
           ))}
         </div>
@@ -162,7 +152,7 @@ export function HowWeWork() {
         />
         <div className="content-wide grid gap-4 sm:grid-cols-2">
           {serviceThemes.map((theme, i) => (
-            <FadeIn key={theme.id} delay={i * 0.04}>
+            <FadeIn key={theme.id} delay={i * 0.04} className="h-full">
               <ServiceThemeCard theme={theme} />
             </FadeIn>
           ))}

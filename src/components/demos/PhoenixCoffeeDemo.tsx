@@ -8,221 +8,565 @@ import {
   DemoTabBar,
 } from './DeviceFrame'
 import { InteractiveDemoShell } from './InteractiveDemoShell'
+import { DemoAiAssistant } from './shared/DemoAiAssistant'
+import { DemoJourneyPicker } from './shared/DemoJourneyPicker'
+import { DemoOutcomeReveal } from './shared/DemoOutcomeReveal'
+import { DemoProcessingSequence } from './shared/DemoProcessingSequence'
+import { DemoRecommendationPanel } from './shared/DemoRecommendationPanel'
 
 const accent = '#92400e'
-const POINTS = 847
-const TARGET = 1000
 
-type Tab = 'home' | 'order' | 'rewards' | 'account'
-type Flow = null | 'customise' | 'cart' | 'scheduled' | 'redeem' | 'confirmed'
+type Tab = 'home' | 'machine' | 'maintenance' | 'support'
+type BreakdownView = 'symptoms' | 'processing' | 'diagnosis' | 'outcome'
+type LearnView = 'diagram' | 'detail'
+type MaintView = 'dashboard' | 'processing' | 'plan' | 'outcome'
 
-const drinks = [
-  { id: 'latte', name: 'Phoenix Latte', price: 5.5, pts: 55, desc: 'House blend · microfoam' },
-  { id: 'iced', name: 'Iced Phoenix', price: 6, pts: 60, desc: 'Cold brew · orange peel' },
-  { id: 'matcha', name: 'Matcha Cloud', price: 6.5, pts: 65, desc: 'Ceremonial grade · oat' },
+const symptoms = [
+  {
+    id: 'slow-bitter',
+    targetId: 'symptom-slow-bitter',
+    label: 'Slow extraction + bitter taste',
+    detail: 'Shots running 35+ seconds · sour-bitter finish',
+  },
+  { id: 'no-steam', label: 'No steam pressure', detail: 'Steam wand weak · gauge below 1 bar' },
+  { id: 'leak', label: 'Water leak under group head', detail: 'Drip after shot · gasket wear likely' },
+]
+
+const machineParts = [
+  {
+    id: 'boiler',
+    targetId: 'part-boiler',
+    label: 'Boiler',
+    guidance: 'Heats water to brew temperature. Descale every 3 months or 10k shots.',
+    fault: 'Scale buildup causes slow extraction and bitter taste.',
+  },
+  {
+    id: 'pump',
+    label: 'Pump',
+    guidance: 'Pressurises water through the group head. Check for unusual noise.',
+    fault: 'Weak pressure often indicates pump wear or air lock.',
+  },
+  {
+    id: 'grouphead',
+    targetId: 'part-grouphead',
+    label: 'Group head',
+    guidance: 'Backflush daily · deep clean weekly. Replace gasket every 6 months.',
+    fault: 'Dirty group head causes channeling and inconsistent shots.',
+  },
+  {
+    id: 'water',
+    label: 'Water system',
+    guidance: 'Filter replacement every 30 days · monitor TDS readings.',
+    fault: 'Old filters affect taste and increase scale buildup.',
+  },
+  {
+    id: 'steam',
+    label: 'Steam system',
+    guidance: 'Purge wand after each use · descale steam circuit quarterly.',
+    fault: 'Blockage reduces steam pressure for milk texturing.',
+  },
+]
+
+const breakdownActions = [
+  {
+    id: 'descale',
+    title: 'Run descale cycle',
+    description: 'Recommended first step · 25 min · no parts required',
+    impact: 'Resolves ~85% of slow + bitter cases',
+  },
+  {
+    id: 'technician',
+    title: 'Book technician',
+    description: 'If descale fails · estimated $180 callout',
+    impact: 'Escalate after self-service attempt',
+  },
 ]
 
 function PhoenixApp() {
   const { show } = useDemoAnnotation()
-  const { mode } = useDemoGuide()
-  const [tab, setTab] = useState<Tab>('home')
-  const [flow, setFlow] = useState<Flow>(null)
-  const [drink, setDrink] = useState(drinks[0])
-  const [size, setSize] = useState('Regular')
-  const [milk, setMilk] = useState('Oat')
-  const [extraShot, setExtraShot] = useState(false)
-  const [schedule, setSchedule] = useState('Now')
+  const {
+    mode,
+    config,
+    awaitingJourney,
+    activeJourney,
+    selectJourney,
+    skipToExplore,
+  } = useDemoGuide()
 
-  const usualBtn = useGuideActivate('usual-btn')
-  const addOrderBtn = useGuideActivate('add-order-btn')
-  const scheduleBtn = useGuideActivate('schedule-btn')
-  const placeOrderBtn = useGuideActivate('place-order-btn')
+  const [tab, setTab] = useState<Tab>('home')
+  const [breakdownView, setBreakdownView] = useState<BreakdownView>('symptoms')
+  const [selectedSymptom, setSelectedSymptom] = useState<string | null>(null)
+  const [selectedAction, setSelectedAction] = useState<string | null>(null)
+  const [learnView, setLearnView] = useState<LearnView>('diagram')
+  const [activePart, setActivePart] = useState(machineParts[0])
+  const [partsVisited, setPartsVisited] = useState<Set<string>>(new Set())
+  const [maintView, setMaintView] = useState<MaintView>('dashboard')
+  const [scheduled, setScheduled] = useState(false)
+
+  const runDiagnosis = useGuideActivate('run-diagnosis-btn')
+  const symptomSlow = useGuideActivate('symptom-slow-bitter')
+  const partBoiler = useGuideActivate('part-boiler')
+  const partGrouphead = useGuideActivate('part-grouphead')
+  const guidanceNext = useGuideActivate('part-guidance-next')
+  const explorerDone = useGuideActivate('explorer-done')
+  const maintDashboard = useGuideActivate('maint-dashboard')
+  const maintAiRec = useGuideActivate('maint-ai-rec')
+  const maintSchedule = useGuideActivate('maint-schedule')
 
   const exploreShow = (annotation: Parameters<typeof show>[0]) => {
     if (mode === 'explore') show(annotation)
   }
 
-  if (flow === 'confirmed') {
-    return (
-      <DemoScreen title="Order placed" subtitle="Surry Hills" accentColor={accent} onBack={() => { setFlow(null); setTab('home') }}>
-        <div className="space-y-3 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-2xl">✓</div>
-          <p className="font-semibold">Ready {schedule === 'Now' ? 'in ~8 min' : `at ${schedule === '8:15' ? '8:15 AM' : schedule}`}</p>
-          <p className="text-[0.8125rem] text-slate-600">Scheduled pickup · Surry Hills</p>
-          <p className="text-[0.8125rem] text-slate-600">+{drink.pts + (extraShot ? 10 : 0)} Phoenix Points</p>
-          <div className="rounded-xl bg-amber-50 p-3 text-[0.8125rem] text-amber-900">
-            <p className="font-semibold">Silver tier · {POINTS + drink.pts} points</p>
-            <p className="mt-1">{TARGET - POINTS - drink.pts} points to your next free drink</p>
-          </div>
-        </div>
-      </DemoScreen>
-    )
+  const resetJourneyState = () => {
+    setBreakdownView('symptoms')
+    setSelectedSymptom(null)
+    setSelectedAction(null)
+    setLearnView('diagram')
+    setActivePart(machineParts[0])
+    setPartsVisited(new Set())
+    setMaintView('dashboard')
+    setScheduled(false)
+    setTab('home')
   }
 
-  if (flow === 'redeem') {
-    return (
-      <DemoScreen title="Redeem reward" subtitle="850 points" accentColor={accent} onBack={() => setFlow(null)}>
-        <div className="space-y-3">
-          <div className="rounded-2xl bg-white p-4 ring-1 ring-slate-100">
-            <p className="font-semibold">Free regular drink</p>
-            <p className="mt-1 text-[0.8125rem] text-slate-500">Any menu item · regular size</p>
-          </div>
-          <DemoButton accentColor={accent} onClick={() => {
-            exploreShow({ id: 'redeem', clientAsk: 'whether points redemption should happen at order or pickup.', ourSolution: 'redeem-at-checkout flow - validated in store with baristas before POS integration.' })
-            setTab('order')
-            setFlow('customise')
-          }}>Apply to next order</DemoButton>
-        </div>
-      </DemoScreen>
-    )
+  const handleSelectJourney = (id: string) => {
+    selectJourney(id)
+    resetJourneyState()
+    if (id === 'learn') setTab('machine')
+    if (id === 'maintenance') setTab('maintenance')
   }
 
-  if (flow === 'cart') {
-    const total = drink.price + (extraShot ? 0.8 : 0)
+  if (awaitingJourney) {
     return (
-      <DemoScreen title="Your order" subtitle="Surry Hills" accentColor={accent} onBack={() => setFlow('customise')}>
-        <div className="space-y-3">
-          <div className="rounded-2xl bg-white p-4 ring-1 ring-slate-100">
-            <p className="font-semibold">{drink.name}</p>
-            <p className="text-[0.8125rem] text-slate-500">{size} · {milk}{extraShot ? ' · extra shot' : ''}</p>
-            <p className="mt-2 text-[1.125rem] font-bold">${total.toFixed(2)}</p>
-          </div>
-          <GuideTarget id="schedule-btn">
-            <button type="button" onClick={() => {
-              scheduleBtn.onGuideAction()
-              setFlow('scheduled')
-            }} className="flex w-full justify-between rounded-xl bg-white p-3 ring-1 ring-slate-100 text-[0.8125rem]">
-              <span>Pickup time · schedule ahead</span><span className="font-semibold">{schedule === 'Now' ? 'Now (~8 min)' : schedule === '8:15' ? '8:15 AM' : schedule}</span>
-            </button>
-          </GuideTarget>
-          <GuideTarget id="place-order-btn">
-            <DemoButton accentColor={accent} onClick={() => {
-              placeOrderBtn.onGuideAction()
-              setFlow('confirmed')
-            }}>Place order · ${total.toFixed(2)}</DemoButton>
-          </GuideTarget>
-        </div>
-      </DemoScreen>
-    )
-  }
-
-  if (flow === 'scheduled') {
-    return (
-      <DemoScreen title="Schedule pickup" subtitle="Morning commute" accentColor={accent} onBack={() => setFlow('cart')}>
-        <p className="mb-3 text-[0.8125rem] text-slate-500">Pick a time before you place the order.</p>
-        {['Now (~8 min)', '8:15 AM', '12:30 PM'].map((t) => (
-          <button key={t} type="button" onClick={() => { setSchedule(t.split(' ')[0]); setFlow('cart') }} className="mb-2 w-full rounded-xl bg-white p-3 text-left ring-1 ring-slate-100">
-            <span className="font-semibold">{t}</span>
-            {t.includes('8:15') && <span className="mt-0.5 block text-[0.6875rem] text-slate-500">Most popular · pre-work pickup</span>}
-          </button>
-        ))}
-      </DemoScreen>
-    )
-  }
-
-  if (flow === 'customise') {
-    return (
-      <DemoScreen title={drink.name} accentColor={accent} onBack={() => { setFlow(null); setTab('order') }}>
-        <div className="space-y-3">
-          <div>
-            <p className="mb-2 text-[0.6875rem] font-semibold uppercase text-slate-400">1 · Choose size</p>
-            <div className="flex gap-2">{['Small', 'Regular', 'Large'].map((s) => (
-              <button key={s} type="button" onClick={() => setSize(s)} className={`flex-1 rounded-lg py-2 text-[0.6875rem] font-semibold ${size === s ? 'bg-amber-800 text-white' : 'bg-white ring-1 ring-slate-200'}`}>{s}</button>
-            ))}</div>
-          </div>
-          <div>
-            <p className="mb-2 text-[0.6875rem] font-semibold uppercase text-slate-400">2 · Choose milk</p>
-            <div className="flex flex-wrap gap-2">{['Oat', 'Almond', 'Full'].map((m) => (
-              <button key={m} type="button" onClick={() => setMilk(m)} className={`rounded-lg px-3 py-1.5 text-[0.6875rem] font-semibold ${milk === m ? 'bg-amber-800 text-white' : 'bg-white ring-1 ring-slate-200'}`}>{m}</button>
-            ))}</div>
-          </div>
-          <div>
-            <p className="mb-2 text-[0.6875rem] font-semibold uppercase text-slate-400">3 · Add extras</p>
-            <button type="button" onClick={() => setExtraShot(!extraShot)} className={`w-full rounded-xl p-3 text-left text-[0.8125rem] ${extraShot ? 'bg-amber-50 ring-1 ring-amber-200' : 'bg-white ring-1 ring-slate-200'}`}>Extra shot · +$0.80</button>
-          </div>
-          <GuideTarget id="add-order-btn">
-            <DemoButton accentColor={accent} onClick={() => {
-              addOrderBtn.onGuideAction()
-              setFlow('cart')
-            }}>Add to order</DemoButton>
-          </GuideTarget>
-        </div>
-      </DemoScreen>
-    )
-  }
-
-  const titles: Record<Tab, string> = { home: 'Phoenix Coffee', order: 'Order', rewards: 'Rewards', account: 'Account' }
-
-  return (
-    <div className="flex h-full flex-col">
-      <div className="min-h-0 flex-1">
-        <DemoScreen title={titles[tab]} subtitle={tab === 'home' ? 'Surry Hills · Open' : undefined} accentColor={accent}>
-          {tab === 'home' && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between rounded-xl bg-emerald-50 px-3 py-2 ring-1 ring-emerald-100">
-                <p className="text-[0.75rem] font-medium text-emerald-900">Surry Hills · Open</p>
-                <p className="text-[0.6875rem] text-emerald-700">~8 min wait</p>
-              </div>
-
-              <div className="rounded-2xl bg-amber-900 p-4 text-white">
-                <div className="flex items-start justify-between">
-                  <p className="text-[0.625rem] font-semibold uppercase opacity-80">Points · Silver tier</p>
-                  <DemoPill color="gold">Silver</DemoPill>
-                </div>
-                <p className="text-[1.5rem] font-bold">{POINTS} <span className="text-[0.875rem] font-normal opacity-80">/ {TARGET}</span></p>
-                <div className="mt-2 h-1.5 rounded-full bg-white/20"><div className="h-full rounded-full bg-white" style={{ width: `${(POINTS / TARGET) * 100}%` }} /></div>
-                <p className="mt-2 text-[0.75rem] opacity-90">{TARGET - POINTS} points to a free drink</p>
-              </div>
-
-              <div className="rounded-xl bg-white p-3 ring-1 ring-slate-100">
-                <p className="text-[0.625rem] font-semibold uppercase text-slate-400">Next reward</p>
-                <p className="mt-1 font-semibold">Free regular drink</p>
-                <p className="text-[0.6875rem] text-slate-500">{TARGET - POINTS} points away · redeem in Rewards</p>
-              </div>
-
-              <GuideTarget id="usual-btn">
-                <button type="button" onClick={() => {
-                  usualBtn.onGuideAction()
-                  setDrink(drinks[0])
-                  setFlow('customise')
-                }} className="w-full rounded-2xl bg-white p-4 text-left ring-1 ring-slate-100">
-                  <div className="flex items-center justify-between">
-                    <p className="text-[0.625rem] font-semibold uppercase text-amber-800">Your usual · 1-tap reorder</p>
-                    <DemoPill color="green">Fast</DemoPill>
-                  </div>
-                  <p className="mt-1 font-semibold">Phoenix Latte · Oat · Regular</p>
-                  <p className="mt-1 text-[0.6875rem] text-slate-500">Last ordered yesterday · 8:02 AM</p>
-                </button>
-              </GuideTarget>
-            </div>
-          )}
-          {tab === 'order' && drinks.map((d) => (
-            <button key={d.id} type="button" onClick={() => { setDrink(d); setFlow('customise') }} className="mb-2 flex w-full justify-between rounded-xl bg-white p-3 ring-1 ring-slate-100">
-              <div className="text-left"><p className="font-semibold">{d.name}</p><p className="text-[0.6875rem] text-slate-500">{d.desc}</p></div>
-              <span className="font-semibold text-amber-900">${d.price.toFixed(2)}</span>
-            </button>
-          ))}
-          {tab === 'rewards' && (
-            <div className="space-y-2">
-              <button type="button" onClick={() => setFlow('redeem')} className="w-full rounded-2xl bg-gradient-to-r from-amber-700 to-amber-900 p-4 text-left text-white">
-                <DemoPill color="gold">Available</DemoPill>
-                <p className="mt-2 font-semibold">Free regular drink</p>
-                <p className="text-[0.75rem] opacity-90">850 points · tap to redeem</p>
-              </button>
-              {['Free size upgrade · 150 pts', 'Birthday drink · 0 pts'].map((r) => (
-                <div key={r} className="rounded-xl bg-white p-3 text-[0.8125rem] ring-1 ring-slate-100">{r}</div>
-              ))}
-            </div>
-          )}
-          {tab === 'account' && (
-            <div className="space-y-2 text-[0.8125rem]">
-              <div className="rounded-xl bg-white p-3 ring-1 ring-slate-100"><p className="text-slate-500">Member since</p><p className="font-semibold">2023 · Silver tier</p></div>
-              <div className="rounded-xl bg-white p-3 ring-1 ring-slate-100"><p className="text-slate-500">Orders this month</p><p className="font-semibold">12 · $68.40 spent</p></div>
+      <div className="flex h-full flex-col">
+        <DemoScreen title="Phoenix Ops" subtitle="Surry Hills · 6 stores" accentColor={accent}>
+          <DemoJourneyPicker
+            journeys={config.journeys ?? []}
+            accentColor={accent}
+            onSelect={handleSelectJourney}
+          />
+          {config.assistant && (
+            <div className="mt-4">
+              <DemoAiAssistant config={config.assistant} accentColor={accent} compact />
             </div>
           )}
         </DemoScreen>
       </div>
-      <DemoTabBar tabs={[{ id: 'home', label: 'Home', icon: '⌂' }, { id: 'order', label: 'Order', icon: '☕' }, { id: 'rewards', label: 'Rewards', icon: '★' }, { id: 'account', label: 'You', icon: '○' }]} active={tab} onChange={(id) => { setFlow(null); setTab(id as Tab) }} accentColor={accent} />
+    )
+  }
+
+  if (mode !== 'explore' && activeJourney?.id === 'breakdown') {
+    if (breakdownView === 'processing') {
+      return (
+        <DemoScreen title="AI diagnosis" subtitle="Analysing symptoms" accentColor={accent}>
+          <DemoProcessingSequence
+            messages={
+              activeJourney.processingMessages ?? [
+                'Analysing symptoms…',
+                'Checking service history…',
+                'Generating recommendations…',
+              ]
+            }
+            accentColor={accent}
+            onComplete={() => setBreakdownView('diagnosis')}
+          />
+        </DemoScreen>
+      )
+    }
+
+    if (breakdownView === 'diagnosis') {
+      return (
+        <DemoScreen
+          title="Diagnosis ready"
+          subtitle="La Marzocco Linea · Surry Hills"
+          accentColor={accent}
+          onBack={() => setBreakdownView('symptoms')}
+        >
+          <div className="space-y-3">
+            <div className="rounded-xl bg-violet-50 p-3 ring-1 ring-violet-100">
+              <p className="text-[0.625rem] font-semibold uppercase text-violet-700">AI insight</p>
+              <p className="mt-1 text-[0.8125rem] leading-relaxed text-violet-900">
+                Pattern matches scale buildup in boiler and group head. Last descale was 94 days ago
+                — recommended interval is 90 days.
+              </p>
+            </div>
+            <DemoRecommendationPanel
+              recommendations={breakdownActions}
+              accentColor={accent}
+              highlightTargetId="action-descale"
+              selectedId={selectedAction ?? undefined}
+              onSelect={(id) => {
+                setSelectedAction(id)
+                if (id === 'descale') setBreakdownView('outcome')
+              }}
+            />
+          </div>
+        </DemoScreen>
+      )
+    }
+
+    if (breakdownView === 'outcome') {
+      return (
+        <DemoScreen title="Issue resolved" subtitle="Self-service complete" accentColor={accent}>
+          <DemoOutcomeReveal
+            outcome={activeJourney.outcome}
+            accentColor={accent}
+            onContinue={() => {
+              skipToExplore()
+              setTab('support')
+            }}
+          />
+        </DemoScreen>
+      )
+    }
+
+    return (
+      <DemoScreen title="Report a fault" subtitle="Step 2 · Select symptoms" accentColor={accent}>
+        <div className="space-y-2">
+          <p className="text-[0.8125rem] text-slate-600">
+            What is happening with the machine?
+          </p>
+          {symptoms.map((symptom) => {
+            const isTarget = symptom.targetId === 'symptom-slow-bitter'
+            const card = (
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedSymptom(symptom.id)
+                  if (symptom.id === 'slow-bitter') symptomSlow.onGuideAction()
+                }}
+                className={`w-full rounded-xl p-3 text-left ring-1 transition ${
+                  selectedSymptom === symptom.id
+                    ? 'bg-amber-50 ring-amber-300'
+                    : 'bg-white ring-slate-100'
+                }`}
+              >
+                <p className="font-semibold text-slate-900">{symptom.label}</p>
+                <p className="mt-0.5 text-[0.75rem] text-slate-500">{symptom.detail}</p>
+              </button>
+            )
+
+            if (isTarget) {
+              return (
+                <GuideTarget key={symptom.id} id={symptom.targetId!}>
+                  {card}
+                </GuideTarget>
+              )
+            }
+
+            return <div key={symptom.id}>{card}</div>
+          })}
+          {selectedSymptom && (
+            <GuideTarget id="run-diagnosis-btn">
+              <DemoButton
+                accentColor={accent}
+                onClick={() => {
+                  runDiagnosis.onGuideAction()
+                  setBreakdownView('processing')
+                }}
+              >
+                Run AI diagnosis
+              </DemoButton>
+            </GuideTarget>
+          )}
+        </div>
+      </DemoScreen>
+    )
+  }
+
+  if (mode !== 'explore' && activeJourney?.id === 'learn') {
+    if (learnView === 'detail') {
+      return (
+        <DemoScreen
+          title={activePart.label}
+          subtitle="Maintenance & faults"
+          accentColor={accent}
+          onBack={() => setLearnView('diagram')}
+        >
+          <div className="space-y-3">
+            <div className="rounded-xl bg-white p-3 ring-1 ring-slate-100">
+              <p className="text-[0.625rem] font-semibold uppercase text-slate-400">Guidance</p>
+              <p className="mt-1 text-[0.8125rem] text-slate-700">{activePart.guidance}</p>
+            </div>
+            <div className="rounded-xl bg-amber-50 p-3 ring-1 ring-amber-100">
+              <p className="text-[0.625rem] font-semibold uppercase text-amber-800">Common fault</p>
+              <p className="mt-1 text-[0.8125rem] text-amber-900">{activePart.fault}</p>
+            </div>
+            <GuideTarget id="part-guidance-next">
+              <DemoButton
+                accentColor={accent}
+                variant="secondary"
+                onClick={() => {
+                  guidanceNext.onGuideAction()
+                  setLearnView('diagram')
+                }}
+              >
+                Next component
+              </DemoButton>
+            </GuideTarget>
+            {partsVisited.size >= 2 && (
+              <GuideTarget id="explorer-done">
+                <DemoButton
+                  accentColor={accent}
+                  onClick={() => {
+                    explorerDone.onGuideAction()
+                    skipToExplore()
+                  }}
+                >
+                  Finish tour
+                </DemoButton>
+              </GuideTarget>
+            )}
+          </div>
+        </DemoScreen>
+      )
+    }
+
+    return (
+      <DemoScreen title="Machine explorer" subtitle="Tap a component" accentColor={accent}>
+        <div className="space-y-3">
+          <div className="relative mx-auto aspect-[4/5] max-w-[200px] rounded-2xl bg-gradient-to-b from-slate-100 to-slate-200 p-4">
+            {machineParts.map((part, i) => {
+              const positions = [
+                'left-1/2 top-2 -translate-x-1/2',
+                'left-2 top-1/3',
+                'right-2 top-1/3',
+                'left-1/2 bottom-16 -translate-x-1/2',
+                'left-1/2 bottom-4 -translate-x-1/2',
+              ]
+              const isTarget = part.targetId
+              const btn = (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActivePart(part)
+                    setPartsVisited((prev) => new Set(prev).add(part.id))
+                    setLearnView('detail')
+                    if (part.id === 'boiler') partBoiler.onGuideAction()
+                    if (part.id === 'grouphead') partGrouphead.onGuideAction()
+                    exploreShow({
+                      id: `part-${part.id}`,
+                      clientAsk: `staff to understand the ${part.label.toLowerCase()} without a manual.`,
+                      ourSolution: `interactive component guide with maintenance steps and common faults.`,
+                    })
+                  }}
+                  className={`absolute rounded-lg px-2 py-1 text-[0.625rem] font-semibold shadow-sm ring-1 ring-slate-300 transition hover:ring-amber-400 ${
+                    partsVisited.has(part.id) ? 'bg-emerald-100 text-emerald-800' : 'bg-white text-slate-700'
+                  } ${positions[i]}`}
+                >
+                  {part.label}
+                </button>
+              )
+
+              if (isTarget) {
+                return (
+                  <GuideTarget key={part.id} id={part.targetId!}>
+                    {btn}
+                  </GuideTarget>
+                )
+              }
+
+              return <span key={part.id}>{btn}</span>
+            })}
+            <div className="absolute inset-x-4 top-12 bottom-20 rounded-xl border-2 border-dashed border-slate-300/80" />
+          </div>
+          <p className="text-center text-[0.75rem] text-slate-500">
+            {partsVisited.size} of {machineParts.length} components explored
+          </p>
+        </div>
+      </DemoScreen>
+    )
+  }
+
+  if (mode !== 'explore' && activeJourney?.id === 'maintenance') {
+    if (maintView === 'processing') {
+      return (
+        <DemoScreen title="Generating plan" subtitle="AI maintenance" accentColor={accent}>
+          <DemoProcessingSequence
+            messages={
+              activeJourney.processingMessages ?? [
+                'Reviewing service history…',
+                'Checking filter status…',
+                'Generating recommendations…',
+              ]
+            }
+            accentColor={accent}
+            onComplete={() => setMaintView('plan')}
+          />
+        </DemoScreen>
+      )
+    }
+
+    if (maintView === 'plan') {
+      return (
+        <DemoScreen title="Maintenance plan" subtitle="AI recommended" accentColor={accent} onBack={() => setMaintView('dashboard')}>
+          <div className="space-y-3">
+            <div className="rounded-xl bg-violet-50 p-3 ring-1 ring-violet-100">
+              <p className="text-[0.625rem] font-semibold uppercase text-violet-700">Recommendation</p>
+              <p className="mt-1 text-[0.8125rem] text-violet-900">
+                Schedule descale within 4 days · filter replacement in 12 days. Risk score improves
+                from 72 to 41 with both tasks completed.
+              </p>
+            </div>
+            <GuideTarget id="maint-schedule">
+              <DemoButton
+                accentColor={accent}
+                onClick={() => {
+                  maintSchedule.onGuideAction()
+                  setScheduled(true)
+                  setMaintView('outcome')
+                }}
+              >
+                Schedule descale · Tue 7 AM
+              </DemoButton>
+            </GuideTarget>
+          </div>
+        </DemoScreen>
+      )
+    }
+
+    if (maintView === 'outcome') {
+      return (
+        <DemoScreen title="Plan scheduled" subtitle={scheduled ? 'Descale confirmed' : ''} accentColor={accent}>
+          <DemoOutcomeReveal
+            outcome={activeJourney.outcome}
+            accentColor={accent}
+            onContinue={() => {
+              skipToExplore()
+              setTab('maintenance')
+            }}
+          />
+        </DemoScreen>
+      )
+    }
+
+    return (
+      <DemoScreen title="Maintenance" subtitle="Surry Hills · Linea PB" accentColor={accent}>
+        <GuideTarget id="maint-dashboard">
+          <div
+            className="space-y-3"
+            onClick={() => maintDashboard.onGuideAction()}
+            onKeyDown={() => {}}
+            role="presentation"
+          >
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { label: 'Last service', value: '94 days ago', warn: true },
+                { label: 'Cleaning status', value: 'Due today', warn: true },
+                { label: 'Filter status', value: '12 days left', warn: false },
+                { label: 'Risk score', value: '72 / 100', warn: true },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className={`rounded-xl p-3 ring-1 ${
+                    item.warn ? 'bg-amber-50 ring-amber-100' : 'bg-white ring-slate-100'
+                  }`}
+                >
+                  <p className="text-[0.625rem] font-semibold uppercase text-slate-400">{item.label}</p>
+                  <p className="mt-1 text-[0.875rem] font-semibold text-slate-900">{item.value}</p>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-2xl bg-emerald-900 p-4 text-white">
+              <p className="text-[0.625rem] font-semibold uppercase opacity-80">Cost savings YTD</p>
+              <p className="mt-1 text-[1.375rem] font-bold">$2,450</p>
+              <p className="mt-1 text-[0.75rem] opacity-90">Service callouts avoided across 6 stores</p>
+            </div>
+            <GuideTarget id="maint-ai-rec">
+              <button
+                type="button"
+                onClick={() => {
+                  maintAiRec.onGuideAction()
+                  setMaintView('processing')
+                }}
+                className="w-full rounded-xl bg-violet-600 p-3 text-left text-white"
+              >
+                <DemoPill color="gold">AI</DemoPill>
+                <p className="mt-2 font-semibold">View maintenance plan</p>
+                <p className="text-[0.75rem] opacity-90">Descale due · filter replacement scheduled</p>
+              </button>
+            </GuideTarget>
+          </div>
+        </GuideTarget>
+      </DemoScreen>
+    )
+  }
+
+  const titles: Record<Tab, string> = {
+    home: 'Phoenix Ops',
+    machine: 'Machine',
+    maintenance: 'Maintenance',
+    support: 'Support',
+  }
+
+  return (
+    <div className="flex h-full flex-col">
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        <DemoScreen title={titles[tab]} subtitle="Explore freely" accentColor={accent}>
+          {tab === 'home' && (
+            <div className="space-y-3">
+              <div className="rounded-xl bg-emerald-50 px-3 py-2 ring-1 ring-emerald-100">
+                <p className="text-[0.75rem] font-medium text-emerald-900">All stores operational</p>
+                <p className="text-[0.6875rem] text-emerald-700">1 maintenance task due this week</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setTab('support')
+                  setBreakdownView('symptoms')
+                }}
+                className="w-full rounded-2xl bg-amber-900 p-4 text-left text-white"
+              >
+                <p className="text-[0.625rem] font-semibold uppercase opacity-80">Quick action</p>
+                <p className="mt-1 font-semibold">Report a machine fault</p>
+              </button>
+            </div>
+          )}
+          {tab === 'support' && (
+            <div className="space-y-3">
+              {config.assistant && (
+                <DemoAiAssistant config={config.assistant} accentColor={accent} />
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  setBreakdownView('symptoms')
+                  exploreShow({
+                    id: 'support-fault',
+                    clientAsk: 'a single place for fault reporting and AI guidance.',
+                    ourSolution: 'integrated troubleshooting flow with escalation path to technicians.',
+                  })
+                }}
+                className="w-full rounded-xl bg-white p-3 text-left ring-1 ring-slate-100"
+              >
+                <p className="font-semibold">Start fault report</p>
+                <p className="text-[0.75rem] text-slate-500">Guided diagnosis · ~2 min</p>
+              </button>
+            </div>
+          )}
+          {tab === 'machine' && (
+            <p className="text-[0.8125rem] text-slate-600">
+              Machine explorer available during the Learn journey. Restart to try another scenario.
+            </p>
+          )}
+          {tab === 'maintenance' && (
+            <p className="text-[0.8125rem] text-slate-600">
+              Maintenance dashboard and AI plans — explore freely or restart a journey.
+            </p>
+          )}
+        </DemoScreen>
+      </div>
+      <DemoTabBar
+        tabs={[
+          { id: 'home', label: 'Home', icon: '⌂' },
+          { id: 'machine', label: 'Machine', icon: '⚙' },
+          { id: 'maintenance', label: 'Maint.', icon: '◷' },
+          { id: 'support', label: 'Support', icon: '?' },
+        ]}
+        active={tab}
+        onChange={(id) => setTab(id as Tab)}
+        accentColor={accent}
+      />
     </div>
   )
 }

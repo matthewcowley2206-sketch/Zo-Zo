@@ -10,6 +10,7 @@ import {
 import { entitySummary, homeFaqs } from '../content/seo'
 import { site } from '../content/site'
 import { DemoRenderer } from '../components/demos/DemoRenderer'
+import { MethodStepCard } from '../components/method/MethodStepCard'
 import { ServiceThemeCard } from '../components/services/ServiceThemeCard'
 import { FaqSection } from '../components/seo/FaqSection'
 import { ArrowLink, Button } from '../components/ui/Button'
@@ -17,7 +18,7 @@ import { FadeIn } from '../components/ui/FadeIn'
 import { Divider, Section, SectionHeader } from '../components/ui/Section'
 
 export function Home() {
-  const featuredDemo = projectDemos[0]
+  const featuredDemo = projectDemos.find((d) => d.id === 'phoenix-coffee') ?? projectDemos[0]
   const clientListeningTheme = serviceThemes.find((theme) => theme.featured)
 
   return (
@@ -111,16 +112,7 @@ export function Home() {
         <div className="content-wide grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {methodSteps.map((step, i) => (
             <FadeIn key={step.id} delay={i * 0.08} className="h-full">
-              <div className="flex h-full flex-col rounded-3xl border border-cream/10 bg-cream/[0.04] p-8 sm:p-9">
-                <span className="text-[0.8125rem] font-medium tabular-nums text-cream/45">
-                  {step.number}
-                </span>
-                <h3 className="headline-small mt-3 text-cream">{step.title}</h3>
-                <p className="mt-4 flex-1 text-[1.0625rem] leading-relaxed text-cream/65">
-                  {step.description}
-                </p>
-                <p className="mt-5 text-[0.8125rem] leading-relaxed text-cream/45">{step.uncertainty}</p>
-              </div>
+              <MethodStepCard step={step} titleAs="h3" />
             </FadeIn>
           ))}
         </div>
@@ -178,7 +170,7 @@ export function Home() {
         />
         <div className="content-wide grid gap-4 sm:grid-cols-2">
           {serviceThemes.map((theme, i) => (
-            <FadeIn key={theme.id} delay={i * 0.06}>
+            <FadeIn key={theme.id} delay={i * 0.06} className="h-full">
               <ServiceThemeCard theme={theme} />
             </FadeIn>
           ))}
@@ -199,12 +191,12 @@ export function Home() {
         <FadeIn className="content-wide">
           <div className="rounded-3xl bg-cream px-6 py-10 sm:px-10 sm:py-14 ring-1 ring-line">
             <p className="mb-8 text-center text-[0.9375rem] text-muted">
-              {featuredDemo.clientName} is a placeholder for an aviation engagement. Try the
-              check-in flow below.
+              {featuredDemo.clientName} is a placeholder for a hospitality engagement. Choose a
+              scenario and follow the guided troubleshooting flow below.
             </p>
             <DemoRenderer demoId={featuredDemo.id} />
             <p className="mt-8 flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-center">
-              <ArrowLink to="/services/prototype-development#horizon-airways">
+              <ArrowLink to="/services/prototype-development#phoenix-coffee">
                 See all prototype demos
               </ArrowLink>
               <span className="hidden text-muted-light sm:inline">·</span>
@@ -219,8 +211,8 @@ export function Home() {
       <Section>
         <SectionHeader
           eyebrow="Our work"
-          title="Three prototypes. Three industries."
-          description="Horizon Airways, Phoenix Coffee, and Northgate Legal - placeholder names, real capability."
+          title="Four prototypes. Four industries."
+          description="Horizon Airways, Phoenix Coffee, Northgate Legal, and Brightline Studio - placeholder names, real capability."
         />
         <div className="content-wide grid gap-6 lg:grid-cols-3">
           {projectDemos.map((demo, i) => (
@@ -262,9 +254,7 @@ export function Home() {
             <blockquote className="headline-section text-cream">
               &ldquo;Clarity creates momentum - and momentum changes everything.&rdquo;
             </blockquote>
-            <p className="mt-6 text-[1.0625rem] text-cream/60">
-              Matthew Cowley · Founder, Zo&Zo Advisory
-            </p>
+            <p className="mt-6 text-[1.0625rem] text-cream/60">{site.name}</p>
           </FadeIn>
           <FadeIn delay={0.15} className="mt-10">
             <ArrowLink to="/about" className="!text-cream hover:!text-cream/70">

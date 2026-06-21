@@ -1,5 +1,11 @@
 import type { ProjectDemo } from '../../content/demos'
+import {
+  isTestBeforeYouInvest,
+  tbyiCapabilityLinkClasses,
+  tbyiCapabilityTitleClasses,
+} from '../../lib/testBeforeYouInvest'
 import { FadeIn } from '../ui/FadeIn'
+import { TbyiCapabilityHeader } from '../services/TbyiCapabilityHeader'
 import { DemoBadge } from './DeviceFrame'
 import { DemoRenderer } from './DemoRenderer'
 
@@ -9,6 +15,8 @@ type ProjectShowcaseProps = {
 }
 
 export function ProjectShowcase({ demo, reversed = false }: ProjectShowcaseProps) {
+  const isTbyi = isTestBeforeYouInvest({ label: demo.themeLabel })
+
   return (
     <div className="content-wide">
       <div
@@ -34,9 +42,19 @@ export function ProjectShowcase({ demo, reversed = false }: ProjectShowcaseProps
 
         <div className={reversed ? 'lg:[direction:ltr]' : ''}>
           <FadeIn delay={0.08}>
-            <p className="mb-2 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-muted-light">
-              {demo.themeLabel}
-            </p>
+            {isTbyi ? (
+              <div className={`mb-4 inline-block rounded-2xl border px-4 py-3 ${tbyiCapabilityLinkClasses}`}>
+                <TbyiCapabilityHeader
+                  title={demo.themeLabel}
+                  titleClassName={`text-[0.8125rem] font-semibold uppercase tracking-[0.12em] ${tbyiCapabilityTitleClasses}`}
+                  badgeClassName="mt-2"
+                />
+              </div>
+            ) : (
+              <p className="mb-2 text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-muted-light">
+                {demo.themeLabel}
+              </p>
+            )}
             <p className="eyebrow mb-4">Example work</p>
             <h2 className="headline-small">{demo.headline}</h2>
             <p className="mt-5 body-regular">{demo.summary}</p>

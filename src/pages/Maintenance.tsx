@@ -8,7 +8,7 @@ export function Maintenance() {
       <PageMeta
         seo={{
           title: 'Temporarily unavailable | Zo&Zo Advisory',
-          description: 'Zo&Zo Advisory is temporarily unavailable. Please check back soon or email matt@zoandzo.com.au.',
+          description: `Zo&Zo Advisory is temporarily unavailable. Please check back soon or email ${site.email}.`,
           path: '/',
           noindex: true,
         }}

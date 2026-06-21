@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import type { DemoGuideConfig, GuideStep } from './demoGuides'
+import type { DemoGuideConfig, DemoJourney, GuideStep } from './demoGuides'
 import { useDemoAnnotation } from './DemoAnnotations'
 
 type GuideMode = 'guided' | 'explore'
@@ -30,6 +30,10 @@ type DemoGuideContextValue = {
   skipToExplore: () => void
   restart: () => void
   restartKey: number
+  journeyId: string | null
+  activeJourney: DemoJourney | null
+  awaitingJourney: boolean
+  selectJourney: (id: string) => void
 }
 
 const DemoGuideContext = createContext<DemoGuideContextValue | null>(null)
@@ -45,15 +49,25 @@ export function DemoGuideProvider({
 }) {
   const { show, dismiss } = useDemoAnnotation()
   const deviceRef = useRef<HTMLDivElement>(null)
+  const hasJourneys = Boolean(config.journeys?.length)
   const [mode, setMode] = useState<GuideMode>('guided')
+  const [journeyId, setJourneyId] = useState<string | null>(null)
   const [stepIndex, setStepIndex] = useState(0)
   const [targetVisible, setTargetVisible] = useState(true)
   const [tick, setTick] = useState(0)
   const [restartKey, setRestartKey] = useState(0)
 
-  const totalSteps = config.steps.length
+  const activeJourney =
+    hasJourneys && journeyId
+      ? (config.journeys!.find((j) => j.id === journeyId) ?? null)
+      : null
+  const awaitingJourney = hasJourneys && !activeJourney
+  const activeSteps = activeJourney?.steps ?? config.steps
+  const totalSteps = activeSteps.length
   const currentStep =
-    mode === 'guided' && stepIndex < totalSteps ? config.steps[stepIndex] : null
+    !awaitingJourney && mode === 'guided' && stepIndex < totalSteps
+      ? activeSteps[stepIndex]
+      : null
 
   const bump = useCallback(() => setTick((t) => t + 1), [])
 
@@ -109,13 +123,25 @@ export function DemoGuideProvider({
     setStepIndex(totalSteps)
   }, [totalSteps])
 
+  const selectJourney = useCallback(
+    (id: string) => {
+      dismiss()
+      setJourneyId(id)
+      setMode('guided')
+      setStepIndex(0)
+      bump()
+    },
+    [bump, dismiss],
+  )
+
   const restart = useCallback(() => {
     dismiss()
     setMode('guided')
     setStepIndex(0)
+    if (hasJourneys) setJourneyId(null)
     setRestartKey((key) => key + 1)
     bump()
-  }, [bump, dismiss])
+  }, [bump, dismiss, hasJourneys])
 
   const value = useMemo(
     () => ({
@@ -133,6 +159,10 @@ export function DemoGuideProvider({
       skipToExplore,
       restart,
       restartKey,
+      journeyId,
+      activeJourney,
+      awaitingJourney,
+      selectJourney,
     }),
     [
       config,
@@ -147,6 +177,10 @@ export function DemoGuideProvider({
       skipToExplore,
       restart,
       restartKey,
+      journeyId,
+      activeJourney,
+      awaitingJourney,
+      selectJourney,
     ],
   )
 
@@ -216,10 +250,15 @@ export function DemoGuideRail() {
     accentColor,
     skipToExplore,
     restart,
+    activeJourney,
+    awaitingJourney,
   } = useDemoGuide()
 
-  const displayHint =
-    mode === 'guided' && currentStep
+  const railTitle = activeJourney?.title ?? config.title
+
+  const displayHint = awaitingJourney
+    ? 'Choose a scenario inside the prototype — each journey takes about 60 seconds.'
+    : mode === 'guided' && currentStep
       ? targetVisible
         ? currentStep.hint
         : (currentStep.recovery ?? currentStep.hint)
@@ -233,26 +272,32 @@ export function DemoGuideRail() {
             <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted-light">
               Guided walkthrough
             </p>
-            <p className="mt-1 text-[1.0625rem] font-semibold text-ink">{config.title}</p>
+            <p className="mt-1 text-[1.0625rem] font-semibold text-ink">{railTitle}</p>
+            {activeJourney && (
+              <p className="mt-1 text-[0.8125rem] text-muted">
+                &ldquo;{activeJourney.scenario}&rdquo;
+              </p>
+            )}
           </div>
-          {mode === 'guided' ? (
+          {mode === 'guided' && !awaitingJourney ? (
             <span
               className="shrink-0 rounded-full px-2.5 py-1 text-[0.6875rem] font-semibold text-white"
               style={{ backgroundColor: accentColor }}
             >
               {stepIndex + 1} / {totalSteps}
             </span>
-          ) : (
+          ) : mode === 'explore' ? (
             <span className="shrink-0 rounded-full bg-emerald-100 px-2.5 py-1 text-[0.6875rem] font-semibold text-emerald-800">
               Complete
             </span>
-          )}
+          ) : null}
         </div>
 
         <p className="mt-3 text-[0.8125rem] leading-relaxed text-muted">{config.intro}</p>
 
+        {!awaitingJourney && (
         <div className="mt-4 flex gap-1.5">
-          {config.steps.map((step, i) => (
+          {(activeJourney?.steps ?? config.steps).map((step, i) => (
             <div
               key={step.id}
               className="h-1.5 flex-1 rounded-full transition-colors duration-300"
@@ -267,6 +312,7 @@ export function DemoGuideRail() {
             />
           ))}
         </div>
+        )}
 
         <AnimatePresence mode="wait">
           <motion.p
@@ -295,11 +341,13 @@ export function DemoGuideRail() {
           >
             ↓
           </motion.span>
-          {mode === 'guided'
-            ? config.device === 'desktop'
-              ? 'Click the glowing area inside the prototype'
-              : 'Tap the glowing area inside the phone'
-            : 'Explore freely - notes still appear on key taps'}
+          {awaitingJourney
+            ? 'Tap a scenario card inside the phone to begin'
+            : mode === 'guided'
+              ? config.device === 'desktop'
+                ? 'Click the glowing area inside the prototype'
+                : 'Tap the glowing area inside the phone'
+              : 'Explore freely - notes still appear on key taps'}
         </p>
 
         <div className="mt-5 flex flex-wrap gap-2">

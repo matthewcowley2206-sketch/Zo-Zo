@@ -13,6 +13,9 @@
   --color-line: rgba(0, 0, 0, 0.08);
   --color-accent: #322929;
   --color-nav: #2a2a2e;
+  --color-zo-green: #1a3d34;
+  --color-zo-green-light: #234a40;
+  --color-zo-green-deep: #142f28;
 }
 
 @layer base {

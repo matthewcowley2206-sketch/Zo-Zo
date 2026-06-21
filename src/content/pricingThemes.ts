@@ -1,4 +1,4 @@
-import { formatFromPrice, pricingBySlug, pricingFaqs } from './pricing'
+import { formatFromPrice, formatTypicalInvestment, pricingBySlug, pricingFaqs } from './pricing'
 import { serviceThemes } from './method'
 
 export type PricingModuleRow = {
@@ -85,4 +85,4 @@ export const pricingThemeGroups: PricingThemeGroup[] = [
   },
 ]
 
-export { formatFromPrice, pricingFaqs }
+export { formatFromPrice, formatTypicalInvestment, pricingFaqs }

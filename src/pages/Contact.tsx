@@ -36,7 +36,7 @@ export function Contact() {
       setError(
         submitError instanceof Error
           ? submitError.message
-          : 'Unable to send your message. Please email matt@zoandzo.com.au directly.',
+          : `Unable to send your message. Please email ${site.email} directly.`,
       )
     } finally {
       setSubmitting(false)

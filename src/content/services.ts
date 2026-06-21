@@ -66,7 +66,7 @@ export const services: Service[] = [
       {
         question: 'How much does prototype development cost?',
         answer:
-          'Typical prototype development engagements start from $8,500 ex GST, scoped to your idea and key flows. You receive a fixed quote after a clarity call - see our pricing page for starting points.',
+          'Typical investment from $8,500 ex GST, scoped to your idea and key flows. You receive a fixed quote after a clarity call - see our pricing page for starting points.',
       },
       { question: 'What is a working prototype?', answer: 'A clickable, interactive mock-up of an idea - built quickly so you can see and test it before committing to full development.' },
       { question: 'Is this the same as building the real product?', answer: 'No. Prototypes are built to learn and align - not to go live. Faster, cheaper, and designed to answer whether this is the right direction.' },
