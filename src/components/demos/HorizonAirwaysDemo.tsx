@@ -1,304 +1,701 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useDemoAnnotation } from './DemoAnnotations'
 import { GuideTarget, useDemoGuide, useGuideActivate } from './DemoGuide'
-import {
-  DemoButton,
-  DemoPill,
-  DemoScreen,
-  DemoTabBar,
-} from './DeviceFrame'
+import { horizonAccounts } from './demoGuides'
+import { DemoButton, DemoPill } from './DeviceFrame'
 import { InteractiveDemoShell } from './InteractiveDemoShell'
+import { DemoAiAssistant } from './shared/DemoAiAssistant'
+import { DemoJourneyPicker } from './shared/DemoJourneyPicker'
+import { DemoOutcomeReveal } from './shared/DemoOutcomeReveal'
+import { DemoProcessingSequence } from './shared/DemoProcessingSequence'
+import { DemoRecommendationPanel } from './shared/DemoRecommendationPanel'
 
 const accent = '#0c4a6e'
-const gold = '#b45309'
-const MILES = 82400
 
-type Tab = 'home' | 'book' | 'miles' | 'trips'
-type Flow =
-  | null
-  | 'search'
-  | 'results'
-  | 'confirm'
-  | 'trip'
-  | 'checkin'
-  | 'upgrade'
-  | 'lounge'
-  | 'boarding'
+type Tab = 'portfolio' | 'alerts' | 'forecast'
+type SalesView = 'portfolio' | 'processing' | 'opportunities' | 'outcome'
+type AccountView = 'alert' | 'health' | 'processing' | 'brief' | 'outcome'
+type ExecutiveView = 'dashboard' | 'processing' | 'priorities' | 'outcome'
+
+const opportunityAlerts = [
+  {
+    id: 'mining',
+    label: 'Mining sector travel down 12%',
+    detail: 'Sector-wide contraction · 4 accounts affected',
+    tone: 'amber',
+  },
+  {
+    id: 'pacific',
+    targetId: 'alert-at-risk',
+    label: 'Revenue risk · Pacific Resources',
+    detail: 'Spend down 24% · no exec contact 90 days',
+    tone: 'rose',
+  },
+  {
+    id: 'westfield',
+    label: 'Executive engagement recommended',
+    detail: 'Westfield Mining · contract renewal Q4',
+    tone: 'sky',
+  },
+]
+
+const salesActions = [
+  {
+    id: 'focus-mining',
+    title: 'Focus mining sector recovery',
+    description: 'Targeted coverage + sector incentive program · Q3',
+    impact: '+$2.2M forecast uplift',
+  },
+  {
+    id: 'incentive',
+    title: 'Offer commercial incentive',
+    description: 'Volume commitment discount · top 3 mining accounts',
+    impact: '+$1.4M potential · higher certainty',
+  },
+]
+
+const accountActions = [
+  {
+    id: 'retention',
+    title: 'Launch retention campaign',
+    description: 'Executive outreach + travel credit · Pacific Resources',
+    impact: 'Risk 78 → 52 · $620k protected',
+  },
+  {
+    id: 'coverage',
+    title: 'Increase account coverage',
+    description: 'Dedicated AM + quarterly business review',
+    impact: 'Risk 78 → 61 · relationship rebuild',
+  },
+]
+
+const executiveActions = [
+  {
+    id: 'priority-growth',
+    title: 'Prioritise mining sector recovery',
+    description: 'Cross-functional taskforce · sales + network planning',
+    impact: '$3.1M Q3 upside · top strategic bet',
+  },
+  {
+    id: 'retention-program',
+    title: 'Enterprise retention program',
+    description: 'Top 10 at-risk accounts · exec sponsor model',
+    impact: '$1.8M revenue protected',
+  },
+]
+
+function HorizonHeader({
+  title,
+  subtitle = 'Horizon Airways · Commercial intelligence',
+  right,
+}: {
+  title: string
+  subtitle?: string
+  right?: ReactNode
+}) {
+  return (
+    <div className="shrink-0 border-b border-slate-200 px-5 py-3" style={{ backgroundColor: accent }}>
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-[0.625rem] font-medium uppercase tracking-wider text-white/70">
+            {subtitle}
+          </p>
+          <h3 className="text-[0.9375rem] font-semibold text-white">{title}</h3>
+        </div>
+        {right ?? <DemoPill color="green">Simulated</DemoPill>}
+      </div>
+    </div>
+  )
+}
+
+function HorizonShell({
+  title,
+  subtitle,
+  children,
+  onBack,
+}: {
+  title: string
+  subtitle?: string
+  children: ReactNode
+  onBack?: () => void
+}) {
+  return (
+    <div className="flex h-full min-h-0 flex-col">
+      <HorizonHeader title={title} subtitle={subtitle} />
+      <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4">
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            className="mb-3 text-[0.8125rem] font-medium text-slate-600 hover:text-slate-900"
+          >
+            ← Back
+          </button>
+        )}
+        <div className="mx-auto max-w-[560px] space-y-3">{children}</div>
+      </div>
+    </div>
+  )
+}
+
+function PortfolioTable({
+  highlightTargetId,
+  onSelect,
+  selectedId,
+}: {
+  highlightTargetId?: string
+  onSelect: (id: string, targetId?: string) => void
+  selectedId?: string
+}) {
+  return (
+    <div className="space-y-2">
+      {horizonAccounts.map((account) => {
+        const targetId = account.targetId ?? `account-${account.id}`
+        const isHighlight = highlightTargetId === targetId
+        const card = (
+          <button
+            type="button"
+            onClick={() => onSelect(account.id, account.targetId)}
+            className={`flex w-full items-center justify-between rounded-xl p-3 text-left ring-1 transition ${
+              selectedId === account.id
+                ? 'bg-sky-50 ring-sky-200'
+                : 'bg-white ring-slate-200 hover:ring-sky-200'
+            }`}
+          >
+            <div>
+              <p className="font-semibold text-slate-900">{account.name}</p>
+              <p className="text-[0.6875rem] text-slate-500">
+                {account.sector} · {account.status}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="font-semibold tabular-nums text-slate-900">{account.revenue}</p>
+              <p
+                className={`text-[0.6875rem] font-bold tabular-nums ${
+                  account.risk >= 60
+                    ? 'text-rose-600'
+                    : account.risk >= 40
+                      ? 'text-amber-600'
+                      : 'text-emerald-600'
+                }`}
+              >
+                Risk {account.risk} · {account.trend}
+              </p>
+            </div>
+          </button>
+        )
+
+        if (isHighlight) {
+          return (
+            <GuideTarget key={account.id} id={targetId}>
+              {card}
+            </GuideTarget>
+          )
+        }
+
+        return <div key={account.id}>{card}</div>
+      })}
+    </div>
+  )
+}
 
 function HorizonApp() {
   const { show } = useDemoAnnotation()
-  const { mode } = useDemoGuide()
-  const [tab, setTab] = useState<Tab>('home')
-  const [flow, setFlow] = useState<Flow>(null)
-  const [useMiles, setUseMiles] = useState(true)
-  const [selectedFlight, setSelectedFlight] = useState<string | null>(null)
-  const [seat, setSeat] = useState('24K')
-  const [upgraded, setUpgraded] = useState(false)
-  const [checkedIn, setCheckedIn] = useState(false)
+  const {
+    mode,
+    config,
+    awaitingJourney,
+    activeJourney,
+    selectJourney,
+    skipToExplore,
+  } = useDemoGuide()
 
-  const tripCard = useGuideActivate('trip-card')
-  const upgradeBtn = useGuideActivate('upgrade-btn')
-  const checkinBtn = useGuideActivate('checkin-btn')
-  const boardingBtn = useGuideActivate('boarding-btn')
-  const loungeBtn = useGuideActivate('lounge-btn')
+  const [tab, setTab] = useState<Tab>('portfolio')
+  const [salesView, setSalesView] = useState<SalesView>('portfolio')
+  const [accountView, setAccountView] = useState<AccountView>('alert')
+  const [executiveView, setExecutiveView] = useState<ExecutiveView>('dashboard')
+  const [selectedAccount, setSelectedAccount] = useState<string | null>(null)
+  const [selectedAction, setSelectedAction] = useState<string | null>(null)
+  const [forecast, setForecast] = useState('$42.0M')
+
+  const portfolioMining = useGuideActivate('portfolio-account-mining')
+  const runScan = useGuideActivate('run-opportunity-scan')
+  const alertAtRisk = useGuideActivate('alert-at-risk')
+  const accountHealth = useGuideActivate('account-health-pacific')
+  const generateBrief = useGuideActivate('generate-brief-btn')
+  const execDashboard = useGuideActivate('exec-dashboard')
+  const aiSummary = useGuideActivate('ai-summary-btn')
 
   const exploreShow = (annotation: Parameters<typeof show>[0]) => {
     if (mode === 'explore') show(annotation)
   }
 
-  const resetFlow = () => setFlow(null)
+  const resetJourneyState = () => {
+    setSalesView('portfolio')
+    setAccountView('alert')
+    setExecutiveView('dashboard')
+    setSelectedAccount(null)
+    setSelectedAction(null)
+    setForecast('$42.0M')
+    setTab('portfolio')
+  }
 
-  if (flow === 'boarding') {
+  const handleSelectJourney = (id: string) => {
+    selectJourney(id)
+    resetJourneyState()
+  }
+
+  const handleAccountSelect = (id: string, targetId?: string) => {
+    setSelectedAccount(id)
+    if (targetId === 'portfolio-account-mining') portfolioMining.onGuideAction()
+    if (targetId === 'account-health-pacific') accountHealth.onGuideAction()
+  }
+
+  if (awaitingJourney) {
     return (
-      <DemoScreen title="Boarding pass" subtitle="HZ 284 · SYD → SIN" accentColor={accent} onBack={() => setFlow('trip')}>
-        <div className="space-y-3">
-          <div className="overflow-hidden rounded-2xl bg-white ring-1 ring-slate-100">
-            <div className="bg-gradient-to-r from-sky-800 to-sky-600 px-4 py-3 text-white">
-              <div className="flex justify-between">
-                <p className="text-[0.625rem] uppercase opacity-80">Horizon Gold</p>
-                <DemoPill color="gold">Group 1</DemoPill>
-              </div>
-              <p className="mt-1 text-[1.125rem] font-bold">SYD → SIN</p>
-            </div>
-            <div className="grid grid-cols-2 gap-3 p-4 text-[0.8125rem]">
-              <div><p className="text-[0.625rem] uppercase text-slate-400">Seat</p><p className="font-semibold">{upgraded ? '3A Business' : seat}</p></div>
-              <div><p className="text-[0.625rem] uppercase text-slate-400">Gate</p><p className="font-semibold">B12 · 13:45</p></div>
-              <div><p className="text-[0.625rem] uppercase text-slate-400">Lounge</p><p className="font-semibold text-sky-700">Included</p></div>
-              <div><p className="text-[0.625rem] uppercase text-slate-400">Miles earned</p><p className="font-semibold">+2,840</p></div>
-            </div>
-          </div>
-          <DemoButton accentColor={accent} variant="secondary" onClick={() => { resetFlow(); setTab('home') }}>Back to home</DemoButton>
-        </div>
-      </DemoScreen>
+      <HorizonShell title="Choose a scenario" subtitle="Commercial growth platform">
+        <DemoJourneyPicker
+          journeys={config.journeys ?? []}
+          accentColor={accent}
+          onSelect={handleSelectJourney}
+        />
+        {config.assistant && (
+          <DemoAiAssistant config={config.assistant} accentColor={accent} compact />
+        )}
+      </HorizonShell>
     )
   }
 
-  if (flow === 'lounge') {
-    return (
-      <DemoScreen title="Lounge pass" subtitle="Gold member benefit" accentColor={gold} onBack={() => setFlow('trip')}>
-        <div className="rounded-2xl bg-gradient-to-br from-amber-600 to-amber-900 p-5 text-white">
-          <div className="flex justify-between text-[0.625rem] uppercase opacity-80">
-            <span>Horizon Gold</span>
-            <span>HZ 284 · SYD → SIN</span>
-          </div>
-          <p className="mt-2 text-[1.25rem] font-bold">Horizon Lounge</p>
-          <p className="mt-1 text-[0.75rem] opacity-90">Terminal 1 International · Valid today</p>
-          <p className="mt-4 text-center font-mono text-lg tracking-widest">HZ-G-8842</p>
-          <p className="mt-2 text-center text-[0.75rem] opacity-90">1 guest included · Linked to your trip</p>
-        </div>
-      </DemoScreen>
-    )
-  }
+  if (mode !== 'explore' && activeJourney?.id === 'sales') {
+    if (salesView === 'processing') {
+      return (
+        <HorizonShell title="Opportunity scan" subtitle="AI analysis">
+          <DemoProcessingSequence
+            messages={
+              activeJourney.processingMessages ?? [
+                'Reviewing portfolio…',
+                'Scanning sectors…',
+                'Identifying opportunities…',
+              ]
+            }
+            accentColor={accent}
+            onComplete={() => setSalesView('opportunities')}
+          />
+        </HorizonShell>
+      )
+    }
 
-  if (flow === 'upgrade') {
-    const afterMiles = MILES - 18500
-    return (
-      <DemoScreen title="Upgrade with miles" subtitle="HZ 284" accentColor={accent} onBack={() => setFlow('trip')}>
-        <div className="space-y-3">
-          <div className="rounded-2xl bg-white p-4 ring-1 ring-slate-100">
-            <p className="font-semibold">Economy → Business</p>
-            <p className="mt-1 text-[0.75rem] text-slate-500">SYD → SIN · Today</p>
-            <div className="mt-4 grid grid-cols-2 gap-3 text-[0.8125rem]">
-              <div className="rounded-xl bg-slate-50 p-3">
-                <p className="text-[0.625rem] uppercase text-slate-400">Cost</p>
-                <p className="mt-1 font-bold text-sky-800">18,500 miles</p>
-              </div>
-              <div className="rounded-xl bg-slate-50 p-3">
-                <p className="text-[0.625rem] uppercase text-slate-400">Balance after</p>
-                <p className="mt-1 font-bold">{afterMiles.toLocaleString()}</p>
-              </div>
-            </div>
-            <p className="mt-3 text-[0.75rem] text-slate-500">Current balance · {MILES.toLocaleString()} miles</p>
-          </div>
-          <DemoButton accentColor={accent} onClick={() => { setUpgraded(true); setFlow('checkin') }}>Confirm upgrade</DemoButton>
-        </div>
-      </DemoScreen>
-    )
-  }
-
-  if (flow === 'checkin') {
-    return (
-      <DemoScreen title="Check in" subtitle={upgraded ? 'Business · Gold' : 'Economy · Gold'} accentColor={accent} onBack={() => setFlow('trip')}>
-        <div className="space-y-3">
+    if (salesView === 'opportunities') {
+      return (
+        <HorizonShell
+          title="Opportunities identified"
+          subtitle="Review recommendations"
+          onBack={() => setSalesView('portfolio')}
+        >
           <div className="rounded-xl bg-sky-50 p-3 ring-1 ring-sky-100">
-            <p className="text-[0.625rem] font-semibold uppercase text-sky-800">Gold benefits on this trip</p>
-            <div className="mt-2 flex flex-wrap gap-2 text-[0.6875rem]">
-              <DemoPill color="gold">Lounge included</DemoPill>
-              <DemoPill color="blue">Priority boarding</DemoPill>
-              <DemoPill color="green">+2,840 miles</DemoPill>
-            </div>
+            <p className="text-[0.625rem] font-semibold uppercase text-sky-800">AI insight</p>
+            <p className="mt-1 text-[0.8125rem] leading-relaxed text-sky-900">
+              Mining sector offers largest Q3 upside. Westfield Mining and Pacific Resources need
+              coordinated coverage. Forecast uplift +$2.2M with focused recovery plan.
+            </p>
           </div>
-          {!upgraded && (
-            <>
-              <p className="text-[0.6875rem] font-semibold uppercase text-slate-400">Select seat</p>
-              <div className="grid grid-cols-4 gap-1.5">
-                {['22A', '22B', '24K', '24J'].map((s) => (
-                  <button key={s} type="button" onClick={() => setSeat(s)} className={`rounded-lg py-2 text-[0.6875rem] font-semibold ${seat === s ? 'bg-sky-700 text-white' : 'bg-white ring-1 ring-slate-200'}`}>{s}</button>
-                ))}
-              </div>
-            </>
-          )}
-          {upgraded && (
-            <div className="rounded-xl bg-white p-3 ring-1 ring-slate-100 text-[0.8125rem]">
-              <p className="text-slate-500">Seat assigned</p>
-              <p className="font-semibold">3A · Business</p>
-            </div>
-          )}
-          <GuideTarget id="checkin-btn">
-            <DemoButton accentColor={accent} onClick={() => {
-              checkinBtn.onGuideAction()
-              setCheckedIn(true)
-              setFlow('trip')
-            }}>Complete check-in</DemoButton>
+          <DemoRecommendationPanel
+            recommendations={salesActions}
+            accentColor={accent}
+            highlightTargetId="action-focus-mining"
+            selectedId={selectedAction ?? undefined}
+            onSelect={(id) => {
+              setSelectedAction(id)
+              if (id === 'focus-mining') {
+                setForecast('$44.2M')
+                setSalesView('outcome')
+              }
+            }}
+          />
+        </HorizonShell>
+      )
+    }
+
+    if (salesView === 'outcome') {
+      return (
+        <HorizonShell title="Forecast updated" subtitle="Sales leader focus">
+          <DemoOutcomeReveal
+            outcome={activeJourney.outcome}
+            accentColor={accent}
+            onContinue={() => {
+              skipToExplore()
+              setTab('forecast')
+            }}
+          />
+        </HorizonShell>
+      )
+    }
+
+    return (
+      <HorizonShell title="Portfolio review" subtitle="Step 2 · Sales leader">
+        <p className="text-[0.8125rem] text-slate-600">
+          Review account portfolio performance for Q3 planning.
+        </p>
+        <PortfolioTable
+          highlightTargetId="portfolio-account-mining"
+          selectedId={selectedAccount ?? undefined}
+          onSelect={(id, targetId) => handleAccountSelect(id, targetId)}
+        />
+        {selectedAccount && (
+          <GuideTarget id="run-opportunity-scan">
+            <DemoButton
+              accentColor={accent}
+              onClick={() => {
+                runScan.onGuideAction()
+                setSalesView('processing')
+              }}
+            >
+              Run opportunity scan
+            </DemoButton>
           </GuideTarget>
-        </div>
-      </DemoScreen>
+        )}
+      </HorizonShell>
     )
   }
 
-  if (flow === 'trip') {
-    return (
-      <DemoScreen title="HZ 284 · Today" subtitle="SYD → SIN" accentColor={accent} onBack={() => { resetFlow(); setTab('trips') }}>
-        <div className="space-y-3">
-          <div className="flex justify-between rounded-2xl bg-white p-4 ring-1 ring-slate-100">
-            <div><p className="text-xl font-bold">SYD</p><p className="text-[0.75rem] text-slate-500">14:20</p></div>
-            <div className="self-center text-slate-300">✈</div>
-            <div className="text-right"><p className="text-xl font-bold">SIN</p><p className="text-[0.75rem] text-slate-500">20:35</p></div>
+  if (mode !== 'explore' && activeJourney?.id === 'account') {
+    const pacific = horizonAccounts.find((a) => a.id === 'pacific')!
+
+    if (accountView === 'processing') {
+      return (
+        <HorizonShell title="Generating brief" subtitle="AI account analysis">
+          <DemoProcessingSequence
+            messages={
+              activeJourney.processingMessages ?? [
+                'Analysing account health…',
+                'Reviewing travel patterns…',
+                'Generating brief…',
+              ]
+            }
+            accentColor={accent}
+            onComplete={() => setAccountView('brief')}
+          />
+        </HorizonShell>
+      )
+    }
+
+    if (accountView === 'brief') {
+      return (
+        <HorizonShell
+          title="Account brief"
+          subtitle="Pacific Resources"
+          onBack={() => setAccountView('health')}
+        >
+          <div className="rounded-xl bg-white p-4 ring-1 ring-slate-200">
+            <p className="text-[0.625rem] font-semibold uppercase text-slate-400">AI account brief</p>
+            <p className="mt-2 text-[0.8125rem] leading-relaxed text-slate-700">
+              Pacific Resources travel spend down 24% QoQ. Root cause: competitor route expansion +
+              reduced project travel. No executive contact in 90 days. Recommend retention campaign
+              with travel credit and dedicated AM coverage.
+            </p>
           </div>
-          {!checkedIn && (
-            <DemoButton accentColor={accent} onClick={() => setFlow('checkin')}>Check in</DemoButton>
-          )}
-          {!checkedIn && !upgraded && (
-            <GuideTarget id="upgrade-btn">
-              <DemoButton accentColor={gold} variant="secondary" onClick={() => {
-                upgradeBtn.onGuideAction()
-                setFlow('upgrade')
-              }}>Upgrade with miles</DemoButton>
-            </GuideTarget>
-          )}
-          {checkedIn && (
-            <GuideTarget id="boarding-btn">
-              <DemoButton accentColor={accent} onClick={() => {
-                boardingBtn.onGuideAction()
-                setFlow('boarding')
-              }}>View boarding pass</DemoButton>
-            </GuideTarget>
-          )}
-          <GuideTarget id="lounge-btn">
-            <DemoButton accentColor={accent} variant="secondary" onClick={() => {
-              loungeBtn.onGuideAction()
-              exploreShow({ id: 'lounge', clientAsk: 'digital lounge passes for Gold - no PDF, no separate app.', ourSolution: 'pass generated from tier + trip in the same record.' })
-              setFlow('lounge')
-            }}>Open lounge pass</DemoButton>
+          <DemoRecommendationPanel
+            recommendations={accountActions}
+            accentColor={accent}
+            highlightTargetId="action-retention"
+            selectedId={selectedAction ?? undefined}
+            onSelect={(id) => {
+              setSelectedAction(id)
+              if (id === 'retention') setAccountView('outcome')
+            }}
+          />
+        </HorizonShell>
+      )
+    }
+
+    if (accountView === 'outcome') {
+      return (
+        <HorizonShell title="Risk reduced" subtitle="Account manager">
+          <DemoOutcomeReveal
+            outcome={activeJourney.outcome}
+            accentColor={accent}
+            onContinue={() => {
+              skipToExplore()
+              setTab('alerts')
+            }}
+          />
+        </HorizonShell>
+      )
+    }
+
+    if (accountView === 'health') {
+      return (
+        <HorizonShell
+          title={pacific.name}
+          subtitle="Account health"
+          onBack={() => setAccountView('alert')}
+        >
+        <GuideTarget id="account-health-pacific">
+          <div
+            className="grid grid-cols-2 gap-2"
+            onClick={() => accountHealth.onGuideAction()}
+            onKeyDown={() => {}}
+            role="presentation"
+          >
+            {[
+              { label: 'Revenue YTD', value: pacific.revenue },
+              { label: 'Trend', value: pacific.trend },
+              { label: 'Risk score', value: `${pacific.risk} / 100` },
+              { label: 'Revenue at risk', value: '$620k' },
+            ].map((stat) => (
+              <div key={stat.label} className="rounded-lg bg-white p-3 ring-1 ring-slate-200">
+                <p className="text-[0.625rem] text-slate-400">{stat.label}</p>
+                <p className="mt-1 font-semibold text-slate-900">{stat.value}</p>
+              </div>
+            ))}
+          </div>
+        </GuideTarget>
+          <GuideTarget id="generate-brief-btn">
+            <DemoButton
+              accentColor={accent}
+              onClick={() => {
+                generateBrief.onGuideAction()
+                setAccountView('processing')
+              }}
+            >
+              Generate account brief
+            </DemoButton>
           </GuideTarget>
-        </div>
-      </DemoScreen>
-    )
-  }
+        </HorizonShell>
+      )
+    }
 
-  if (flow === 'confirm') {
     return (
-      <DemoScreen title="Confirm" subtitle="Award booking" accentColor={accent} onBack={() => setFlow('results')}>
-        <div className="rounded-2xl bg-white p-4 ring-1 ring-slate-100">
-          <p className="font-semibold">{selectedFlight}</p>
-          <p className="mt-2 text-[1.125rem] font-bold text-sky-800">52,000 miles</p>
-        </div>
-        <DemoButton accentColor={accent} className="mt-3" onClick={() => {
-          resetFlow()
-          setTab('trips')
-          exploreShow({ id: 'book', clientAsk: 'miles pricing visible before replatforming booking.', ourSolution: 'award flow tested with leadership before any backend commitment.' })
-        }}>Confirm</DemoButton>
-      </DemoScreen>
+      <HorizonShell title="Alerts" subtitle="Account at risk">
+        <p className="text-[0.8125rem] text-slate-600">Review proactive commercial alerts.</p>
+        {opportunityAlerts.map((alert) => {
+          const isTarget = alert.targetId === 'alert-at-risk'
+          const card = (
+            <button
+              type="button"
+              onClick={() => {
+                if (alert.id === 'pacific') {
+                  alertAtRisk.onGuideAction()
+                  setSelectedAccount('pacific')
+                  setAccountView('health')
+                }
+              }}
+              className={`w-full rounded-xl p-3 text-left ring-1 ${
+                alert.tone === 'rose'
+                  ? 'bg-rose-50 ring-rose-100'
+                  : alert.tone === 'amber'
+                    ? 'bg-amber-50 ring-amber-100'
+                    : 'bg-sky-50 ring-sky-100'
+              }`}
+            >
+              <p className="font-semibold text-slate-900">{alert.label}</p>
+              <p className="mt-1 text-[0.75rem] text-slate-600">{alert.detail}</p>
+            </button>
+          )
+
+          if (isTarget) {
+            return (
+              <GuideTarget key={alert.id} id={alert.targetId!}>
+                {card}
+              </GuideTarget>
+            )
+          }
+
+          return <div key={alert.id}>{card}</div>
+        })}
+      </HorizonShell>
     )
   }
 
-  if (flow === 'results') {
+  if (mode !== 'explore' && activeJourney?.id === 'executive') {
+    if (executiveView === 'processing') {
+      return (
+        <HorizonShell title="Executive summary" subtitle="AI synthesis">
+          <DemoProcessingSequence
+            messages={
+              activeJourney.processingMessages ?? [
+                'Aggregating signals…',
+                'Generating summary…',
+                'Ranking priorities…',
+              ]
+            }
+            accentColor={accent}
+            onComplete={() => setExecutiveView('priorities')}
+          />
+        </HorizonShell>
+      )
+    }
+
+    if (executiveView === 'priorities') {
+      return (
+        <HorizonShell
+          title="Strategic priorities"
+          subtitle="Executive focus"
+          onBack={() => setExecutiveView('dashboard')}
+        >
+          <div className="rounded-xl bg-violet-50 p-3 ring-1 ring-violet-100">
+            <p className="text-[0.625rem] font-semibold uppercase text-violet-700">AI summary</p>
+            <p className="mt-1 text-[0.8125rem] leading-relaxed text-violet-900">
+              Commercial health stable overall, but mining sector contraction creates both risk and
+              recovery opportunity. Recommend 3 owned priorities with $3.1M Q3 upside.
+            </p>
+          </div>
+          <DemoRecommendationPanel
+            recommendations={executiveActions}
+            accentColor={accent}
+            highlightTargetId="action-priority-growth"
+            selectedId={selectedAction ?? undefined}
+            onSelect={(id) => {
+              setSelectedAction(id)
+              if (id === 'priority-growth') setExecutiveView('outcome')
+            }}
+          />
+        </HorizonShell>
+      )
+    }
+
+    if (executiveView === 'outcome') {
+      return (
+        <HorizonShell title="Focus aligned" subtitle="Executive priorities">
+          <DemoOutcomeReveal
+            outcome={activeJourney.outcome}
+            accentColor={accent}
+            onContinue={() => {
+              skipToExplore()
+              setTab('portfolio')
+            }}
+          />
+        </HorizonShell>
+      )
+    }
+
     return (
-      <DemoScreen title="Award flights" subtitle="SYD → LHR" accentColor={accent} onBack={() => setFlow('search')}>
-        {['HZ 102 · 52,000 miles', 'HZ 118 · 48,000 miles'].map((f) => (
-          <button key={f} type="button" onClick={() => { setSelectedFlight(f); setFlow('confirm') }} className="mb-2 w-full rounded-xl bg-white p-3 text-left ring-1 ring-slate-100">{f}</button>
-        ))}
-      </DemoScreen>
-    )
-  }
-
-  if (flow === 'search') {
-    return (
-      <DemoScreen title="Search" subtitle="Book with miles" accentColor={accent} onBack={() => { resetFlow(); setTab('book') }}>
-        <button type="button" onClick={() => setUseMiles(!useMiles)} className={`mb-3 flex w-full justify-between rounded-xl px-3 py-2.5 text-[0.8125rem] ${useMiles ? 'bg-sky-50 ring-1 ring-sky-200' : 'bg-white ring-1 ring-slate-200'}`}>
-          <span>Pay with Horizon Miles</span><span>{useMiles ? 'On' : 'Off'}</span>
-        </button>
-        <DemoButton accentColor={accent} onClick={() => {
-          exploreShow({ id: 'search', clientAsk: 'award and revenue search in one place.', ourSolution: 'simplified fare engine - enough to validate UX, not to go live.' })
-          setFlow('results')
-        }}>Search SYD → LHR</DemoButton>
-      </DemoScreen>
-    )
-  }
-
-  const titles: Record<Tab, string> = { home: 'Hello, Alex', book: 'Book', miles: 'Horizon Miles', trips: 'My trips' }
-
-  return (
-    <div className="flex h-full flex-col">
-      <div className="min-h-0 flex-1">
-        <DemoScreen title={titles[tab]} subtitle="Horizon Airways" accentColor={accent}>
-          {tab === 'home' && (
-            <div className="space-y-3">
-              <div className="rounded-2xl bg-white p-3 ring-1 ring-slate-100">
-                <p className="text-[0.625rem] font-semibold uppercase text-slate-400">Tier status</p>
-                <div className="mt-2 flex items-center justify-between">
-                  <div>
-                    <p className="font-bold text-amber-800">Horizon Gold</p>
-                    <p className="text-[0.6875rem] text-slate-500">Lounge · Extra baggage · Priority</p>
-                  </div>
-                  <DemoPill color="gold">Active</DemoPill>
+      <HorizonShell title="Executive dashboard" subtitle="Commercial overview">
+        <GuideTarget id="exec-dashboard">
+          <div
+            className="space-y-3"
+            onClick={() => execDashboard.onGuideAction()}
+            onKeyDown={() => {}}
+            role="presentation"
+          >
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { label: 'Q3 forecast', value: forecast },
+                { label: 'At-risk revenue', value: '$2.1M' },
+                { label: 'Opportunities', value: '7 active' },
+              ].map((stat) => (
+                <div key={stat.label} className="rounded-lg bg-white p-3 ring-1 ring-slate-200">
+                  <p className="text-[0.625rem] text-slate-400">{stat.label}</p>
+                  <p className="mt-1 text-[1rem] font-bold text-slate-900">{stat.value}</p>
                 </div>
-              </div>
-
-              <div className="rounded-2xl p-4 text-white" style={{ background: `linear-gradient(135deg, ${gold}, #92400e)` }}>
-                <p className="text-[0.625rem] font-semibold uppercase opacity-80">Miles balance</p>
-                <p className="text-[1.5rem] font-bold">{MILES.toLocaleString()}</p>
-                <p className="mt-1 text-[0.8125rem] opacity-90">7,600 miles to Platinum</p>
-                <div className="mt-2 h-1.5 rounded-full bg-white/20"><div className="h-full w-[92%] rounded-full bg-white" /></div>
-              </div>
-
-              <div>
-                <p className="mb-2 text-[0.625rem] font-semibold uppercase text-slate-400">Upcoming trips</p>
-                <GuideTarget id="trip-card">
-                  <button type="button" onClick={() => {
-                    tripCard.onGuideAction()
-                    exploreShow({ id: 'trip-card', clientAsk: 'next trip on the loyalty home, not buried in bookings.', ourSolution: 'upcoming flight with check-in and miles earn on one card.' })
-                    setFlow('trip')
-                  }} className="w-full rounded-2xl bg-white p-4 text-left ring-1 ring-slate-100">
-                    <DemoPill color="amber">Today · Check in open</DemoPill>
-                    <p className="mt-2 font-bold">SYD → SIN · HZ 284</p>
-                    <p className="text-[0.75rem] text-slate-500">14:20 departure · +2,840 miles</p>
-                  </button>
-                </GuideTarget>
-                <div className="mt-2 rounded-xl bg-white p-3 ring-1 ring-slate-100">
-                  <p className="text-[0.6875rem] font-semibold text-slate-700">SYD → MEL · HZ 412</p>
-                  <p className="text-[0.6875rem] text-slate-500">Thu 19 Jun · Confirmed</p>
-                </div>
-              </div>
-            </div>
-          )}
-          {tab === 'book' && <DemoButton accentColor={accent} onClick={() => setFlow('search')}>Search flights</DemoButton>}
-          {tab === 'miles' && (
-            <div className="space-y-2">
-              {['Upgrade with miles', 'Partner hotels', 'Gift miles'].map((t) => (
-                <button key={t} type="button" onClick={() => exploreShow({ id: t, clientAsk: `interest in "${t}" before phase-two scope.`, ourSolution: 'clickable catalogue used in prioritisation workshops.' })} className="w-full rounded-xl bg-white p-3 text-left ring-1 ring-slate-100">{t}</button>
               ))}
             </div>
-          )}
-          {tab === 'trips' && (
-            <button type="button" onClick={() => setFlow('trip')} className="w-full rounded-2xl bg-white p-4 text-left ring-1 ring-slate-100">
-              <p className="font-bold">SYD → SIN · HZ 284</p>
-              <p className="text-[0.75rem] text-slate-500">Today · 14:20</p>
-            </button>
-          )}
-        </DemoScreen>
+            <div className="rounded-lg bg-amber-50 px-3 py-2 text-[0.75rem] text-amber-900 ring-1 ring-amber-100">
+              Alert · Mining sector travel down 12% · executive engagement recommended
+            </div>
+            <div className="rounded-lg bg-rose-50 px-3 py-2 text-[0.75rem] text-rose-900 ring-1 ring-rose-100">
+              Risk · Pacific Resources · $620k revenue at risk
+            </div>
+          </div>
+        </GuideTarget>
+        <GuideTarget id="ai-summary-btn">
+          <DemoButton
+            accentColor={accent}
+            onClick={() => {
+              aiSummary.onGuideAction()
+              setExecutiveView('processing')
+            }}
+          >
+            Generate AI summary
+          </DemoButton>
+        </GuideTarget>
+      </HorizonShell>
+    )
+  }
+
+  const navTabs: { id: Tab; label: string }[] = [
+    { id: 'portfolio', label: 'Portfolio' },
+    { id: 'alerts', label: 'Alerts' },
+    { id: 'forecast', label: 'Forecast' },
+  ]
+
+  return (
+    <div className="flex h-full min-h-0 flex-col">
+      <HorizonHeader
+        title={
+          tab === 'portfolio'
+            ? 'Account portfolio'
+            : tab === 'alerts'
+              ? 'Opportunity alerts'
+              : 'Revenue forecast'
+        }
+        right={
+          <span className="rounded-full bg-white/15 px-2.5 py-1 text-[0.6875rem] font-semibold text-white">
+            Explore mode
+          </span>
+        }
+      />
+      <div className="flex shrink-0 gap-1 border-b border-slate-200 bg-white px-4 py-2">
+        {navTabs.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => setTab(t.id)}
+            className={`rounded-lg px-3 py-1.5 text-[0.75rem] font-semibold transition ${
+              tab === t.id ? 'text-white' : 'text-slate-600 hover:bg-slate-100'
+            }`}
+            style={tab === t.id ? { backgroundColor: accent } : undefined}
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
-      <DemoTabBar tabs={[{ id: 'home', label: 'Home', icon: '⌂' }, { id: 'book', label: 'Book', icon: '✈' }, { id: 'miles', label: 'Miles', icon: '★' }, { id: 'trips', label: 'Trips', icon: '▦' }]} active={tab} onChange={(id) => { resetFlow(); setTab(id as Tab) }} accentColor={accent} />
+      <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4">
+        <div className="mx-auto max-w-[560px] space-y-3">
+          {tab === 'portfolio' && (
+            <>
+              <PortfolioTable
+                onSelect={(id) => {
+                  setSelectedAccount(id)
+                  exploreShow({
+                    id: `account-${id}`,
+                    clientAsk: 'portfolio visibility without spreadsheet exports.',
+                    ourSolution: 'live portfolio with sector, revenue, and risk in one view.',
+                  })
+                }}
+              />
+              {config.assistant && (
+                <DemoAiAssistant config={config.assistant} accentColor={accent} />
+              )}
+            </>
+          )}
+          {tab === 'alerts' &&
+            opportunityAlerts.map((alert) => (
+              <div
+                key={alert.id}
+                className={`rounded-xl p-3 ring-1 ${
+                  alert.tone === 'rose'
+                    ? 'bg-rose-50 ring-rose-100'
+                    : alert.tone === 'amber'
+                      ? 'bg-amber-50 ring-amber-100'
+                      : 'bg-sky-50 ring-sky-100'
+                }`}
+              >
+                <p className="font-semibold text-slate-900">{alert.label}</p>
+                <p className="mt-1 text-[0.75rem] text-slate-600">{alert.detail}</p>
+              </div>
+            ))}
+          {tab === 'forecast' && (
+            <div className="rounded-xl bg-white p-4 ring-1 ring-slate-200">
+              <p className="text-[0.625rem] font-semibold uppercase text-slate-400">Q3 forecast</p>
+              <p className="mt-2 text-[2rem] font-bold text-slate-900">{forecast}</p>
+              <p className="mt-2 text-[0.8125rem] text-slate-600">
+                Simulated based on portfolio actions · updates when you complete journeys
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

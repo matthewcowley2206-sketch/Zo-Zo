@@ -489,76 +489,286 @@ export const northgateJourneys: DemoJourney[] = [
   },
 ]
 
-export const demoGuides: Record<string, DemoGuideConfig> = {
-  'horizon-airways': {
-    id: 'horizon-airways',
-    title: 'Loyalty & travel day',
-    intro:
-      'This is a working prototype inside the phone. Follow the glowing tap - brief notes appear as you go.',
-    completeMessage:
-      'You have seen the core journey. Keep exploring - Book, Miles, and lounge pass are all live.',
-    scopeNote:
-      'Simplified from a global loyalty replatform. Production adds partner airlines, fare rules, fraud, and dozens of integrations - this was enough for leadership to commit.',
+export const horizonAssistant: DemoAssistantConfig = {
+  title: 'AI commercial assistant',
+  placeholder: 'Ask about account risk, focus areas, or opportunities.',
+  prompts: [
+    {
+      id: 'at-risk',
+      label: 'Which accounts are most at risk?',
+      response:
+        'Pacific Resources is highest risk (score 78) — travel spend down 24% QoQ, no executive contact in 90 days. Westfield Mining is secondary (score 64) due to sector contraction.',
+    },
+    {
+      id: 'focus',
+      label: 'Where should I focus?',
+      response:
+        'Mining sector recovery offers the largest Q3 upside (+$2.2M forecast). Pair commercial incentives with executive engagement on Westfield Mining and Pacific Resources.',
+    },
+    {
+      id: 'opportunities',
+      label: 'What opportunities should I pursue?',
+      response:
+        'Top 3: (1) Mining sector incentive program — $1.4M, (2) Pacific retention campaign — $620k protected, (3) Harbour Group contract extension — $480k new revenue.',
+    },
+  ],
+}
+
+export const horizonAccounts = [
+  {
+    id: 'pacific',
+    targetId: 'account-health-pacific',
+    name: 'Pacific Resources',
+    sector: 'Resources',
+    revenue: '$4.8M',
+    trend: '↓ 24%',
+    risk: 78,
+    status: 'At risk',
+  },
+  {
+    id: 'westfield',
+    targetId: 'portfolio-account-mining',
+    name: 'Westfield Mining',
+    sector: 'Mining',
+    revenue: '$3.2M',
+    trend: '↓ 12%',
+    risk: 64,
+    status: 'Opportunity',
+  },
+  {
+    id: 'harbour',
+    name: 'Harbour Group',
+    sector: 'Financial services',
+    revenue: '$5.1M',
+    trend: '→ Stable',
+    risk: 28,
+    status: 'Healthy',
+  },
+  {
+    id: 'apex',
+    name: 'Apex Legal',
+    sector: 'Professional services',
+    revenue: '$2.4M',
+    trend: '↑ 8%',
+    risk: 22,
+    status: 'Growth',
+  },
+]
+
+export const horizonJourneys: DemoJourney[] = [
+  {
+    id: 'sales',
+    title: 'Sales leader focus',
+    persona: 'Sales leader',
+    scenario: 'I need to know where to focus this quarter.',
+    processingMessages: [
+      'Reviewing portfolio performance…',
+      'Scanning sector trends…',
+      'Identifying opportunities…',
+    ],
     steps: [
       {
-        id: 'trip',
-        target: 'trip-card',
-        hint: "Tap today's flight under Upcoming trips.",
-        recovery: 'Use the Home tab - look for Tier status, Miles balance, then Upcoming trips.',
+        id: 'portfolio',
+        target: 'portfolio-account-mining',
+        hint: 'Review the portfolio — tap Westfield Mining to inspect the sector signal.',
+        recovery: 'Open the portfolio table and select Westfield Mining.',
         annotation: {
-          id: 'home-loyalty',
+          id: 'portfolio',
           clientAsk:
-            'a single app where frequent flyers see tier status, miles, and upcoming trips without jumping between systems.',
+            'sales leaders to see portfolio performance without exporting five spreadsheets.',
           ourSolution:
-            'a loyalty-first home screen - tier, balance, and next flight on one view, ready for executive walkthroughs.',
+            'unified portfolio view with sector trends and risk scores — validated with sales VP in one workshop.',
         },
       },
       {
-        id: 'upgrade',
-        target: 'upgrade-btn',
-        hint: 'Try upgrading with miles before check-in.',
-        recovery: 'Open your trip first, then tap Upgrade with miles.',
+        id: 'scan',
+        target: 'run-opportunity-scan',
+        hint: 'Run AI opportunity scan on the portfolio.',
+        recovery: 'Tap Run opportunity scan below the portfolio table.',
         annotation: {
-          id: 'upgrade',
-          clientAsk: 'to test miles redemption before wiring to the loyalty engine.',
+          id: 'opportunity-scan',
+          clientAsk: 'AI to surface where to focus this quarter — not generic dashboards.',
           ourSolution:
-            'full upgrade path with balance preview - rules debated in workshops, not in Jira.',
+            'simulated scan that ranks sector opportunities with revenue impact — leadership saw forecast shift live.',
         },
       },
       {
-        id: 'checkin',
-        target: 'checkin-btn',
-        hint: 'Complete check-in - seats and Gold benefits together.',
-        recovery: 'From your trip, tap Check in, pick a seat, then complete check-in.',
-        annotation: {
-          id: 'checkin',
-          clientAsk: 'check-in, seats, and loyalty benefits in one journey - not three apps.',
-          ourSolution: 'unified check-in respecting tier, upgrade, and lounge eligibility.',
-        },
+        id: 'action',
+        target: 'action-focus-mining',
+        hint: 'Choose Focus mining sector recovery — highest forecast impact.',
+        recovery: 'Select Focus mining sector recovery from recommendations.',
       },
       {
-        id: 'boarding',
-        target: 'boarding-btn',
-        hint: 'Open your boarding pass.',
-        recovery: 'After check-in, tap View boarding pass on the trip screen.',
+        id: 'outcome',
+        target: 'outcome-continue',
+        hint: 'Review the updated revenue forecast and identified opportunities.',
+        recovery: 'Tap Continue exploring after reviewing the outcome.',
         annotation: {
-          id: 'boarding',
-          clientAsk: 'boarding pass with tier, lounge, and miles earned on one card.',
-          ourSolution: 'single boarding pass pulling tier benefits and trip details together.',
-        },
-      },
-      {
-        id: 'lounge',
-        target: 'lounge-btn',
-        hint: 'Open your Gold lounge pass.',
-        recovery: 'From the trip screen, tap Open lounge pass.',
-        annotation: {
-          id: 'lounge',
-          clientAsk: 'digital lounge passes for Gold - no PDF, no separate app.',
-          ourSolution: 'pass generated from tier + trip in the same record.',
+          id: 'outcome-sales',
+          clientAsk: 'proof that the platform drives revenue decisions, not just reporting.',
+          ourSolution:
+            'forecast update tied to chosen action — sales committee approved pilot from this view.',
         },
       },
     ],
+    outcome: {
+      beforeLabel: 'Q3 forecast (before)',
+      beforeValue: '$42.0M · unclear focus',
+      afterLabel: 'Q3 forecast (after)',
+      afterValue: '$44.2M · mining recovery plan',
+      headline: 'Business opportunities identified.',
+      metric: '+$2.2M forecast uplift',
+    },
+  },
+  {
+    id: 'account',
+    title: 'Account at risk',
+    persona: 'Account manager',
+    scenario: 'A major account is at risk.',
+    processingMessages: [
+      'Analysing account health…',
+      'Reviewing travel patterns…',
+      'Generating account brief…',
+    ],
+    steps: [
+      {
+        id: 'alert',
+        target: 'alert-at-risk',
+        hint: 'Open the revenue risk alert for Pacific Resources.',
+        recovery: 'Tap the Pacific Resources alert at the top of the dashboard.',
+        annotation: {
+          id: 'alert',
+          clientAsk: 'account managers to see risk before it appears in the churn report.',
+          ourSolution:
+            'proactive alerts wired to travel spend and engagement signals — AM validated thresholds first.',
+        },
+      },
+      {
+        id: 'health',
+        target: 'account-health-pacific',
+        hint: 'Review Pacific Resources account health details.',
+        recovery: 'Tap Pacific Resources in the account panel.',
+      },
+      {
+        id: 'brief',
+        target: 'generate-brief-btn',
+        hint: 'Generate an AI account brief.',
+        recovery: 'Tap Generate account brief on the account detail view.',
+        annotation: {
+          id: 'brief',
+          clientAsk: 'a brief they can use in a client conversation tomorrow — not a 20-page report.',
+          ourSolution:
+            'one-page brief with risk drivers and recommended actions — AM used it in a real client call during pilot.',
+        },
+      },
+      {
+        id: 'retention',
+        target: 'action-retention',
+        hint: 'Select Launch retention campaign.',
+        recovery: 'Choose Launch retention campaign from recommendations.',
+        annotation: {
+          id: 'retention',
+          clientAsk: 'simulated outcomes before committing commercial budget.',
+          ourSolution:
+            'decision simulation showing risk reduction and revenue protected — signed off by commercial director.',
+        },
+      },
+      {
+        id: 'outcome',
+        target: 'outcome-continue',
+        hint: 'See how risk reduced after your chosen action.',
+        recovery: 'Review outcome and tap Continue exploring.',
+      },
+    ],
+    outcome: {
+      beforeLabel: 'Risk score (before)',
+      beforeValue: '78 / 100 · revenue at risk $620k',
+      afterLabel: 'Risk score (after)',
+      afterValue: '52 / 100 · retention campaign active',
+      headline: 'Account risk reduced.',
+      metric: '$620k revenue protected',
+    },
+  },
+  {
+    id: 'executive',
+    title: 'Executive priorities',
+    persona: 'Executive',
+    scenario: 'What should leadership focus on?',
+    processingMessages: [
+      'Aggregating commercial signals…',
+      'Generating executive summary…',
+      'Ranking strategic priorities…',
+    ],
+    steps: [
+      {
+        id: 'dashboard',
+        target: 'exec-dashboard',
+        hint: 'Review the executive dashboard — sector performance and alerts.',
+        recovery: 'Scroll through the executive dashboard metrics and alerts.',
+        annotation: {
+          id: 'exec-dash',
+          clientAsk:
+            'leadership to see commercial health in one sitting — not three separate BI tools.',
+          ourSolution:
+            'executive dashboard with sector trends, risk exposure, and opportunity pipeline — CEO validated layout.',
+        },
+      },
+      {
+        id: 'summary',
+        target: 'ai-summary-btn',
+        hint: 'Generate the AI executive summary.',
+        recovery: 'Tap Generate AI summary on the dashboard.',
+      },
+      {
+        id: 'priority',
+        target: 'action-priority-growth',
+        hint: 'Prioritise mining sector recovery — top strategic focus.',
+        recovery: 'Select Prioritise mining sector recovery from recommendations.',
+        annotation: {
+          id: 'priority',
+          clientAsk: 'clear strategic focus — not a list of 20 initiatives.',
+          ourSolution:
+            'ranked priorities with revenue impact and owners — exec team aligned on top 3 in one session.',
+        },
+      },
+      {
+        id: 'outcome',
+        target: 'outcome-continue',
+        hint: 'Review the strategic focus outcome.',
+        recovery: 'Tap Continue exploring after reviewing priorities.',
+        annotation: {
+          id: 'outcome-exec',
+          clientAsk: 'confidence that commercial leadership is focused on the right bets.',
+          ourSolution:
+            'before/after from fragmented priorities to 3 owned initiatives — board saw this in pre-read.',
+        },
+      },
+    ],
+    outcome: {
+      beforeLabel: 'Before',
+      beforeValue: '6 disconnected priorities · no owners',
+      afterLabel: 'After',
+      afterValue: '3 strategic focus areas · owners assigned',
+      headline: 'Clear strategic focus for leadership.',
+      metric: 'Est. $3.1M Q3 upside identified',
+    },
+  },
+]
+
+export const demoGuides: Record<string, DemoGuideConfig> = {
+  'horizon-airways': {
+    id: 'horizon-airways',
+    title: 'Commercial growth intelligence',
+    device: 'desktop',
+    intro:
+      'Choose a scenario inside the prototype, then follow the guided workflow. Each step shows what the client asked for.',
+    completeMessage:
+      'Journey complete. Try another scenario, ask the commercial assistant, or explore portfolio and alerts freely.',
+    scopeNote:
+      'Built to validate commercial intelligence for a regional airline. Production connects to CRM, booking data, and revenue management — this prototype settled the experience before platform investment.',
+    steps: [],
+    journeys: horizonJourneys,
+    assistant: horizonAssistant,
   },
   'phoenix-coffee': {
     id: 'phoenix-coffee',

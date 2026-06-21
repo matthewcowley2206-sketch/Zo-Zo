@@ -21,19 +21,20 @@ export const projectDemos: ProjectDemo[] = [
     id: 'horizon-airways',
     clientName: 'Horizon Airways',
     sector: 'Aviation',
-    themeLabel: 'Test Before You Invest',
-    headline: 'Loyalty, booking, and check-in - in one app you can actually test.',
+    themeLabel: 'Growth & Go-to-Market',
+    headline: 'Commercial intelligence that tells you where to focus — before you commit.',
     summary:
-      'A working mobile prototype for Horizon Miles: tier status, award booking, miles redemption, check-in, and lounge access - simplified from a global airline loyalty replatform.',
+      'A desktop growth intelligence prototype with guided journeys for sales leaders, account managers, and executives — portfolio analysis, risk alerts, AI briefs, and forecast simulations.',
     challenge:
-      'Leadership needed to rethink the frequent-flyer experience - loyalty, booking, and airport journey together - without committing to a full platform rebuild.',
+      'Commercial leadership had CRM data, booking stats, and spreadsheets — but no single view to prioritise accounts, respond to sector risk, or simulate revenue impact before acting.',
     approach:
-      'We mapped the loyalty-led journey, aligned stakeholders on priority flows, and built a clickable prototype covering miles balance through boarding.',
+      'We built three role-based journeys inside a working prototype: quarterly focus, at-risk account response, and executive prioritisation — each with simulated AI and measurable outcomes.',
     outcome:
-      'Shared understanding across teams, faster decisions, and a validated brief before development spend.',
+      'Sales and executive teams aligned on Q3 priorities with forecast uplift modelled in the session — validated before CRM and BI integration.',
     humanImage: hiRes(photos.demoAirport),
     humanImageAlt: 'Traveller at an airport window, looking out at aircraft',
     accentColor: '#0c4a6e',
+    device: 'desktop',
   },
   {
     id: 'phoenix-coffee',
