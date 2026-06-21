@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { GuideTarget, useGuideActivate } from '../DemoGuide'
 
 export type InsightCategory = {
@@ -8,6 +9,9 @@ export type InsightCategory = {
   summary: string
   mentions: number
   risk?: string
+  supportingQuotes?: string[]
+  rootCauses?: string[]
+  recommendedActions?: string[]
 }
 
 type DemoInsightExplorerProps = {
@@ -16,6 +20,7 @@ type DemoInsightExplorerProps = {
   onSelect: (id: string) => void
   highlightTargetId?: string
   accentColor: string
+  drillDown?: boolean
 }
 
 const sentimentStyles = {
@@ -30,6 +35,7 @@ export function DemoInsightExplorer({
   onSelect,
   highlightTargetId,
   accentColor,
+  drillDown = false,
 }: DemoInsightExplorerProps) {
   const active = categories.find((c) => c.id === activeId) ?? categories[0]
 
@@ -73,7 +79,7 @@ export function DemoInsightExplorer({
         })}
       </div>
 
-      <InsightDetail category={active} accentColor={accentColor} />
+      <InsightDetail category={active} accentColor={accentColor} drillDown={drillDown} />
     </div>
   )
 }
@@ -81,9 +87,11 @@ export function DemoInsightExplorer({
 function InsightDetail({
   category,
   accentColor,
+  drillDown,
 }: {
   category: InsightCategory
   accentColor: string
+  drillDown: boolean
 }) {
   return (
     <div className="rounded-xl bg-white p-4 ring-1 ring-slate-200">
@@ -112,6 +120,51 @@ function InsightDetail({
           Risk signal · {category.risk}
         </p>
       )}
+
+      {drillDown && (
+        <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
+          {category.supportingQuotes && category.supportingQuotes.length > 0 && (
+            <DrillSection title="Supporting signals">
+              {category.supportingQuotes.map((q) => (
+                <p key={q} className="text-[0.75rem] italic leading-relaxed text-slate-600">
+                  &ldquo;{q}&rdquo;
+                </p>
+              ))}
+            </DrillSection>
+          )}
+          {category.rootCauses && category.rootCauses.length > 0 && (
+            <DrillSection title="Root causes">
+              <ul className="space-y-1">
+                {category.rootCauses.map((c) => (
+                  <li key={c} className="text-[0.75rem] text-slate-700">
+                    · {c}
+                  </li>
+                ))}
+              </ul>
+            </DrillSection>
+          )}
+          {category.recommendedActions && category.recommendedActions.length > 0 && (
+            <DrillSection title="Recommended actions">
+              <ul className="space-y-1">
+                {category.recommendedActions.map((a) => (
+                  <li key={a} className="text-[0.75rem] font-medium text-emerald-800">
+                    → {a}
+                  </li>
+                ))}
+              </ul>
+            </DrillSection>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function DrillSection({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <div>
+      <p className="text-[0.625rem] font-semibold uppercase tracking-wide text-slate-400">{title}</p>
+      <div className="mt-1.5 space-y-1.5">{children}</div>
     </div>
   )
 }

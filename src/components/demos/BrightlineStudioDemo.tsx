@@ -18,7 +18,7 @@ import { DemoRoadmapPanel } from './shared/DemoRoadmapPanel'
 const accent = '#0f766e'
 
 const SUGGESTED_CHALLENGE =
-  'We want to expand into adjacent markets but need clarity on where to focus first — without over-investing before validation.'
+  'We want to expand into adjacent markets but need clarity on where to focus first - without over-investing before validation.'
 
 const WORKSHOP_CHALLENGE =
   'Our leadership team has five competing priorities for H2. We need alignment on what to fund, what to defer, and who owns each bet.'

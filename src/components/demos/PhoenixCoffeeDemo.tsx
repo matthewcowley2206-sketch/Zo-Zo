@@ -8,29 +8,24 @@ import {
   DemoTabBar,
 } from './DeviceFrame'
 import { InteractiveDemoShell } from './InteractiveDemoShell'
+import { analysePhoenixSymptoms, phoenixSymptomExamples } from '../../lib/demoAnalysis/phoenixDiagnosis'
+import type { PhoenixDiagnosisResult } from '../../lib/demoAnalysis/types'
 import { DemoAiAssistant } from './shared/DemoAiAssistant'
+import { DemoBusinessImpactPanel } from './shared/DemoBusinessImpactPanel'
+import { DemoCauseAnalysisPanel } from './shared/DemoCauseAnalysisPanel'
 import { DemoJourneyPicker } from './shared/DemoJourneyPicker'
+import { DemoOutcomePreview } from './shared/DemoOutcomePreview'
 import { DemoOutcomeReveal } from './shared/DemoOutcomeReveal'
 import { DemoProcessingSequence } from './shared/DemoProcessingSequence'
 import { DemoRecommendationPanel } from './shared/DemoRecommendationPanel'
+import { DemoServiceClosingPanel } from './shared/DemoServiceClosingPanel'
 
 const accent = '#92400e'
 
 type Tab = 'home' | 'machine' | 'maintenance' | 'support'
-type BreakdownView = 'symptoms' | 'processing' | 'diagnosis' | 'outcome'
+type BreakdownView = 'symptoms' | 'processing' | 'diagnosis' | 'actions' | 'impact'
 type LearnView = 'diagram' | 'detail'
 type MaintView = 'dashboard' | 'processing' | 'plan' | 'outcome'
-
-const symptoms = [
-  {
-    id: 'slow-bitter',
-    targetId: 'symptom-slow-bitter',
-    label: 'Slow extraction + bitter taste',
-    detail: 'Shots running 35+ seconds · sour-bitter finish',
-  },
-  { id: 'no-steam', label: 'No steam pressure', detail: 'Steam wand weak · gauge below 1 bar' },
-  { id: 'leak', label: 'Water leak under group head', detail: 'Drip after shot · gasket wear likely' },
-]
 
 const machineParts = [
   {
@@ -67,21 +62,6 @@ const machineParts = [
   },
 ]
 
-const breakdownActions = [
-  {
-    id: 'descale',
-    title: 'Run descale cycle',
-    description: 'Recommended first step · 25 min · no parts required',
-    impact: 'Resolves ~85% of slow + bitter cases',
-  },
-  {
-    id: 'technician',
-    title: 'Book technician',
-    description: 'If descale fails · estimated $180 callout',
-    impact: 'Escalate after self-service attempt',
-  },
-]
-
 function PhoenixApp() {
   const { show } = useDemoAnnotation()
   const {
@@ -95,7 +75,8 @@ function PhoenixApp() {
 
   const [tab, setTab] = useState<Tab>('home')
   const [breakdownView, setBreakdownView] = useState<BreakdownView>('symptoms')
-  const [selectedSymptom, setSelectedSymptom] = useState<string | null>(null)
+  const [symptomText, setSymptomText] = useState('')
+  const [diagnosisResult, setDiagnosisResult] = useState<PhoenixDiagnosisResult | null>(null)
   const [selectedAction, setSelectedAction] = useState<string | null>(null)
   const [learnView, setLearnView] = useState<LearnView>('diagram')
   const [activePart, setActivePart] = useState(machineParts[0])
@@ -104,7 +85,7 @@ function PhoenixApp() {
   const [scheduled, setScheduled] = useState(false)
 
   const runDiagnosis = useGuideActivate('run-diagnosis-btn')
-  const symptomSlow = useGuideActivate('symptom-slow-bitter')
+  const previewContinue = useGuideActivate('outcome-preview-continue')
   const partBoiler = useGuideActivate('part-boiler')
   const partGrouphead = useGuideActivate('part-grouphead')
   const guidanceNext = useGuideActivate('part-guidance-next')
@@ -119,7 +100,8 @@ function PhoenixApp() {
 
   const resetJourneyState = () => {
     setBreakdownView('symptoms')
-    setSelectedSymptom(null)
+    setSymptomText('')
+    setDiagnosisResult(null)
     setSelectedAction(null)
     setLearnView('diagram')
     setActivePart(machineParts[0])
@@ -134,6 +116,9 @@ function PhoenixApp() {
     resetJourneyState()
     if (id === 'learn') setTab('machine')
     if (id === 'maintenance') setTab('maintenance')
+    if (id === 'breakdown') {
+      setSymptomText(phoenixSymptomExamples[0].text)
+    }
   }
 
   if (awaitingJourney) {
@@ -155,18 +140,19 @@ function PhoenixApp() {
     )
   }
 
+  const runSymptomAnalysis = () => {
+    const result = analysePhoenixSymptoms(symptomText)
+    setDiagnosisResult(result)
+    runDiagnosis.onGuideAction()
+    setBreakdownView('processing')
+  }
+
   if (mode !== 'explore' && activeJourney?.id === 'breakdown') {
-    if (breakdownView === 'processing') {
+    if (breakdownView === 'processing' && diagnosisResult) {
       return (
         <DemoScreen title="AI diagnosis" subtitle="Analysing symptoms" accentColor={accent}>
           <DemoProcessingSequence
-            messages={
-              activeJourney.processingMessages ?? [
-                'Analysing symptoms…',
-                'Checking service history…',
-                'Generating recommendations…',
-              ]
-            }
+            messages={diagnosisResult.processingMessages}
             accentColor={accent}
             onComplete={() => setBreakdownView('diagnosis')}
           />
@@ -174,7 +160,7 @@ function PhoenixApp() {
       )
     }
 
-    if (breakdownView === 'diagnosis') {
+    if (breakdownView === 'diagnosis' && diagnosisResult) {
       return (
         <DemoScreen
           title="Diagnosis ready"
@@ -186,85 +172,120 @@ function PhoenixApp() {
             <div className="rounded-xl bg-violet-50 p-3 ring-1 ring-violet-100">
               <p className="text-[0.625rem] font-semibold uppercase text-violet-700">AI insight</p>
               <p className="mt-1 text-[0.8125rem] leading-relaxed text-violet-900">
-                Pattern matches scale buildup in boiler and group head. Last descale was 94 days ago
-                — recommended interval is 90 days.
+                {diagnosisResult.insight}
               </p>
             </div>
-            <DemoRecommendationPanel
-              recommendations={breakdownActions}
-              accentColor={accent}
-              highlightTargetId="action-descale"
-              selectedId={selectedAction ?? undefined}
-              onSelect={(id) => {
-                setSelectedAction(id)
-                if (id === 'descale') setBreakdownView('outcome')
-              }}
+            <DemoCauseAnalysisPanel
+              causes={diagnosisResult.causes}
+              confidence={diagnosisResult.confidence}
+              matchedSignals={diagnosisResult.matchedSignals}
             />
+            <DemoOutcomePreview
+              headline={diagnosisResult.outcomePreview.headline}
+              metric={diagnosisResult.outcomePreview.metric}
+              detail={diagnosisResult.outcomePreview.detail}
+              accentColor={accent}
+            />
+            <GuideTarget id="outcome-preview-continue">
+              <DemoButton
+                accentColor={accent}
+                onClick={() => {
+                  previewContinue.onGuideAction()
+                  setBreakdownView('actions')
+                }}
+              >
+                View recommended actions
+              </DemoButton>
+            </GuideTarget>
           </div>
         </DemoScreen>
       )
     }
 
-    if (breakdownView === 'outcome') {
+    if (breakdownView === 'actions' && diagnosisResult) {
+      const primaryId = diagnosisResult.recommendations[0]?.id
       return (
-        <DemoScreen title="Issue resolved" subtitle="Self-service complete" accentColor={accent}>
-          <DemoOutcomeReveal
-            outcome={activeJourney.outcome}
+        <DemoScreen
+          title="Recommended actions"
+          subtitle="Step 4 · Choose next step"
+          accentColor={accent}
+          onBack={() => setBreakdownView('diagnosis')}
+        >
+          <DemoRecommendationPanel
+            recommendations={diagnosisResult.recommendations}
             accentColor={accent}
-            onContinue={() => {
-              skipToExplore()
-              setTab('support')
+            highlightTargetId={primaryId ? `action-${primaryId}` : 'action-descale'}
+            selectedId={selectedAction ?? undefined}
+            onSelect={(id) => {
+              setSelectedAction(id)
+              setBreakdownView('impact')
             }}
           />
         </DemoScreen>
       )
     }
 
+    if (breakdownView === 'impact' && diagnosisResult) {
+      const impact = diagnosisResult.businessImpact
+      return (
+        <DemoScreen title="Business impact" subtitle="Self-service complete" accentColor={accent}>
+          <DemoBusinessImpactPanel
+            items={[
+              { label: 'Technician cost avoided', value: impact.technicianCostAvoided },
+              { label: 'Downtime avoided', value: impact.downtimeAvoided },
+              { label: 'Staff confidence', value: impact.staffConfidence },
+              { label: 'Maintenance compliance', value: impact.maintenanceCompliance },
+            ]}
+          />
+          <div className="mt-4">
+            <DemoOutcomeReveal
+              outcome={{
+                ...activeJourney.outcome,
+                metric: diagnosisResult.outcomePreview.metric,
+                headline: diagnosisResult.outcomePreview.headline,
+              }}
+              accentColor={accent}
+              onContinue={() => {
+                skipToExplore()
+                setTab('support')
+              }}
+            />
+          </div>
+          <div className="mt-4">
+            <DemoServiceClosingPanel variant="phoenix" />
+          </div>
+        </DemoScreen>
+      )
+    }
+
     return (
-      <DemoScreen title="Report a fault" subtitle="Step 2 · Select symptoms" accentColor={accent}>
-        <div className="space-y-2">
+      <DemoScreen title="Report a fault" subtitle="Describe the symptom" accentColor={accent}>
+        <div className="space-y-3">
           <p className="text-[0.8125rem] text-slate-600">
-            What is happening with the machine?
+            Type what is happening - or try an example below.
           </p>
-          {symptoms.map((symptom) => {
-            const isTarget = symptom.targetId === 'symptom-slow-bitter'
-            const card = (
+          <textarea
+            value={symptomText}
+            onChange={(e) => setSymptomText(e.target.value)}
+            placeholder="e.g. Coffee is bitter and extracting slowly…"
+            rows={3}
+            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-[0.8125rem] leading-relaxed text-slate-800 placeholder:text-slate-400 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200"
+          />
+          <div className="flex flex-wrap gap-1.5">
+            {phoenixSymptomExamples.map((ex) => (
               <button
+                key={ex.label}
                 type="button"
-                onClick={() => {
-                  setSelectedSymptom(symptom.id)
-                  if (symptom.id === 'slow-bitter') symptomSlow.onGuideAction()
-                }}
-                className={`w-full rounded-xl p-3 text-left ring-1 transition ${
-                  selectedSymptom === symptom.id
-                    ? 'bg-amber-50 ring-amber-300'
-                    : 'bg-white ring-slate-100'
-                }`}
+                onClick={() => setSymptomText(ex.text)}
+                className="rounded-lg bg-slate-100 px-2.5 py-1 text-[0.6875rem] font-medium text-slate-700 ring-1 ring-slate-200 transition hover:bg-amber-50 hover:ring-amber-200"
               >
-                <p className="font-semibold text-slate-900">{symptom.label}</p>
-                <p className="mt-0.5 text-[0.75rem] text-slate-500">{symptom.detail}</p>
+                {ex.label}
               </button>
-            )
-
-            if (isTarget) {
-              return (
-                <GuideTarget key={symptom.id} id={symptom.targetId!}>
-                  {card}
-                </GuideTarget>
-              )
-            }
-
-            return <div key={symptom.id}>{card}</div>
-          })}
-          {selectedSymptom && (
+            ))}
+          </div>
+          {symptomText.trim().length >= 3 && (
             <GuideTarget id="run-diagnosis-btn">
-              <DemoButton
-                accentColor={accent}
-                onClick={() => {
-                  runDiagnosis.onGuideAction()
-                  setBreakdownView('processing')
-                }}
-              >
+              <DemoButton accentColor={accent} onClick={runSymptomAnalysis}>
                 Run AI diagnosis
               </DemoButton>
             </GuideTarget>
@@ -551,7 +572,7 @@ function PhoenixApp() {
           )}
           {tab === 'maintenance' && (
             <p className="text-[0.8125rem] text-slate-600">
-              Maintenance dashboard and AI plans — explore freely or restart a journey.
+              Maintenance dashboard and AI plans - explore freely or restart a journey.
             </p>
           )}
         </DemoScreen>

@@ -13,7 +13,7 @@ export function isTestBeforeYouInvest(input: {
   return false
 }
 
-/** Premium dark green signature treatment — capability cards only. */
+/** Premium dark green signature treatment - capability cards only. */
 export const tbyiCapabilityClasses =
   'border-emerald-800/35 bg-zo-green text-cream shadow-md shadow-zo-green-deep/20'
 
@@ -27,7 +27,7 @@ export const tbyiCapabilityCtaClasses =
 
 export const tbyiCapabilityLinkClasses = `${tbyiCapabilityClasses} ${tbyiCapabilityHoverClasses}`
 
-/** Compact pill for footer / work labels — same signature colour. */
+/** Compact pill for footer / work labels - same signature colour. */
 export const tbyiSignaturePillClasses =
   'border-emerald-800/35 bg-zo-green text-cream hover:bg-zo-green-light'
 

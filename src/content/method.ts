@@ -1,9 +1,9 @@
 export const positioning = {
   headline: 'Helping leaders move from uncertainty to confidence.',
   subhead:
-    'We help you understand customers and stakeholders, shape strategy, design practical solutions, test ideas before you invest — and decide what to do next.',
+    'We help you understand customers and stakeholders, shape strategy, design practical solutions, test ideas before you invest - and decide what to do next.',
   subheadMobile:
-    'From understanding the real problem to testing practical solutions before you invest — so you can decide with confidence.',
+    'From understanding the real problem to testing practical solutions before you invest - so you can decide with confidence.',
   secondaryTagline: 'Turning Complexity into Clarity',
 } as const
 
@@ -14,7 +14,7 @@ export const methodSteps = [
     title: 'Understand',
     href: '/services/client-listening',
     description:
-      'Clarify what is really happening — define the right problem, understand the customer, stakeholder or business challenge.',
+      'Clarify what is really happening - define the right problem, understand the customer, stakeholder or business challenge.',
     uncertainty:
       'Reduces uncertainty about what is really going on.',
   },
@@ -91,7 +91,7 @@ export const serviceThemes: ServiceTheme[] = [
     id: 'strategy-structure',
     title: 'Strategy & Structure',
     summary:
-      'Strategic direction, prioritisation, communication clarity, and operating model design — so your team can follow.',
+      'Strategic direction, prioritisation, communication clarity, and operating model design - so your team can follow.',
     problem:
       'Too many priorities and no shared direction - teams cannot see what to do next or how work should flow.',
     outcome:

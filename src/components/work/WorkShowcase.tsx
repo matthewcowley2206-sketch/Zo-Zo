@@ -19,7 +19,7 @@ function ExampleWorkIntro() {
     <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
       <div>
         <p className="body-large max-w-[540px]">
-          These examples show how our method comes to life — clickable prototypes leaders
+          These examples show how our method comes to life - clickable prototypes leaders
           can evaluate in context. Names are placeholders where confidentiality applies.
         </p>
       </div>
@@ -28,7 +28,7 @@ function ExampleWorkIntro() {
           Not a software agency
         </p>
         <p className="mt-4 text-[1.125rem] leading-relaxed text-cream/85">
-          Prototypes here are decision tools — scoped to reduce uncertainty and support
+          Prototypes here are decision tools - scoped to reduce uncertainty and support
           confident next steps, not products built for launch.
         </p>
       </div>
@@ -82,7 +82,7 @@ export function WorkShowcase({
           <div className="content-wide">
             <CollapsibleSection
               eyebrow="Example work"
-              title="Ideas made tangible — try the prototypes"
+              title="Ideas made tangible - try the prototypes"
               description="Expand an example to read the story and interact with the live prototype."
               defaultOpen
             >

@@ -27,7 +27,7 @@ export type PageSeo = {
 
 /** Plain-language entity summary for humans and answer engines. */
 export const entitySummary =
-  'Zo&Zo Advisory is a Sydney-based business advisory helping leaders across Australia move from uncertainty to confidence. We help you define the right problem, understand customers and stakeholders, shape strategy, design practical solutions, and test ideas before major investment — so you can decide what to do next with evidence, not guesswork.'
+  'Zo&Zo Advisory is a Sydney-based business advisory helping leaders across Australia move from uncertainty to confidence. We help you define the right problem, understand customers and stakeholders, shape strategy, design practical solutions, and test ideas before major investment - so you can decide what to do next with evidence, not guesswork.'
 
 export const homeFaqs: FaqItem[] = [
   {

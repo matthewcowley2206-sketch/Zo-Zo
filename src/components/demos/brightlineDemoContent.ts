@@ -8,13 +8,13 @@ export const brightlineAssistant: DemoAssistantConfig = {
       id: 'focus',
       label: 'What should we focus on first?',
       response:
-        'Start with the partnership channel — highest fit score, lowest capital requirement, and validates demand before product investment. Sequence: 30-day partner pilot → 90-day scale decision.',
+        'Start with the partnership channel - highest fit score, lowest capital requirement, and validates demand before product investment. Sequence: 30-day partner pilot → 90-day scale decision.',
     },
     {
       id: 'risks',
       label: 'What risks exist?',
       response:
-        'Top 3 risks: (1) Channel conflict with direct sales — mitigate with clear partner tier rules, (2) Capacity strain on delivery — phase rollout by region, (3) Unclear value proposition — run 5 client tests before scale.',
+        'Top 3 risks: (1) Channel conflict with direct sales - mitigate with clear partner tier rules, (2) Capacity strain on delivery - phase rollout by region, (3) Unclear value proposition - run 5 client tests before scale.',
     },
     {
       id: 'delivery',
@@ -61,14 +61,14 @@ export const brightlineJourneys: DemoJourney[] = [
       {
         id: 'challenge',
         target: 'challenge-input',
-        hint: 'Enter your business challenge — or use the suggested prompt.',
+        hint: 'Enter your business challenge - or use the suggested prompt.',
         recovery: 'Type in the challenge field or tap Use suggested challenge.',
         annotation: {
           id: 'challenge',
           clientAsk:
             'leadership to articulate a fuzzy idea without a blank-page strategy workshop.',
           ourSolution:
-            'guided challenge intake with suggested prompts — validated with founders in one session.',
+            'guided challenge intake with suggested prompts - validated with founders in one session.',
         },
       },
       {
@@ -78,15 +78,15 @@ export const brightlineJourneys: DemoJourney[] = [
         recovery: 'Tap Generate opportunity canvas after entering your challenge.',
         annotation: {
           id: 'canvas',
-          clientAsk: 'structured options — not a wall of AI text.',
+          clientAsk: 'structured options - not a wall of AI text.',
           ourSolution:
-            'opportunity canvas with fit scores and trade-offs — exec team ranked options live.',
+            'opportunity canvas with fit scores and trade-offs - exec team ranked options live.',
         },
       },
       {
         id: 'prioritise',
         target: 'action-partnership',
-        hint: 'Prioritise Partnership channel expansion — highest fit.',
+        hint: 'Prioritise Partnership channel expansion - highest fit.',
         recovery: 'Select Partnership channel expansion from recommendations.',
       },
       {
@@ -96,9 +96,9 @@ export const brightlineJourneys: DemoJourney[] = [
         recovery: 'Tap Continue exploring after reviewing the outcome.',
         annotation: {
           id: 'outcome-idea',
-          clientAsk: 'confidence about what to do next Monday — not just strategy slides.',
+          clientAsk: 'confidence about what to do next Monday - not just strategy slides.',
           ourSolution:
-            'prioritised opportunity with 30-day actions — board approved pilot budget from this view.',
+            'prioritised opportunity with 30-day actions - board approved pilot budget from this view.',
         },
       },
     ],
@@ -125,13 +125,13 @@ export const brightlineJourneys: DemoJourney[] = [
       {
         id: 'current',
         target: 'current-state-review',
-        hint: 'Review the current state assessment — bottlenecks and gaps.',
+        hint: 'Review the current state assessment - bottlenecks and gaps.',
         recovery: 'Scroll through the current state panel and tap Acknowledge assessment.',
         annotation: {
           id: 'current-state',
-          clientAsk: 'an honest current state view — not a polished annual report.',
+          clientAsk: 'an honest current state view - not a polished annual report.',
           ourSolution:
-            'structured assessment with bottlenecks, metrics, and stakeholder pain — COO validated in workshop.',
+            'structured assessment with bottlenecks, metrics, and stakeholder pain - COO validated in workshop.',
         },
       },
       {
@@ -143,13 +143,13 @@ export const brightlineJourneys: DemoJourney[] = [
       {
         id: 'roadmap',
         target: 'action-transformation-roadmap',
-        hint: 'Approve the transformation roadmap — phased delivery.',
+        hint: 'Approve the transformation roadmap - phased delivery.',
         recovery: 'Select Approve transformation roadmap from recommendations.',
         annotation: {
           id: 'roadmap',
-          clientAsk: 'a roadmap they could fund — not a 200-page program plan.',
+          clientAsk: 'a roadmap they could fund - not a 200-page program plan.',
           ourSolution:
-            '30/90-day phased roadmap with owners — program board signed off in one sitting.',
+            '30/90-day phased roadmap with owners - program board signed off in one sitting.',
         },
       },
       {
@@ -186,9 +186,9 @@ export const brightlineJourneys: DemoJourney[] = [
         recovery: 'Read the workshop challenge card and tap Confirm challenge.',
         annotation: {
           id: 'workshop-challenge',
-          clientAsk: 'a facilitated session that produces decisions — not sticky notes on a wall.',
+          clientAsk: 'a facilitated session that produces decisions - not sticky notes on a wall.',
           ourSolution:
-            'AI-assisted facilitation with structured challenge framing — leadership aligned in 90 minutes.',
+            'AI-assisted facilitation with structured challenge framing - leadership aligned in 90 minutes.',
         },
       },
       {
@@ -200,13 +200,13 @@ export const brightlineJourneys: DemoJourney[] = [
       {
         id: 'align',
         target: 'action-align-priority',
-        hint: 'Align on the top priority — customer experience program.',
+        hint: 'Align on the top priority - customer experience program.',
         recovery: 'Select Align on customer experience program.',
         annotation: {
           id: 'align',
           clientAsk: 'shared direction the whole exec team could repeat consistently.',
           ourSolution:
-            'priority matrix with impact/effort scoring — team voted on top 3 in the prototype session.',
+            'priority matrix with impact/effort scoring - team voted on top 3 in the prototype session.',
         },
       },
       {
@@ -218,7 +218,7 @@ export const brightlineJourneys: DemoJourney[] = [
           id: 'outcome-workshop',
           clientAsk: 'proof that workshops can end with owned priorities.',
           ourSolution:
-            'shared priorities with exec sponsors — replaced a follow-up alignment meeting entirely.',
+            'shared priorities with exec sponsors - replaced a follow-up alignment meeting entirely.',
         },
       },
     ],

@@ -21,7 +21,7 @@ export function ProjectShowcase({ demo, reversed = false, compact = false }: Pro
   const isTbyi = isTestBeforeYouInvest({ label: demo.themeLabel })
 
   const demoIntro = hideGuideRail
-    ? 'Choose a scenario inside the prototype and follow the highlights — fully interactive.'
+    ? 'Choose a scenario inside the prototype and follow the highlights - fully interactive.'
     : demo.device === 'desktop'
       ? 'The prototype below is fully interactive. Follow the guided walkthrough - it tells you exactly where to click, and why it mattered to the client.'
       : 'The phone below is fully interactive. Follow the guided walkthrough - it tells you exactly where to tap, and why it mattered to the client.'

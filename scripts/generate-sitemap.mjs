@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url'
 const SITE_URL = 'https://www.zoandzo.com.au'
 const lastmod = new Date().toISOString().slice(0, 10)
 
-/** Canonical service URLs — legacy merged slugs redirect and are excluded. */
+/** Canonical service URLs - legacy merged slugs redirect and are excluded. */
 const serviceSlugs = [
   'prototype-development',
   'strategy',

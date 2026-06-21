@@ -3,7 +3,6 @@ import { humanImagery, projectDemos } from '../content/demos'
 import {
   methodSteps,
   positioning,
-  prototypeProofLine,
   serviceThemes,
   tensionPoints,
 } from '../content/method'
@@ -18,7 +17,8 @@ import { FadeIn } from '../components/ui/FadeIn'
 import { Divider, Section, SectionHeader } from '../components/ui/Section'
 
 export function Home() {
-  const featuredDemo = projectDemos.find((d) => d.id === 'phoenix-coffee') ?? projectDemos[0]
+  const phoenixDemo = projectDemos.find((d) => d.id === 'phoenix-coffee') ?? projectDemos[0]
+  const northgateDemo = projectDemos.find((d) => d.id === 'northgate-legal') ?? projectDemos[1]
   const clientListeningTheme = serviceThemes.find((theme) => theme.featured)
 
   return (
@@ -184,35 +184,65 @@ export function Home() {
 
       <Section theme="cream">
         <SectionHeader
-          eyebrow="Proof, not promises"
-          title="See ideas working before you commit."
-          description={prototypeProofLine}
+          eyebrow="Flagship demonstration"
+          title="Test before you invest."
+          description="Type a symptom. Get a dynamic diagnosis. See business impact before you commit to a platform."
         />
         <FadeIn className="content-wide">
           <div className="rounded-3xl bg-cream px-6 py-10 sm:px-10 sm:py-14 ring-1 ring-line">
             <p className="mb-8 text-center text-[0.9375rem] text-muted">
-              {featuredDemo.clientName} is a placeholder for a hospitality engagement. Choose a
-              scenario and follow the guided troubleshooting flow below.
+              {phoenixDemo.clientName} is a placeholder for a hospitality engagement. Type a symptom
+              or tap an example - the diagnosis changes based on what you enter.
             </p>
-            <DemoRenderer demoId={featuredDemo.id} />
+            <DemoRenderer demoId={phoenixDemo.id} />
             <p className="mt-8 flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-center">
               <ArrowLink to="/services/prototype-development#phoenix-coffee">
-                See all prototype demos
+                Explore Test Before You Invest
               </ArrowLink>
-              <span className="hidden text-muted-light sm:inline">·</span>
-              <ArrowLink to="/services/prototype-development">About Test Before You Invest</ArrowLink>
-              <span className="hidden text-muted-light sm:inline">·</span>
-              <ArrowLink to="/services/data-ai">Data, AI & Insights</ArrowLink>
             </p>
           </div>
+        </FadeIn>
+      </Section>
+
+      <Divider />
+
+      <Section>
+        <SectionHeader
+          eyebrow="Flagship demonstration"
+          title="Client listening that drives decisions."
+          description="Paste feedback or try a sample. See themes, risks, and an executive brief generated from what you provide."
+        />
+        <FadeIn className="content-wide">
+          <div className="rounded-3xl bg-white px-6 py-10 sm:px-10 sm:py-14 ring-1 ring-line">
+            <p className="mb-8 text-center text-[0.9375rem] text-muted">
+              {northgateDemo.clientName} demonstrates Zo&Zo&apos;s Client Listening capability -
+              turning voice of customer into prioritised action before analytics investment.
+            </p>
+            <DemoRenderer demoId={northgateDemo.id} />
+            <p className="mt-8 flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-center">
+              <ArrowLink to="/services/client-listening">
+                Explore Client Listening
+              </ArrowLink>
+              <span className="hidden text-muted-light sm:inline">·</span>
+              <ArrowLink to="/services/prototype-development#northgate-legal">
+                Try on example work page
+              </ArrowLink>
+            </p>
+          </div>
+        </FadeIn>
+      </Section>
+
+      <Section size="compact">
+        <FadeIn className="content-max text-center">
+          <ArrowLink to="/services/prototype-development">See all prototype demos</ArrowLink>
         </FadeIn>
       </Section>
 
       <Section>
         <SectionHeader
           eyebrow="Our work"
-          title="Four prototypes. Four industries."
-          description="Horizon Airways, Phoenix Coffee, Northgate Legal, and Brightline Studio - placeholder names, real capability."
+          title="Four prototypes. Two flagship demonstrations."
+          description="Phoenix Coffee and Northgate Legal lead - plus Horizon Airways and Brightline Studio. Placeholder names, real capability."
         />
         <div className="content-wide grid gap-6 lg:grid-cols-3">
           {projectDemos.map((demo, i) => (

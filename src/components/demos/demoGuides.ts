@@ -24,51 +24,51 @@ export const phoenixJourneys: DemoJourney[] = [
     steps: [
       {
         id: 'symptom',
-        target: 'symptom-slow-bitter',
-        hint: 'Select the symptom that matches — slow extraction and bitter taste.',
-        recovery: 'Tap the symptom card describing slow extraction and bitter taste.',
+        target: 'run-diagnosis-btn',
+        hint: 'Type a symptom or tap an example, then run AI diagnosis.',
+        recovery: 'Enter what is happening with the machine and tap Run AI diagnosis.',
         annotation: {
           id: 'symptom-pick',
           clientAsk:
             'staff to diagnose common faults without calling a technician every time.',
           ourSolution:
-            'guided symptom capture that mirrors how baristas actually describe problems on shift.',
+            'free-text symptom capture with dynamic AI analysis - tested with store managers first.',
         },
       },
       {
-        id: 'diagnose',
-        target: 'run-diagnosis-btn',
-        hint: 'Run AI diagnosis on the symptoms you selected.',
-        recovery: 'Tap Run AI diagnosis below the selected symptoms.',
+        id: 'preview',
+        target: 'outcome-preview-continue',
+        hint: 'Review the outcome preview and likely causes, then continue.',
+        recovery: 'Scroll to the outcome preview and tap View recommended actions.',
         annotation: {
-          id: 'ai-diagnose',
-          clientAsk: 'likely causes before anyone opens the machine or calls service.',
+          id: 'outcome-preview',
+          clientAsk: 'proof of value before anyone commits to a service call.',
           ourSolution:
-            'simulated AI analysis using machine model, usage, and symptom pattern — tested with store managers first.',
+            'early outcome preview with confidence score and ranked causes - leadership saw ROI immediately.',
         },
       },
       {
         id: 'action',
         target: 'action-descale',
-        hint: 'Choose the recommended descale action.',
-        recovery: 'After diagnosis, tap Run descale cycle (recommended).',
+        hint: 'Choose the recommended action.',
+        recovery: 'Tap the top recommended action to see business impact.',
         annotation: {
           id: 'action-pick',
           clientAsk: 'clear next steps staff can follow without a manual.',
           ourSolution:
-            'ranked actions with estimated time and cost — avoids unnecessary callouts.',
+            'ranked actions with estimated time and cost - avoids unnecessary callouts.',
         },
       },
       {
         id: 'outcome',
         target: 'outcome-continue',
-        hint: 'Review the outcome — likely cause identified and callout avoided.',
-        recovery: 'Scroll to the outcome summary, then tap Continue exploring.',
+        hint: 'Review business impact and continue exploring.',
+        recovery: 'Scroll to the business impact summary, then tap Continue exploring.',
         annotation: {
           id: 'outcome-breakdown',
           clientAsk: 'proof that self-service troubleshooting saves money and downtime.',
           ourSolution:
-            'before/after outcome with estimated technician cost avoided — leadership saw ROI in one session.',
+            'business impact panel with technician savings and compliance metrics.',
         },
       },
     ],
@@ -96,7 +96,7 @@ export const phoenixJourneys: DemoJourney[] = [
           id: 'part-boiler',
           clientAsk: 'new staff to learn components without shadowing a senior barista for weeks.',
           ourSolution:
-            'interactive diagram with plain-language guidance per component — validated in one store pilot.',
+            'interactive diagram with plain-language guidance per component - validated in one store pilot.',
         },
       },
       {
@@ -114,7 +114,7 @@ export const phoenixJourneys: DemoJourney[] = [
           id: 'part-grouphead',
           clientAsk: 'maintenance tasks tied to the part that actually needs attention.',
           ourSolution:
-            'component-level cleaning steps and common faults — reduces training time and inconsistency.',
+            'component-level cleaning steps and common faults - reduces training time and inconsistency.',
         },
       },
       {
@@ -126,7 +126,7 @@ export const phoenixJourneys: DemoJourney[] = [
           id: 'explorer-done',
           clientAsk: 'confidence that staff understand the machine before peak service.',
           ourSolution:
-            'guided exploration with progress tracking — store managers requested this before rollout.',
+            'guided exploration with progress tracking - store managers requested this before rollout.',
         },
       },
     ],
@@ -153,13 +153,13 @@ export const phoenixJourneys: DemoJourney[] = [
       {
         id: 'dashboard',
         target: 'maint-dashboard',
-        hint: 'Review the maintenance dashboard — last service and upcoming tasks.',
+        hint: 'Review the maintenance dashboard - last service and upcoming tasks.',
         recovery: 'Open the Maintenance tab and review status cards.',
         annotation: {
           id: 'maint-dash',
           clientAsk: 'one view of service status across six stores without spreadsheets.',
           ourSolution:
-            'maintenance dashboard with last service, cleaning status, and filter life — ops validated layout first.',
+            'maintenance dashboard with last service, cleaning status, and filter life - ops validated layout first.',
         },
       },
       {
@@ -171,7 +171,7 @@ export const phoenixJourneys: DemoJourney[] = [
           id: 'maint-ai',
           clientAsk: 'proactive alerts before machines fail on Saturday morning rush.',
           ourSolution:
-            'AI recommendations based on usage patterns and service intervals — tested with ops lead.',
+            'AI recommendations based on usage patterns and service intervals - tested with ops lead.',
         },
       },
       {
@@ -189,7 +189,7 @@ export const phoenixJourneys: DemoJourney[] = [
           id: 'outcome-maint',
           clientAsk: 'proof that preventative maintenance pays for itself.',
           ourSolution:
-            'cumulative callouts avoided tracker — leadership approved pilot budget from this view alone.',
+            'cumulative callouts avoided tracker - leadership approved pilot budget from this view alone.',
         },
       },
     ],
@@ -212,13 +212,13 @@ export const phoenixAssistant: DemoAssistantConfig = {
       id: 'slow-bitter',
       label: 'Slow + bitter extraction',
       response:
-        'Likely scale buildup in the boiler or group head. Run a descale cycle first — 85% of similar cases resolve without a technician. Estimated time: 25 minutes.',
+        'Likely scale buildup in the boiler or group head. Run a descale cycle first - 85% of similar cases resolve without a technician. Estimated time: 25 minutes.',
     },
     {
       id: 'no-steam',
       label: 'No steam pressure',
       response:
-        'Check water level and steam wand blockage. If pressure gauge reads below 1 bar after refill, schedule steam system inspection — do not force the pump.',
+        'Check water level and steam wand blockage. If pressure gauge reads below 1 bar after refill, schedule steam system inspection - do not force the pump.',
     },
     {
       id: 'next-service',
@@ -237,7 +237,7 @@ export const northgateAssistant: DemoAssistantConfig = {
       id: 'concerns',
       label: 'What concerns clients most?',
       response:
-        'Responsiveness and value perception are the top concerns — 38% of negative sentiment links to turnaround time on routine matters. Communication quality is secondary but rising in corporate clients.',
+        'Responsiveness and value perception are the top concerns - 38% of negative sentiment links to turnaround time on routine matters. Communication quality is secondary but rising in corporate clients.',
     },
     {
       id: 'prioritise',
@@ -261,7 +261,7 @@ export const northgateInsightCategories = [
     score: 62,
     sentiment: 'mixed' as const,
     summary:
-      'Clients want faster updates on routine matters. Partners agree — but current process relies on manual check-ins.',
+      'Clients want faster updates on routine matters. Partners agree - but current process relies on manual check-ins.',
     mentions: 24,
     risk: 'Turnaround time cited in 38% of mixed feedback',
   },
@@ -309,52 +309,52 @@ export const northgateJourneys: DemoJourney[] = [
     ],
     steps: [
       {
-        id: 'upload',
-        target: 'upload-transcript',
-        hint: 'Select interview transcripts to upload for analysis.',
-        recovery: 'Tap Interview transcript under Step 2 · Upload sources.',
-        annotation: {
-          id: 'upload-transcript',
-          clientAsk:
-            'to analyse interview transcripts without a team of analysts reading every line.',
-          ourSolution:
-            'simulated upload flow with matter tagging — leadership validated intake before AI integration.',
-        },
-      },
-      {
-        id: 'analyse',
+        id: 'paste',
         target: 'run-analysis-btn',
-        hint: 'Run AI analysis on the uploaded transcripts.',
-        recovery: 'After selecting a source, tap Analyse transcripts.',
+        hint: 'Paste feedback or try a sample, then analyse.',
+        recovery: 'Add feedback text or tap a sample scenario, then tap Analyse feedback.',
         annotation: {
-          id: 'run-analysis',
-          clientAsk: 'themes and sentiment surfaced in minutes, not weeks.',
+          id: 'paste-feedback',
+          clientAsk:
+            'to analyse client feedback without a team of analysts reading every line.',
           ourSolution:
-            'processing sequence that mirrors production NLP pipeline — partners saw realistic output timing.',
+            'paste-and-analyse flow with dynamic theme extraction - leadership validated intake before AI integration.',
         },
       },
       {
-        id: 'themes',
-        target: 'theme-responsiveness',
-        hint: 'Explore the Responsiveness theme — highest risk signal.',
-        recovery: 'Open Insight explorer and tap Responsiveness.',
+        id: 'insight',
+        target: 'top-insight-continue',
+        hint: 'Review the top insight and outcome preview.',
+        recovery: 'Scroll to the outcome preview and tap Generate executive brief.',
         annotation: {
-          id: 'themes',
-          clientAsk: 'leadership to see where client sentiment is fragile, not just average scores.',
+          id: 'top-insight',
+          clientAsk: 'evidence of value within minutes, not weeks of analysis.',
           ourSolution:
-            'category explorer with scores, sentiment, and risk flags — replaced a 60-page interview summary.',
+            'early outcome preview with transparency on how insights were generated.',
+        },
+      },
+      {
+        id: 'brief',
+        target: 'action-responsiveness',
+        hint: 'Review the executive brief and prioritise an action.',
+        recovery: 'Choose the top recommended action from the brief.',
+        annotation: {
+          id: 'exec-brief',
+          clientAsk: 'a brief the managing partner can act on immediately.',
+          ourSolution:
+            'executive brief with themes, risks, opportunities, and prioritised actions.',
         },
       },
       {
         id: 'outcome',
         target: 'outcome-continue',
-        hint: 'Review the outcome — key client priorities identified.',
+        hint: 'Review the business outcome and continue exploring.',
         recovery: 'Scroll to the business outcome, then tap Continue exploring.',
         annotation: {
           id: 'outcome-listening',
           clientAsk: 'evidence that client listening drives decisions, not shelf-ware reports.',
           ourSolution:
-            'before/after outcome with prioritised themes — managing partner approved pilot scope from this view.',
+            'before/after outcome with prioritised themes - managing partner approved pilot scope from this view.',
         },
       },
     ],
@@ -385,9 +385,9 @@ export const northgateJourneys: DemoJourney[] = [
         recovery: 'Open the Findings panel on the dashboard.',
         annotation: {
           id: 'findings',
-          clientAsk: 'a single executive view — not separate decks per practice group.',
+          clientAsk: 'a single executive view - not separate decks per practice group.',
           ourSolution:
-            'unified findings dashboard with sentiment trend and top themes — partners aligned in one session.',
+            'unified findings dashboard with sentiment trend and top themes - partners aligned in one session.',
         },
       },
       {
@@ -399,13 +399,13 @@ export const northgateJourneys: DemoJourney[] = [
       {
         id: 'prioritise',
         target: 'action-responsiveness',
-        hint: 'Prioritise the responsiveness initiative — highest impact.',
+        hint: 'Prioritise the responsiveness initiative - highest impact.',
         recovery: 'Select Launch proactive matter updates from recommendations.',
         annotation: {
           id: 'prioritise',
           clientAsk: 'clear priorities leadership can act on this quarter.',
           ourSolution:
-            'ranked recommendations with estimated NPS impact — committee voted on top two in the workshop.',
+            'ranked recommendations with estimated NPS impact - committee voted on top two in the workshop.',
         },
       },
       {
@@ -417,7 +417,7 @@ export const northgateJourneys: DemoJourney[] = [
           id: 'outcome-leadership',
           clientAsk: 'a brief they could take to the partnership meeting, not another slide deck.',
           ourSolution:
-            'action plan with owners and 90-day milestones — scoped CRM integration for phase two.',
+            'action plan with owners and 90-day milestones - scoped CRM integration for phase two.',
         },
       },
     ],
@@ -445,7 +445,7 @@ export const northgateJourneys: DemoJourney[] = [
           id: 'group-select',
           clientAsk: 'practice leaders to see their group without firm-wide averages hiding problems.',
           ourSolution:
-            'group-level sentiment with interview count and NPS — corporate lead validated metrics in workshop.',
+            'group-level sentiment with interview count and NPS - corporate lead validated metrics in workshop.',
         },
       },
       {
@@ -463,7 +463,7 @@ export const northgateJourneys: DemoJourney[] = [
           id: 'opportunity',
           clientAsk: 'targeted improvements, not firm-wide initiatives that miss local context.',
           ourSolution:
-            'group-specific recommendations wired to known client segments — practice lead owned the top action.',
+            'group-specific recommendations wired to known client segments - practice lead owned the top action.',
         },
       },
       {
@@ -475,7 +475,7 @@ export const northgateJourneys: DemoJourney[] = [
           id: 'outcome-practice',
           clientAsk: 'confidence that the right team is fixing the right problems.',
           ourSolution:
-            'before/after with group NPS trajectory — approved for Q3 client experience program.',
+            'before/after with group NPS trajectory - approved for Q3 client experience program.',
         },
       },
     ],
@@ -498,7 +498,7 @@ export const horizonAssistant: DemoAssistantConfig = {
       id: 'at-risk',
       label: 'Which accounts are most at risk?',
       response:
-        'Pacific Resources is highest risk (score 78) — travel spend down 24% QoQ, no executive contact in 90 days. Westfield Mining is secondary (score 64) due to sector contraction.',
+        'Pacific Resources is highest risk (score 78) - travel spend down 24% QoQ, no executive contact in 90 days. Westfield Mining is secondary (score 64) due to sector contraction.',
     },
     {
       id: 'focus',
@@ -510,7 +510,7 @@ export const horizonAssistant: DemoAssistantConfig = {
       id: 'opportunities',
       label: 'What opportunities should I pursue?',
       response:
-        'Top 3: (1) Mining sector incentive program — $1.4M, (2) Pacific retention campaign — $620k protected, (3) Harbour Group contract extension — $480k new revenue.',
+        'Top 3: (1) Mining sector incentive program - $1.4M, (2) Pacific retention campaign - $620k protected, (3) Harbour Group contract extension - $480k new revenue.',
     },
   ],
 }
@@ -571,14 +571,14 @@ export const horizonJourneys: DemoJourney[] = [
       {
         id: 'portfolio',
         target: 'portfolio-account-mining',
-        hint: 'Review the portfolio — tap Westfield Mining to inspect the sector signal.',
+        hint: 'Review the portfolio - tap Westfield Mining to inspect the sector signal.',
         recovery: 'Open the portfolio table and select Westfield Mining.',
         annotation: {
           id: 'portfolio',
           clientAsk:
             'sales leaders to see portfolio performance without exporting five spreadsheets.',
           ourSolution:
-            'unified portfolio view with sector trends and risk scores — validated with sales VP in one workshop.',
+            'unified portfolio view with sector trends and risk scores - validated with sales VP in one workshop.',
         },
       },
       {
@@ -588,15 +588,15 @@ export const horizonJourneys: DemoJourney[] = [
         recovery: 'Tap Run opportunity scan below the portfolio table.',
         annotation: {
           id: 'opportunity-scan',
-          clientAsk: 'AI to surface where to focus this quarter — not generic dashboards.',
+          clientAsk: 'AI to surface where to focus this quarter - not generic dashboards.',
           ourSolution:
-            'simulated scan that ranks sector opportunities with revenue impact — leadership saw forecast shift live.',
+            'simulated scan that ranks sector opportunities with revenue impact - leadership saw forecast shift live.',
         },
       },
       {
         id: 'action',
         target: 'action-focus-mining',
-        hint: 'Choose Focus mining sector recovery — highest forecast impact.',
+        hint: 'Choose Focus mining sector recovery - highest forecast impact.',
         recovery: 'Select Focus mining sector recovery from recommendations.',
       },
       {
@@ -608,7 +608,7 @@ export const horizonJourneys: DemoJourney[] = [
           id: 'outcome-sales',
           clientAsk: 'proof that the platform drives revenue decisions, not just reporting.',
           ourSolution:
-            'forecast update tied to chosen action — sales committee approved pilot from this view.',
+            'forecast update tied to chosen action - sales committee approved pilot from this view.',
         },
       },
     ],
@@ -641,7 +641,7 @@ export const horizonJourneys: DemoJourney[] = [
           id: 'alert',
           clientAsk: 'account managers to see risk before it appears in the churn report.',
           ourSolution:
-            'proactive alerts wired to travel spend and engagement signals — AM validated thresholds first.',
+            'proactive alerts wired to travel spend and engagement signals - AM validated thresholds first.',
         },
       },
       {
@@ -657,9 +657,9 @@ export const horizonJourneys: DemoJourney[] = [
         recovery: 'Tap Generate account brief on the account detail view.',
         annotation: {
           id: 'brief',
-          clientAsk: 'a brief they can use in a client conversation tomorrow — not a 20-page report.',
+          clientAsk: 'a brief they can use in a client conversation tomorrow - not a 20-page report.',
           ourSolution:
-            'one-page brief with risk drivers and recommended actions — AM used it in a real client call during pilot.',
+            'one-page brief with risk drivers and recommended actions - AM used it in a real client call during pilot.',
         },
       },
       {
@@ -671,7 +671,7 @@ export const horizonJourneys: DemoJourney[] = [
           id: 'retention',
           clientAsk: 'simulated outcomes before committing commercial budget.',
           ourSolution:
-            'decision simulation showing risk reduction and revenue protected — signed off by commercial director.',
+            'decision simulation showing risk reduction and revenue protected - signed off by commercial director.',
         },
       },
       {
@@ -704,14 +704,14 @@ export const horizonJourneys: DemoJourney[] = [
       {
         id: 'dashboard',
         target: 'exec-dashboard',
-        hint: 'Review the executive dashboard — sector performance and alerts.',
+        hint: 'Review the executive dashboard - sector performance and alerts.',
         recovery: 'Scroll through the executive dashboard metrics and alerts.',
         annotation: {
           id: 'exec-dash',
           clientAsk:
-            'leadership to see commercial health in one sitting — not three separate BI tools.',
+            'leadership to see commercial health in one sitting - not three separate BI tools.',
           ourSolution:
-            'executive dashboard with sector trends, risk exposure, and opportunity pipeline — CEO validated layout.',
+            'executive dashboard with sector trends, risk exposure, and opportunity pipeline - CEO validated layout.',
         },
       },
       {
@@ -723,13 +723,13 @@ export const horizonJourneys: DemoJourney[] = [
       {
         id: 'priority',
         target: 'action-priority-growth',
-        hint: 'Prioritise mining sector recovery — top strategic focus.',
+        hint: 'Prioritise mining sector recovery - top strategic focus.',
         recovery: 'Select Prioritise mining sector recovery from recommendations.',
         annotation: {
           id: 'priority',
-          clientAsk: 'clear strategic focus — not a list of 20 initiatives.',
+          clientAsk: 'clear strategic focus - not a list of 20 initiatives.',
           ourSolution:
-            'ranked priorities with revenue impact and owners — exec team aligned on top 3 in one session.',
+            'ranked priorities with revenue impact and owners - exec team aligned on top 3 in one session.',
         },
       },
       {
@@ -741,7 +741,7 @@ export const horizonJourneys: DemoJourney[] = [
           id: 'outcome-exec',
           clientAsk: 'confidence that commercial leadership is focused on the right bets.',
           ourSolution:
-            'before/after from fragmented priorities to 3 owned initiatives — board saw this in pre-read.',
+            'before/after from fragmented priorities to 3 owned initiatives - board saw this in pre-read.',
         },
       },
     ],
@@ -766,7 +766,7 @@ export const demoGuides: Record<string, DemoGuideConfig> = {
     completeMessage:
       'Journey complete. Try another scenario, ask the commercial assistant, or explore portfolio and alerts freely.',
     scopeNote:
-      'Built to validate commercial intelligence for a regional airline. Production connects to CRM, booking data, and revenue management — this prototype settled the experience before platform investment.',
+      'Built to validate commercial intelligence for a regional airline. Production connects to CRM, booking data, and revenue management - this prototype settled the experience before platform investment.',
     steps: [],
     journeys: horizonJourneys,
     assistant: horizonAssistant,
@@ -779,7 +779,7 @@ export const demoGuides: Record<string, DemoGuideConfig> = {
     completeMessage:
       'Journey complete. Try another scenario, ask the AI assistant, or explore the machine diagram freely.',
     scopeNote:
-      'Built to validate AI-assisted troubleshooting and preventative maintenance across six stores. Production connects to IoT sensors, service logs, and technician dispatch — this prototype settled the experience first.',
+      'Built to validate AI-assisted troubleshooting and preventative maintenance across six stores. Production connects to IoT sensors, service logs, and technician dispatch - this prototype settled the experience first.',
     device: 'phone',
     steps: [],
     journeys: phoenixJourneys,
@@ -794,7 +794,7 @@ export const demoGuides: Record<string, DemoGuideConfig> = {
     completeMessage:
       'Journey complete. Try another scenario, ask the AI assistant, or explore insight categories freely.',
     scopeNote:
-      'Built to validate client listening and insight workflows for a top-tier firm. Production connects to CRM, interview recordings, and partner dashboards — this prototype settled the experience before integration.',
+      'Built to validate client listening and insight workflows for a top-tier firm. Production connects to CRM, interview recordings, and partner dashboards - this prototype settled the experience before integration.',
     steps: [],
     journeys: northgateJourneys,
     assistant: northgateAssistant,
@@ -808,7 +808,7 @@ export const demoGuides: Record<string, DemoGuideConfig> = {
     completeMessage:
       'Journey complete. Try another scenario, explore scenario planning, or ask the strategy assistant.',
     scopeNote:
-      'Built to validate strategic planning and workshop facilitation for a growing services firm. Production connects to OKR tools, CRM, and program management — this prototype settled the experience first.',
+      'Built to validate strategic planning and workshop facilitation for a growing services firm. Production connects to OKR tools, CRM, and program management - this prototype settled the experience first.',
     steps: [],
     journeys: brightlineJourneys,
     assistant: brightlineAssistant,
