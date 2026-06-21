@@ -57,19 +57,20 @@ export const projectDemos: ProjectDemo[] = [
     id: 'northgate-legal',
     clientName: 'Northgate Legal',
     sector: 'Professional services',
-    themeLabel: 'Strategy & Structure',
-    headline: 'A client portal teams could evaluate in context - not in a meeting deck.',
+    themeLabel: 'Opportunity & Insight',
+    headline: 'Client listening that turns feedback into strategic intelligence.',
     summary:
-      'A client portal prototype with matter tracking, secure messaging, document upload, and invoice visibility - built so partners could navigate it themselves.',
+      'An interactive insight platform with guided journeys: analyse interview transcripts, generate leadership briefs, and review practice group sentiment — before investing in CRM and analytics integration.',
     challenge:
-      'Partners needed to explore a new digital capability but could not agree direction from wireframes and presentations alone.',
+      'Partners had completed client listening but struggled to turn interview data into priorities leadership could act on — spreadsheets and slide decks were not moving decisions.',
     approach:
-      'We structured the problem, simplified the options, and delivered a working portal prototype leadership could navigate themselves.',
+      'We built three guided journeys inside a working prototype: transcript analysis, executive brief generation, and practice group review — each ending with measurable outcomes.',
     outcome:
-      'Faster alignment, clearer requirements, and confidence in what to build next.',
+      'Managing partner approved a Q3 client experience program with clear priorities — validated before analytics platform investment.',
     humanImage: hiRes(photos.demoLegal),
     humanImageAlt: 'Professional team reviewing documents and outcomes together',
     accentColor: '#1e3a5f',
+    device: 'desktop',
   },
   {
     id: 'brightline-studio',

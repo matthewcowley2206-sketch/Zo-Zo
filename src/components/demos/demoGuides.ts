@@ -228,6 +228,267 @@ export const phoenixAssistant: DemoAssistantConfig = {
   ],
 }
 
+export const northgateAssistant: DemoAssistantConfig = {
+  title: 'AI insight assistant',
+  placeholder: 'Ask about client priorities, leadership focus, or impact.',
+  prompts: [
+    {
+      id: 'concerns',
+      label: 'What concerns clients most?',
+      response:
+        'Responsiveness and value perception are the top concerns — 38% of negative sentiment links to turnaround time on routine matters. Communication quality is secondary but rising in corporate clients.',
+    },
+    {
+      id: 'prioritise',
+      label: 'What should leadership prioritise?',
+      response:
+        'Priority 1: Matter status visibility and proactive updates. Priority 2: Value narrative in corporate M&A. Estimated NPS uplift +12 if both addressed in Q3.',
+    },
+    {
+      id: 'impact',
+      label: 'Greatest impact actions?',
+      response:
+        'Automated status updates for in-flight matters (+8 NPS), partner-led value reviews for top 20 clients (+6 NPS), and a single client feedback loop closing within 10 days (+5 NPS).',
+    },
+  ],
+}
+
+export const northgateInsightCategories = [
+  {
+    id: 'responsiveness',
+    label: 'Responsiveness',
+    score: 62,
+    sentiment: 'mixed' as const,
+    summary:
+      'Clients want faster updates on routine matters. Partners agree — but current process relies on manual check-ins.',
+    mentions: 24,
+    risk: 'Turnaround time cited in 38% of mixed feedback',
+  },
+  {
+    id: 'communication',
+    label: 'Communication',
+    score: 71,
+    sentiment: 'positive' as const,
+    summary:
+      'Clear, jargon-free updates praised in litigation and property groups. Corporate clients want more proactive outreach.',
+    mentions: 19,
+  },
+  {
+    id: 'value',
+    label: 'Value',
+    score: 58,
+    sentiment: 'mixed' as const,
+    summary:
+      'Corporate clients question fee transparency on multi-phase matters. Value narrative needs strengthening at partner level.',
+    mentions: 16,
+    risk: 'Fee clarity flagged by 4 of 6 corporate interviewees',
+  },
+  {
+    id: 'strategic',
+    label: 'Strategic advice',
+    score: 74,
+    sentiment: 'positive' as const,
+    summary:
+      'Strong trust in partner judgment on complex matters. Clients want earlier strategic input, not just reactive advice.',
+    mentions: 14,
+  },
+]
+
+export const northgateJourneys: DemoJourney[] = [
+  {
+    id: 'listening',
+    title: 'Client listening review',
+    persona: 'Client insights lead',
+    scenario: "I've completed client interviews.",
+    processingMessages: [
+      'Analysing feedback…',
+      'Generating themes…',
+      'Identifying risks…',
+      'Preparing recommendations…',
+    ],
+    steps: [
+      {
+        id: 'upload',
+        target: 'upload-transcript',
+        hint: 'Select interview transcripts to upload for analysis.',
+        recovery: 'Tap Interview transcript under Step 2 · Upload sources.',
+        annotation: {
+          id: 'upload-transcript',
+          clientAsk:
+            'to analyse interview transcripts without a team of analysts reading every line.',
+          ourSolution:
+            'simulated upload flow with matter tagging — leadership validated intake before AI integration.',
+        },
+      },
+      {
+        id: 'analyse',
+        target: 'run-analysis-btn',
+        hint: 'Run AI analysis on the uploaded transcripts.',
+        recovery: 'After selecting a source, tap Analyse transcripts.',
+        annotation: {
+          id: 'run-analysis',
+          clientAsk: 'themes and sentiment surfaced in minutes, not weeks.',
+          ourSolution:
+            'processing sequence that mirrors production NLP pipeline — partners saw realistic output timing.',
+        },
+      },
+      {
+        id: 'themes',
+        target: 'theme-responsiveness',
+        hint: 'Explore the Responsiveness theme — highest risk signal.',
+        recovery: 'Open Insight explorer and tap Responsiveness.',
+        annotation: {
+          id: 'themes',
+          clientAsk: 'leadership to see where client sentiment is fragile, not just average scores.',
+          ourSolution:
+            'category explorer with scores, sentiment, and risk flags — replaced a 60-page interview summary.',
+        },
+      },
+      {
+        id: 'outcome',
+        target: 'outcome-continue',
+        hint: 'Review the outcome — key client priorities identified.',
+        recovery: 'Scroll to the business outcome, then tap Continue exploring.',
+        annotation: {
+          id: 'outcome-listening',
+          clientAsk: 'evidence that client listening drives decisions, not shelf-ware reports.',
+          ourSolution:
+            'before/after outcome with prioritised themes — managing partner approved pilot scope from this view.',
+        },
+      },
+    ],
+    outcome: {
+      beforeLabel: 'Before',
+      beforeValue: '42 interview pages · no shared themes',
+      afterLabel: 'After',
+      afterValue: '4 priority themes · 2 risk flags raised',
+      headline: 'Key client priorities identified.',
+      metric: 'Analysis time · 3 weeks → 20 minutes',
+    },
+  },
+  {
+    id: 'leadership',
+    title: 'Leadership brief',
+    persona: 'Managing partner',
+    scenario: 'I need an executive summary.',
+    processingMessages: [
+      'Synthesising findings…',
+      'Drafting executive summary…',
+      'Ranking priorities…',
+    ],
+    steps: [
+      {
+        id: 'findings',
+        target: 'findings-summary',
+        hint: 'Review the aggregated findings from client listening.',
+        recovery: 'Open the Findings panel on the dashboard.',
+        annotation: {
+          id: 'findings',
+          clientAsk: 'a single executive view — not separate decks per practice group.',
+          ourSolution:
+            'unified findings dashboard with sentiment trend and top themes — partners aligned in one session.',
+        },
+      },
+      {
+        id: 'brief',
+        target: 'generate-brief-btn',
+        hint: 'Generate the leadership summary with AI.',
+        recovery: 'Tap Generate leadership brief on the findings panel.',
+      },
+      {
+        id: 'prioritise',
+        target: 'action-responsiveness',
+        hint: 'Prioritise the responsiveness initiative — highest impact.',
+        recovery: 'Select Launch proactive matter updates from recommendations.',
+        annotation: {
+          id: 'prioritise',
+          clientAsk: 'clear priorities leadership can act on this quarter.',
+          ourSolution:
+            'ranked recommendations with estimated NPS impact — committee voted on top two in the workshop.',
+        },
+      },
+      {
+        id: 'outcome',
+        target: 'outcome-continue',
+        hint: 'Review the executive action plan outcome.',
+        recovery: 'Tap Continue exploring after reviewing the outcome.',
+        annotation: {
+          id: 'outcome-leadership',
+          clientAsk: 'a brief they could take to the partnership meeting, not another slide deck.',
+          ourSolution:
+            'action plan with owners and 90-day milestones — scoped CRM integration for phase two.',
+        },
+      },
+    ],
+    outcome: {
+      beforeLabel: 'Before',
+      beforeValue: 'Fragmented feedback · no shared plan',
+      afterLabel: 'After',
+      afterValue: '3 priority actions · owners assigned',
+      headline: 'Clear executive action plan.',
+      metric: 'Est. +12 NPS if top 2 actions delivered',
+    },
+  },
+  {
+    id: 'practice',
+    title: 'Practice group review',
+    persona: 'Practice group leader',
+    scenario: 'I want to understand one team.',
+    steps: [
+      {
+        id: 'group',
+        target: 'group-corporate',
+        hint: 'Select Corporate & M&A to review practice group sentiment.',
+        recovery: 'Tap Corporate & M&A under Practice groups.',
+        annotation: {
+          id: 'group-select',
+          clientAsk: 'practice leaders to see their group without firm-wide averages hiding problems.',
+          ourSolution:
+            'group-level sentiment with interview count and NPS — corporate lead validated metrics in workshop.',
+        },
+      },
+      {
+        id: 'sentiment',
+        target: 'sentiment-review',
+        hint: 'Review sentiment breakdown for this practice group.',
+        recovery: 'Tap View sentiment breakdown on the group card.',
+      },
+      {
+        id: 'opportunity',
+        target: 'action-value-review',
+        hint: 'Select the value review action for this group.',
+        recovery: 'Choose Partner-led value reviews from recommendations.',
+        annotation: {
+          id: 'opportunity',
+          clientAsk: 'targeted improvements, not firm-wide initiatives that miss local context.',
+          ourSolution:
+            'group-specific recommendations wired to known client segments — practice lead owned the top action.',
+        },
+      },
+      {
+        id: 'outcome',
+        target: 'outcome-continue',
+        hint: 'See targeted improvement actions for the practice group.',
+        recovery: 'Review outcome and tap Continue exploring.',
+        annotation: {
+          id: 'outcome-practice',
+          clientAsk: 'confidence that the right team is fixing the right problems.',
+          ourSolution:
+            'before/after with group NPS trajectory — approved for Q3 client experience program.',
+        },
+      },
+    ],
+    outcome: {
+      beforeLabel: 'Before',
+      beforeValue: 'Corporate NPS 42 · value concerns rising',
+      afterLabel: 'After',
+      afterValue: '2 targeted actions · value review scheduled',
+      headline: 'Targeted improvement actions defined.',
+      metric: 'Projected NPS +8 for Corporate & M&A',
+    },
+  },
+]
+
 export const demoGuides: Record<string, DemoGuideConfig> = {
   'horizon-airways': {
     id: 'horizon-airways',
@@ -315,64 +576,17 @@ export const demoGuides: Record<string, DemoGuideConfig> = {
   },
   'northgate-legal': {
     id: 'northgate-legal',
-    title: 'Client portal',
+    title: 'Client listening & insight',
+    device: 'desktop',
     intro:
-      'Walk through a matter as the client would. Highlights show exactly where to tap next.',
+      'Choose a scenario inside the prototype, then follow the guided workflow. Each step shows what the firm asked for.',
     completeMessage:
-      'Core portal flows covered. Browse Matters, Chat, and Docs tabs freely.',
+      'Journey complete. Try another scenario, ask the AI assistant, or explore insight categories freely.',
     scopeNote:
-      'A decision-grade prototype for a top-tier firm. Production adds DMS integration, privilege rules, audit trails, and SSO - this let partners click through the experience in one sitting.',
-    steps: [
-      {
-        id: 'matter',
-        target: 'matter-card',
-        hint: 'Open the Harbour Tower matter from your dashboard.',
-        recovery: 'From Home, tap Harbour Tower acquisition.',
-        annotation: {
-          id: 'portal-home',
-          clientAsk:
-            'clients to see matter status, deadlines, and next actions without calling the partner.',
-          ourSolution:
-            'a dashboard with progress, responsible partner, and pending tasks - partners validated layout in a single workshop.',
-        },
-      },
-      {
-        id: 'upload',
-        target: 'upload-btn',
-        hint: 'Upload documents from the matter screen.',
-        recovery: 'Open a matter first, then tap Upload documents.',
-      },
-      {
-        id: 'upload-tap',
-        target: 'upload-zone',
-        hint: 'Tap to upload a file.',
-        recovery: 'Tap Upload documents, then tap the upload area.',
-        annotation: {
-          id: 'upload',
-          clientAsk: 'clients to upload due diligence files without email attachments.',
-          ourSolution:
-            'drag-and-drop upload with matter tagging and partner notification - DMS integration scoped for phase two.',
-        },
-      },
-      {
-        id: 'message',
-        target: 'message-btn',
-        hint: 'Send a message to your partner.',
-        recovery: 'From the matter screen, tap Message partner.',
-      },
-      {
-        id: 'send',
-        target: 'send-message-btn',
-        hint: 'Send the message.',
-        recovery: 'Open Message partner, then tap Send message.',
-        annotation: {
-          id: 'msg',
-          clientAsk: 'secure client-to-partner messaging without email chains.',
-          ourSolution:
-            'in-portal messaging tied to matter record - compliance reviewed the flow before build.',
-        },
-      },
-    ],
+      'Built to validate client listening and insight workflows for a top-tier firm. Production connects to CRM, interview recordings, and partner dashboards — this prototype settled the experience before integration.',
+    steps: [],
+    journeys: northgateJourneys,
+    assistant: northgateAssistant,
   },
   'brightline-studio': {
     id: 'brightline-studio',
