@@ -257,7 +257,7 @@ export function DemoGuideRail() {
   const railTitle = activeJourney?.title ?? config.title
 
   const displayHint = awaitingJourney
-    ? 'Choose a scenario inside the prototype — each journey takes about 60 seconds.'
+    ? 'Choose a scenario in the prototype to begin.'
     : mode === 'guided' && currentStep
       ? targetVisible
         ? currentStep.hint
@@ -268,17 +268,7 @@ export function DemoGuideRail() {
     <div className="flex flex-col justify-center">
       <div className="rounded-2xl border border-line bg-cream p-5 sm:p-6">
         <div className="flex items-start justify-between gap-3">
-          <div>
-            <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-muted-light">
-              Guided walkthrough
-            </p>
-            <p className="mt-1 text-[1.0625rem] font-semibold text-ink">{railTitle}</p>
-            {activeJourney && (
-              <p className="mt-1 text-[0.8125rem] text-muted">
-                &ldquo;{activeJourney.scenario}&rdquo;
-              </p>
-            )}
-          </div>
+          <p className="text-[1.0625rem] font-semibold leading-snug text-ink">{railTitle}</p>
           {mode === 'guided' && !awaitingJourney ? (
             <span
               className="shrink-0 rounded-full px-2.5 py-1 text-[0.6875rem] font-semibold text-white"
@@ -293,38 +283,36 @@ export function DemoGuideRail() {
           ) : null}
         </div>
 
-        <p className="mt-3 text-[0.8125rem] leading-relaxed text-muted">{config.intro}</p>
-
         {!awaitingJourney && (
-        <div className="mt-4 flex gap-1.5">
-          {(activeJourney?.steps ?? config.steps).map((step, i) => (
-            <div
-              key={step.id}
-              className="h-1.5 flex-1 rounded-full transition-colors duration-300"
-              style={{
-                backgroundColor:
-                  i < stepIndex
-                    ? accentColor
-                    : i === stepIndex && mode === 'guided'
-                      ? `${accentColor}99`
-                      : '#e2e8f0',
-              }}
-            />
-          ))}
-        </div>
+          <div className="mt-4 flex gap-1.5">
+            {(activeJourney?.steps ?? config.steps).map((step, i) => (
+              <div
+                key={step.id}
+                className="h-1 flex-1 rounded-full transition-colors duration-300"
+                style={{
+                  backgroundColor:
+                    i < stepIndex
+                      ? accentColor
+                      : i === stepIndex && mode === 'guided'
+                        ? `${accentColor}99`
+                        : '#e2e8f0',
+                }}
+              />
+            ))}
+          </div>
         )}
 
         <AnimatePresence mode="wait">
           <motion.p
             key={displayHint}
-            initial={{ opacity: 0, y: 6 }}
+            initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.25 }}
-            className="mt-5 text-[0.9375rem] leading-relaxed text-ink"
+            transition={{ duration: 0.2 }}
+            className="mt-4 text-[0.9375rem] leading-relaxed text-muted"
           >
             {mode === 'guided' && currentStep && !targetVisible && (
-              <span className="mr-1.5 inline-block rounded bg-amber-100 px-1.5 py-0.5 text-[0.6875rem] font-semibold uppercase text-amber-900">
+              <span className="mb-1.5 block text-[0.6875rem] font-semibold uppercase tracking-wide text-amber-800">
                 Hint
               </span>
             )}
@@ -332,30 +320,12 @@ export function DemoGuideRail() {
           </motion.p>
         </AnimatePresence>
 
-        <p className="mt-4 flex items-center gap-2 text-[0.8125rem] text-muted">
-          <motion.span
-            animate={{ y: [0, 4, 0] }}
-            transition={{ repeat: Infinity, duration: 1.4, ease: 'easeInOut' }}
-            className="text-[1.125rem] leading-none"
-            aria-hidden
-          >
-            ↓
-          </motion.span>
-          {awaitingJourney
-            ? 'Tap a scenario card inside the phone to begin'
-            : mode === 'guided'
-              ? config.device === 'desktop'
-                ? 'Click the glowing area inside the prototype'
-                : 'Tap the glowing area inside the phone'
-              : 'Explore freely - notes still appear on key taps'}
-        </p>
-
-        <div className="mt-5 flex flex-wrap gap-2">
+        <div className="mt-5">
           {mode === 'guided' ? (
             <button
               type="button"
               onClick={skipToExplore}
-              className="text-[0.8125rem] font-medium text-muted transition hover:text-ink"
+              className="w-full rounded-xl border border-line bg-cream-dark/50 px-4 py-2.5 text-[0.8125rem] font-medium text-ink transition hover:border-ink/15 hover:bg-cream-dark"
             >
               Skip to free explore
             </button>
@@ -363,7 +333,7 @@ export function DemoGuideRail() {
             <button
               type="button"
               onClick={restart}
-              className="text-[0.8125rem] font-medium text-muted transition hover:text-ink"
+              className="w-full rounded-xl border border-line bg-cream-dark/50 px-4 py-2.5 text-[0.8125rem] font-medium text-ink transition hover:border-ink/15 hover:bg-cream-dark"
             >
               Restart walkthrough
             </button>

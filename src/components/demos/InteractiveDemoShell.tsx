@@ -3,6 +3,7 @@ import {
   DemoAnnotationBubble,
   DemoAnnotationProvider,
 } from './DemoAnnotations'
+import { useDemoEmbedSettings } from './DemoEmbedSettings'
 import { demoGuides } from './demoGuides'
 import {
   DemoGuideProvider,
@@ -55,6 +56,7 @@ export function InteractiveDemoShell({
   accentColor,
   children,
 }: InteractiveDemoShellProps) {
+  const { hideGuideRail } = useDemoEmbedSettings()
   const config = demoGuides[demoId]
   const device = config.device ?? 'phone'
   const isDesktop = device === 'desktop'
@@ -63,14 +65,20 @@ export function InteractiveDemoShell({
     <DemoAnnotationProvider>
       <DemoGuideProvider config={config} accentColor={accentColor}>
         <div
-          className={`mx-auto grid max-w-[920px] items-start gap-8 lg:gap-10 ${
-            isDesktop ? 'lg:grid-cols-[1fr_680px]' : 'lg:grid-cols-[1fr_320px]'
-          }`}
+          className={
+            hideGuideRail
+              ? 'mx-auto w-full'
+              : `mx-auto grid max-w-[920px] items-start gap-8 lg:gap-10 ${
+                  isDesktop ? 'lg:grid-cols-[1fr_680px]' : 'lg:grid-cols-[1fr_320px]'
+                }`
+          }
         >
-          <div className="order-1 lg:order-1">
-            <DemoGuideRail />
-          </div>
-          <div className="order-2 lg:order-2">
+          {!hideGuideRail && (
+            <div className="order-1 lg:order-1">
+              <DemoGuideRail />
+            </div>
+          )}
+          <div className={hideGuideRail ? undefined : 'order-2 lg:order-2'}>
             <DemoPhoneBeacon device={device}>
               <DemoFrameContent accentColor={accentColor} isDesktop={isDesktop}>
                 {children}

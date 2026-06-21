@@ -1,19 +1,50 @@
 import { projectDemos } from '../../content/demos'
 import { site } from '../../content/site'
+import { DemoEmbedSettingsProvider } from '../demos/DemoEmbedSettings'
 import { ProjectShowcase } from '../demos/ProjectShowcase'
 import { Button } from '../ui/Button'
+import { CollapsibleSection } from '../ui/CollapsibleSection'
 import { FadeIn } from '../ui/FadeIn'
 import { Divider, Section } from '../ui/Section'
 
 type WorkShowcaseProps = {
   showIntro?: boolean
   showPageIntro?: boolean
+  hideGuideRail?: boolean
+  compactLayout?: boolean
 }
 
-export function WorkShowcase({ showIntro = true, showPageIntro = true }: WorkShowcaseProps) {
+function ExampleWorkIntro() {
   return (
+    <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+      <div>
+        <p className="body-large max-w-[540px]">
+          These examples show how our method comes to life — clickable prototypes leaders
+          can evaluate in context. Names are placeholders where confidentiality applies.
+        </p>
+      </div>
+      <div className="overflow-hidden rounded-3xl bg-ink p-8 text-cream sm:p-10">
+        <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-cream/50">
+          Not a software agency
+        </p>
+        <p className="mt-4 text-[1.125rem] leading-relaxed text-cream/85">
+          Prototypes here are decision tools — scoped to reduce uncertainty and support
+          confident next steps, not products built for launch.
+        </p>
+      </div>
+    </div>
+  )
+}
+
+export function WorkShowcase({
+  showIntro = true,
+  showPageIntro = true,
+  hideGuideRail = false,
+  compactLayout = false,
+}: WorkShowcaseProps) {
+  const content = (
     <>
-      {showIntro && showPageIntro && (
+      {showIntro && showPageIntro && !compactLayout && (
         <Section size="compact" id="demos" className="scroll-mt-24">
           <div className="content-wide grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
             <div>
@@ -46,16 +77,49 @@ export function WorkShowcase({ showIntro = true, showPageIntro = true }: WorkSho
         </Section>
       )}
 
-      {!showIntro && !showPageIntro && <div id="demos" className="scroll-mt-24" />}
+      {compactLayout && showIntro && (
+        <Section id="demos" className="scroll-mt-24">
+          <div className="content-wide">
+            <CollapsibleSection
+              eyebrow="Example work"
+              title="Ideas made tangible — try the prototypes"
+              description="Expand an example to read the story and interact with the live prototype."
+              defaultOpen
+            >
+              <ExampleWorkIntro />
+              <div className="mt-10 space-y-3">
+                {projectDemos.map((demo) => (
+                  <CollapsibleSection
+                    key={demo.id}
+                    id={demo.id}
+                    title={demo.clientName}
+                    description={demo.headline}
+                    defaultOpen={false}
+                    size="compact"
+                  >
+                    <ProjectShowcase demo={demo} reversed={false} compact />
+                  </CollapsibleSection>
+                ))}
+              </div>
+            </CollapsibleSection>
+          </div>
+        </Section>
+      )}
 
-      {projectDemos.map((demo, index) => (
-        <div key={demo.id} id={demo.id} className="scroll-mt-24">
-          {(showIntro || index > 0) && index > 0 && <Divider />}
-          <Section theme={index % 2 === 1 ? 'cream' : 'light'} size={showIntro ? 'default' : 'compact'}>
-            <ProjectShowcase demo={demo} reversed={index % 2 === 1} />
-          </Section>
-        </div>
-      ))}
+      {!compactLayout && (
+        <>
+          {!showIntro && !showPageIntro && <div id="demos" className="scroll-mt-24" />}
+
+          {projectDemos.map((demo, index) => (
+            <div key={demo.id} id={demo.id} className="scroll-mt-24">
+              {(showIntro || index > 0) && index > 0 && <Divider />}
+              <Section theme={index % 2 === 1 ? 'cream' : 'light'} size={showIntro ? 'default' : 'compact'}>
+                <ProjectShowcase demo={demo} reversed={index % 2 === 1} />
+              </Section>
+            </div>
+          ))}
+        </>
+      )}
 
       <Section theme="dark" size="compact">
         <FadeIn className="content-max text-center">
@@ -71,4 +135,12 @@ export function WorkShowcase({ showIntro = true, showPageIntro = true }: WorkSho
       </Section>
     </>
   )
+
+  if (hideGuideRail) {
+    return (
+      <DemoEmbedSettingsProvider hideGuideRail>{content}</DemoEmbedSettingsProvider>
+    )
+  }
+
+  return content
 }
