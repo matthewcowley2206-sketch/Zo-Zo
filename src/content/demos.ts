@@ -77,16 +77,16 @@ export const projectDemos: ProjectDemo[] = [
     id: 'brightline-studio',
     clientName: 'Brightline Studio',
     sector: 'Creative & digital',
-    themeLabel: 'Prototype & AI Advisory',
-    headline: 'From inbox chaos to a quote you can stand behind.',
+    themeLabel: 'Strategy & Structure',
+    headline: 'Strategic planning that turns ambiguity into aligned action.',
     summary:
-      'A scope-and-quote workflow prototype: paste a vague enquiry, generate editable scope blocks, pick a quote tier, and send a preview - before anyone opened Excel.',
+      'An interactive planning workspace with guided journeys for new ideas, transformation programs, and leadership workshops — opportunity canvas, scenario planning, and AI-assisted facilitation.',
     challenge:
-      'A growing brand studio was losing half a day on every hot lead - interpreting vague briefs, debating scope internally, then sending quotes everyone second-guessed.',
+      'Leadership had strategic questions but no shared workspace — ideas lived in decks, workshops produced sticky notes, and priorities shifted every quarter without a clear record.',
     approach:
-      'We mapped the scoping workflow with leadership, built a simulated AI draft experience, and tested three quote tiers in a single clickable prototype.',
+      'We built three guided journeys: business idea validation, transformation roadmap, and leadership alignment — each with simulated AI, scenario planning, and measurable outcomes.',
     outcome:
-      'Aligned on scope and pricing before CRM or e-sign integration - and a validated brief for phase one build.',
+      'Executive team aligned on Q3 priorities with a phased roadmap — validated before investing in OKR and program management integration.',
     humanImage: hiRes(photos.demoAgency),
     humanImageAlt: 'Creative team reviewing strategy on a whiteboard in a bright studio',
     accentColor: '#0f766e',

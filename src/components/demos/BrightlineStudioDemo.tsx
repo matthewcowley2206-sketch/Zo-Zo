@@ -1,592 +1,577 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useDemoAnnotation } from './DemoAnnotations'
+import {
+  brightlineOpportunities,
+  brightlineRoadmaps,
+  type RoadmapScenario,
+} from './brightlineDemoContent'
 import { GuideTarget, useDemoGuide, useGuideActivate } from './DemoGuide'
 import { DemoButton, DemoPill } from './DeviceFrame'
 import { InteractiveDemoShell } from './InteractiveDemoShell'
+import { DemoAiAssistant } from './shared/DemoAiAssistant'
+import { DemoJourneyPicker } from './shared/DemoJourneyPicker'
+import { DemoOutcomeReveal } from './shared/DemoOutcomeReveal'
+import { DemoProcessingSequence } from './shared/DemoProcessingSequence'
+import { DemoRecommendationPanel } from './shared/DemoRecommendationPanel'
+import { DemoRoadmapPanel } from './shared/DemoRoadmapPanel'
 
 const accent = '#0f766e'
 
-const SAMPLE_ENQUIRY = `Hi Brightline team,
+const SUGGESTED_CHALLENGE =
+  'We want to expand into adjacent markets but need clarity on where to focus first — without over-investing before validation.'
 
-We need to refresh our website and maybe some brand stuff. We're a B2B services firm (~40 staff). Budget is flexible but we'd like to keep it sensible.
+const WORKSHOP_CHALLENGE =
+  'Our leadership team has five competing priorities for H2. We need alignment on what to fund, what to defer, and who owns each bet.'
 
-Ideally something live before EOFY. Can you send a quote?
+type Tab = 'workspace' | 'scenarios' | 'roadmap'
+type IdeaView = 'challenge' | 'processing' | 'canvas' | 'outcome'
+type TransformView = 'current' | 'processing' | 'future' | 'outcome'
+type WorkshopView = 'challenge' | 'processing' | 'priorities' | 'outcome'
 
-Thanks,
-Marcus · Ops Director`
-
-type Phase = {
-  id: string
-  label: string
-  weeks: number
-  price: number
-  included: boolean
-}
-
-type View = 'enquiry' | 'generating' | 'scope' | 'tiers' | 'quote' | 'email'
-
-type TierId = 'essential' | 'recommended' | 'full'
-
-const defaultPhases: Phase[] = [
-  { id: 'discovery', label: 'Discovery & strategy', weeks: 2, price: 4000, included: true },
-  { id: 'brand', label: 'Brand refresh', weeks: 3, price: 9000, included: true },
-  { id: 'web', label: 'Web design & build', weeks: 5, price: 12500, included: true },
-  { id: 'handover', label: 'Launch & handover', weeks: 1, price: 3000, included: true },
+const transformActions = [
+  {
+    id: 'transformation-roadmap',
+    title: 'Approve transformation roadmap',
+    description: '3 workstreams · phased 30/90-day delivery · exec sponsors',
+    impact: 'Est. 18% efficiency gain over 12 months',
+  },
+  {
+    id: 'pilot-only',
+    title: 'Pilot one workstream first',
+    description: 'Customer experience stream only · lower risk entry',
+    impact: 'Est. 6% gain · validates approach',
+  },
 ]
 
-const fullPartnershipExtras = 13500
-const minQuote = 14000
-
-const tiers: Record<
-  TierId,
-  { label: string; subtitle: string; basePrice: number; extras: string[] }
-> = {
-  essential: {
-    label: 'Essential',
-    subtitle: 'Core web refresh only',
-    basePrice: 18500,
-    extras: ['Discovery workshop', 'Responsive web build', 'CMS handover'],
+const workshopActions = [
+  {
+    id: 'align-priority',
+    title: 'Align on customer experience program',
+    description: 'Top impact · medium effort · exec sponsor assigned',
+    impact: 'Unblocks 2 dependent initiatives',
   },
-  recommended: {
-    label: 'Recommended',
-    subtitle: 'Brand + web - balanced',
-    basePrice: 28500,
-    extras: ['Brand refresh', 'Content support', '2 rounds of revisions'],
+  {
+    id: 'defer-growth',
+    title: 'Defer market expansion to H2',
+    description: 'Free capacity for customer experience · consensus path',
+    impact: 'Reduces execution risk this quarter',
   },
-  full: {
-    label: 'Full partnership',
-    subtitle: 'Brand, web, and post-launch',
-    basePrice: 42000,
-    extras: ['Full brand system', 'Copywriting', '3 months support'],
-  },
+]
+
+function BrightlineHeader({
+  title,
+  subtitle = 'Brightline · Strategic planning',
+  right,
+}: {
+  title: string
+  subtitle?: string
+  right?: ReactNode
+}) {
+  return (
+    <div className="shrink-0 border-b border-slate-200 px-5 py-3" style={{ backgroundColor: accent }}>
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-[0.625rem] font-medium uppercase tracking-wider text-white/70">
+            {subtitle}
+          </p>
+          <h3 className="text-[0.9375rem] font-semibold text-white">{title}</h3>
+        </div>
+        {right ?? <DemoPill color="green">Simulated</DemoPill>}
+      </div>
+    </div>
+  )
 }
 
-function formatPrice(amount: number) {
-  return new Intl.NumberFormat('en-AU', {
-    style: 'currency',
-    currency: 'AUD',
-    maximumFractionDigits: 0,
-  }).format(amount)
-}
-
-function scopeSubtotal(phases: Phase[]) {
-  return phases.filter((p) => p.included).reduce((sum, p) => sum + p.price, 0)
-}
-
-function scopeWeeks(phases: Phase[]) {
-  return phases.filter((p) => p.included).reduce((sum, p) => sum + p.weeks, 0)
-}
-
-function calculateTierPrice(tierId: TierId, phases: Phase[]) {
-  const subtotal = scopeSubtotal(phases)
-  const brandPhase = phases.find((p) => p.id === 'brand')
-  const brandPrice = brandPhase?.included ? brandPhase.price : 0
-
-  switch (tierId) {
-    case 'essential':
-      return Math.max(subtotal - brandPrice, minQuote)
-    case 'recommended':
-      return Math.max(subtotal, minQuote)
-    case 'full':
-      return Math.max(subtotal + fullPartnershipExtras, minQuote)
-  }
-}
-
-function buildEmailDraft(tierLabel: string, total: number, weeks: number) {
-  return {
-    subject: `Your Brightline quote · ${tierLabel}`,
-    body: `Hi Marcus,
-
-Thanks for your enquiry about the website refresh and brand work. Based on our scope conversation, here's your quote summary:
-
-${tierLabel} · ${formatPrice(total)} ex GST
-Timeline · ${weeks} weeks · Target launch before EOFY
-
-You'll find the full breakdown in the preview link below. Happy to adjust scope if you'd like to discuss options.
-
-Preview link: https://quote.brightline.studio/marcus-harbour
-
-Best,
-Sarah
-Brightline Studio`,
-  }
+function BrightlineShell({
+  title,
+  subtitle,
+  children,
+  onBack,
+}: {
+  title: string
+  subtitle?: string
+  children: ReactNode
+  onBack?: () => void
+}) {
+  return (
+    <div className="flex h-full min-h-0 flex-col">
+      <BrightlineHeader title={title} subtitle={subtitle} />
+      <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4">
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            className="mb-3 text-[0.8125rem] font-medium text-slate-600 hover:text-teal-900"
+          >
+            ← Back
+          </button>
+        )}
+        <div className="mx-auto max-w-[540px] space-y-3">{children}</div>
+      </div>
+    </div>
+  )
 }
 
 function BrightlineApp() {
   const { show } = useDemoAnnotation()
-  const { mode } = useDemoGuide()
-  const [view, setView] = useState<View>('enquiry')
-  const [phases, setPhases] = useState<Phase[]>(defaultPhases)
-  const [selectedTier, setSelectedTier] = useState<TierId>('recommended')
-  const [previewSent, setPreviewSent] = useState(false)
-  const [enquiryRead, setEnquiryRead] = useState(false)
-  const [emailSubject, setEmailSubject] = useState('')
-  const [emailBody, setEmailBody] = useState('')
+  const {
+    mode,
+    config,
+    awaitingJourney,
+    activeJourney,
+    selectJourney,
+    skipToExplore,
+  } = useDemoGuide()
 
-  const enquiryCard = useGuideActivate('enquiry-card')
-  const generateBtn = useGuideActivate('generate-btn')
-  const scopeToggle = useGuideActivate('scope-toggle')
-  const tierRecommended = useGuideActivate('tier-recommended')
-  const viewEmailBtn = useGuideActivate('view-email-btn')
-  const sendPreviewBtn = useGuideActivate('send-preview-btn')
+  const [tab, setTab] = useState<Tab>('workspace')
+  const [ideaView, setIdeaView] = useState<IdeaView>('challenge')
+  const [transformView, setTransformView] = useState<TransformView>('current')
+  const [workshopView, setWorkshopView] = useState<WorkshopView>('challenge')
+  const [challenge, setChallenge] = useState('')
+  const [selectedAction, setSelectedAction] = useState<string | null>(null)
+  const [scenario, setScenario] = useState<RoadmapScenario>('growth')
+
+  const challengeInput = useGuideActivate('challenge-input')
+  const generateCanvas = useGuideActivate('generate-canvas-btn')
+  const currentState = useGuideActivate('current-state-review')
+  const futureState = useGuideActivate('future-state-btn')
+  const workshopChallenge = useGuideActivate('workshop-challenge')
+  const runFacilitation = useGuideActivate('run-facilitation-btn')
 
   const exploreShow = (annotation: Parameters<typeof show>[0]) => {
     if (mode === 'explore') show(annotation)
   }
 
-  const includedPhases = phases.filter((p) => p.included)
-  const subtotal = scopeSubtotal(phases)
-  const totalWeeks = scopeWeeks(phases)
-
-  const quoteTotal = useMemo(
-    () => calculateTierPrice(selectedTier, phases),
-    [selectedTier, phases],
-  )
-
-  const openEmail = () => {
-    const draft = buildEmailDraft(tiers[selectedTier].label, quoteTotal, totalWeeks)
-    setEmailSubject(draft.subject)
-    setEmailBody(draft.body)
-    viewEmailBtn.onGuideAction()
-    setView('email')
+  const resetJourneyState = () => {
+    setIdeaView('challenge')
+    setTransformView('current')
+    setWorkshopView('challenge')
+    setChallenge('')
+    setSelectedAction(null)
+    setTab('workspace')
   }
 
-  useEffect(() => {
-    if (view !== 'generating') return
-    const id = window.setTimeout(() => setView('scope'), 1600)
-    return () => window.clearTimeout(id)
-  }, [view])
-
-  const togglePhase = (id: string) => {
-    setPhases((prev) => {
-      const target = prev.find((p) => p.id === id)
-      if (!target) return prev
-      if (target.included && prev.filter((p) => p.included).length <= 1) return prev
-      return prev.map((p) => (p.id === id ? { ...p, included: !p.included } : p))
-    })
+  const handleSelectJourney = (id: string) => {
+    selectJourney(id)
+    resetJourneyState()
   }
 
-  const renderPhaseRow = (phase: Phase, guideWrapped: boolean) => {
-    const row = (
-      <button
-        type="button"
-        onClick={() => {
-          togglePhase(phase.id)
-          if (phase.id === 'brand') scopeToggle.onGuideAction()
-        }}
-        className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-[0.8125rem] ring-1 transition-colors ${
-          phase.included
-            ? 'bg-teal-50 ring-teal-100 text-teal-950'
-            : 'bg-slate-100 ring-slate-200 text-slate-500'
-        }`}
-      >
-        <span
-          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 text-[0.625rem] font-bold leading-none ${
-            phase.included
-              ? 'border-teal-600 bg-teal-600 text-white'
-              : 'border-slate-300 bg-white text-transparent'
-          }`}
-          aria-hidden
-        >
-          ✓
-        </span>
-        <span className={`min-w-0 flex-1 ${phase.included ? '' : 'line-through'}`}>{phase.label}</span>
-        <span className="shrink-0 text-[0.75rem] text-slate-500">{phase.weeks} wks</span>
-        <span
-          className={`shrink-0 font-semibold tabular-nums ${
-            phase.included ? 'text-teal-900' : 'text-slate-400 line-through'
-          }`}
-        >
-          {formatPrice(phase.price)}
-        </span>
-      </button>
-    )
-
-    return guideWrapped ? (
-      <GuideTarget key={phase.id} id="scope-toggle">
-        {row}
-      </GuideTarget>
-    ) : (
-      <div key={phase.id}>{row}</div>
-    )
-  }
-
-  const header = (
-    <div className="shrink-0 border-b border-slate-200 px-5 py-3" style={{ backgroundColor: accent }}>
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-[0.625rem] font-medium uppercase tracking-wider text-white/70">
-            Brightline Studio · Scope builder
-          </p>
-          <h3 className="text-[0.9375rem] font-semibold text-white">
-            {view === 'enquiry' && 'New enquiry'}
-            {view === 'generating' && 'Drafting scope…'}
-            {view === 'scope' && 'Scope draft'}
-            {view === 'tiers' && 'Quote options'}
-            {view === 'quote' && 'Quote preview'}
-            {view === 'email' && 'Review email'}
-          </h3>
-        </div>
-        <DemoPill color="green">Simulated</DemoPill>
-      </div>
-    </div>
-  )
-
-  if (view === 'quote') {
-    const tier = tiers[selectedTier]
+  if (awaitingJourney) {
     return (
-      <div className="flex h-full min-h-0 flex-col">
-        {header}
-        <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4">
-          <div className="mx-auto max-w-[520px] space-y-3">
-            <div className="rounded-xl bg-white p-4 ring-1 ring-slate-200">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-slate-500">
-                    Quote · {tier.label}
-                  </p>
-                  <p className="mt-1 text-[1.375rem] font-bold text-ink">{formatPrice(quoteTotal)}</p>
-                  <p className="mt-1 text-[0.75rem] text-slate-500">Ex GST · Valid 14 days</p>
-                </div>
-                <DemoPill color="green">{selectedTier === 'recommended' ? 'Selected' : tier.label}</DemoPill>
-              </div>
-              <div className="mt-4 space-y-2 border-t border-slate-100 pt-4">
-                {includedPhases.map((phase) => (
-                  <div key={phase.id} className="flex justify-between text-[0.8125rem]">
-                    <span>{phase.label}</span>
-                    <span className="text-slate-500">
-                      {formatPrice(phase.price)} · {phase.weeks} wks
-                    </span>
-                  </div>
-                ))}
-                {tier.extras.map((extra) => (
-                  <div key={extra} className="flex justify-between text-[0.8125rem] text-slate-600">
-                    <span>{extra}</span>
-                    <span className="text-emerald-600">Included</span>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4 rounded-lg bg-teal-50 px-3 py-2 text-[0.75rem] text-teal-900">
-                Timeline · {totalWeeks} weeks · Target launch before EOFY
-              </div>
-            </div>
+      <BrightlineShell title="Choose a scenario" subtitle="Strategy workspace">
+        <DemoJourneyPicker
+          journeys={config.journeys ?? []}
+          accentColor={accent}
+          onSelect={handleSelectJourney}
+        />
+        {config.assistant && (
+          <DemoAiAssistant config={config.assistant} accentColor={accent} compact />
+        )}
+      </BrightlineShell>
+    )
+  }
 
-            <GuideTarget id="view-email-btn">
-              <DemoButton accentColor={accent} onClick={openEmail}>
-                View email
-              </DemoButton>
-            </GuideTarget>
+  if (mode !== 'explore' && activeJourney?.id === 'idea') {
+    if (ideaView === 'processing') {
+      return (
+        <BrightlineShell title="Building canvas" subtitle="AI opportunity mapping">
+          <DemoProcessingSequence
+            messages={
+              activeJourney.processingMessages ?? [
+                'Analysing challenge…',
+                'Mapping opportunities…',
+                'Scoring fit…',
+              ]
+            }
+            accentColor={accent}
+            onComplete={() => setIdeaView('canvas')}
+          />
+        </BrightlineShell>
+      )
+    }
 
-            <DemoButton accentColor={accent} variant="secondary" onClick={() => setView('tiers')}>
-              Change quote option
-            </DemoButton>
+    if (ideaView === 'canvas') {
+      return (
+        <BrightlineShell
+          title="Opportunity canvas"
+          subtitle="Prioritise options"
+          onBack={() => setIdeaView('challenge')}
+        >
+          <div className="rounded-xl bg-teal-50 p-3 ring-1 ring-teal-100">
+            <p className="text-[0.625rem] font-semibold uppercase text-teal-800">AI summary</p>
+            <p className="mt-1 text-[0.8125rem] leading-relaxed text-teal-900">
+              Three viable paths identified. Partnership channel offers fastest validation with
+              lowest capital. Recommend prioritising before product or bundling plays.
+            </p>
           </div>
-        </div>
-      </div>
-    )
-  }
+          <div className="grid gap-2 sm:grid-cols-3">
+            {brightlineOpportunities.map((opp) => (
+              <div
+                key={opp.id}
+                className="rounded-lg bg-white p-2.5 ring-1 ring-slate-200 text-[0.6875rem]"
+              >
+                <p className="font-semibold text-slate-900">{opp.title}</p>
+                <p className="mt-1 text-slate-600">{opp.impact}</p>
+              </div>
+            ))}
+          </div>
+          <DemoRecommendationPanel
+            recommendations={brightlineOpportunities}
+            accentColor={accent}
+            highlightTargetId="action-partnership"
+            selectedId={selectedAction ?? undefined}
+            onSelect={(id) => {
+              setSelectedAction(id)
+              if (id === 'partnership') setIdeaView('outcome')
+            }}
+          />
+        </BrightlineShell>
+      )
+    }
 
-  if (view === 'email') {
-    const tier = tiers[selectedTier]
+    if (ideaView === 'outcome') {
+      return (
+        <BrightlineShell title="Next steps ready" subtitle="New business idea">
+          <DemoRoadmapPanel
+            scenario="growth"
+            {...brightlineRoadmaps.growth}
+            accentColor={accent}
+          />
+          <DemoOutcomeReveal
+            outcome={activeJourney.outcome}
+            accentColor={accent}
+            onContinue={() => {
+              skipToExplore()
+              setTab('roadmap')
+            }}
+          />
+        </BrightlineShell>
+      )
+    }
 
     return (
-      <div className="flex h-full min-h-0 flex-col">
-        {header}
-        <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4">
-          <div className="mx-auto max-w-[520px] space-y-3">
+      <BrightlineShell title="Business challenge" subtitle="New business idea">
+        <GuideTarget id="challenge-input">
+          <div className="space-y-2">
+            <label className="text-[0.6875rem] font-semibold uppercase text-slate-400">
+              Step 2 · Describe your challenge
+            </label>
+            <textarea
+              value={challenge}
+              onChange={(e) => setChallenge(e.target.value)}
+              onFocus={() => challengeInput.onGuideAction()}
+              placeholder="What strategic question are you trying to answer?"
+              className="h-24 w-full rounded-xl border-0 bg-white p-3 text-[0.8125rem] ring-1 ring-slate-200 focus:ring-teal-500"
+            />
             <button
               type="button"
-              onClick={() => setView('quote')}
-              className="text-[0.8125rem] font-medium text-teal-800 hover:text-teal-950"
+              onClick={() => {
+                setChallenge(SUGGESTED_CHALLENGE)
+                challengeInput.onGuideAction()
+              }}
+              className="text-[0.75rem] font-medium text-teal-800 hover:text-teal-950"
             >
-              ← Back to quote
+              Use suggested challenge →
             </button>
-
-            <div className="overflow-hidden rounded-xl bg-white ring-1 ring-slate-200">
-              <div className="space-y-2 border-b border-slate-100 px-4 py-3 text-[0.75rem]">
-                <div className="flex gap-2">
-                  <span className="w-14 shrink-0 text-slate-500">From</span>
-                  <span className="text-slate-700">Sarah · quotes@brightline.studio</span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="w-14 shrink-0 text-slate-500">To</span>
-                  <span className="text-slate-700">Marcus · marcus@harbourgroup.com.au</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-14 shrink-0 text-slate-500">Subject</span>
-                  <input
-                    type="text"
-                    value={emailSubject}
-                    onChange={(e) => setEmailSubject(e.target.value)}
-                    className="min-w-0 flex-1 rounded-md border-0 bg-slate-50 px-2 py-1 text-[0.75rem] text-slate-800 ring-1 ring-slate-200 focus:ring-teal-500"
-                  />
-                </div>
-              </div>
-
-              <textarea
-                value={emailBody}
-                onChange={(e) => setEmailBody(e.target.value)}
-                rows={12}
-                className="w-full resize-none border-0 bg-white px-4 py-3 text-[0.8125rem] leading-relaxed text-slate-700 focus:outline-none focus:ring-0"
-                aria-label="Email message"
-              />
-
-              <div className="border-t border-slate-100 bg-slate-50 px-4 py-3">
-                <p className="text-[0.625rem] font-semibold uppercase tracking-wide text-slate-500">
-                  Attached quote summary
-                </p>
-                <div className="mt-2 rounded-lg bg-white px-3 py-2 ring-1 ring-slate-200">
-                  <p className="text-[0.8125rem] font-semibold text-ink">
-                    {tier.label} · {formatPrice(quoteTotal)} ex GST
-                  </p>
-                  <p className="mt-1 text-[0.75rem] text-slate-600">
-                    {includedPhases.map((p) => p.label).join(' · ')} · {totalWeeks} weeks
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {previewSent ? (
-              <div className="rounded-xl bg-emerald-50 p-4 ring-1 ring-emerald-100">
-                <p className="font-semibold text-emerald-900">Preview sent to Marcus</p>
-                <p className="mt-1 text-[0.8125rem] text-emerald-700">
-                  Link copied · Team notified · CRM note drafted
-                </p>
-              </div>
-            ) : (
-              <GuideTarget id="send-preview-btn">
-                <DemoButton
-                  accentColor={accent}
-                  onClick={() => {
-                    sendPreviewBtn.onGuideAction()
-                    setPreviewSent(true)
-                  }}
-                >
-                  Send preview
-                </DemoButton>
-              </GuideTarget>
-            )}
           </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (view === 'tiers') {
-    return (
-      <div className="flex h-full min-h-0 flex-col">
-        {header}
-        <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4">
-          <p className="mb-3 text-[0.8125rem] text-slate-600">
-            Same scope - pick how you package it for the client.
-          </p>
-          <div className="grid grid-cols-3 gap-3">
-            {(Object.keys(tiers) as TierId[]).map((id) => {
-              const tier = tiers[id]
-              const tierPrice = calculateTierPrice(id, phases)
-              const isRecommended = id === 'recommended'
-              const card = (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedTier(id)
-                    if (isRecommended) tierRecommended.onGuideAction()
-                    setView('quote')
-                    if (!isRecommended) {
-                      exploreShow({
-                        id: `tier-${id}`,
-                        clientAsk: 'flexible packaging without rewriting scope from scratch.',
-                        ourSolution: `${tier.label} tier - same blocks, different line items and price anchor.`,
-                      })
-                    }
-                  }}
-                  className={`flex h-full w-full flex-col rounded-xl bg-white p-3 text-left ring-1 transition-all hover:ring-teal-300 ${
-                    selectedTier === id ? 'ring-2 ring-teal-600' : 'ring-slate-200'
-                  }`}
-                >
-                  <div className="mb-2 flex h-5 items-center">
-                    {isRecommended && (
-                      <span className="rounded-full bg-teal-600 px-2 py-0.5 text-[0.5625rem] font-bold uppercase text-white">
-                        Popular
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-slate-500">
-                    {tier.label}
-                  </p>
-                  <p className="mt-1 text-[1.125rem] font-bold tabular-nums">{formatPrice(tierPrice)}</p>
-                  <p className="mt-auto min-h-[2.75rem] text-[0.75rem] leading-snug text-slate-600">
-                    {tier.subtitle}
-                    {id !== 'recommended' && (
-                      <>
-                        <br />
-                        Based on your scope
-                      </>
-                    )}
-                  </p>
-                </button>
-              )
-
-              return (
-                <div key={id} className="h-full min-w-0">
-                  {isRecommended ? (
-                    <GuideTarget id="tier-recommended" className="block h-full">
-                      {card}
-                    </GuideTarget>
-                  ) : (
-                    card
-                  )}
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  if (view === 'generating') {
-    return (
-      <div className="flex h-full min-h-0 flex-col">
-        {header}
-        <div className="flex min-h-0 flex-1 flex-col items-center justify-center bg-slate-50 p-6">
-          <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-teal-200 border-t-teal-600" />
-          <p className="mt-4 text-[0.9375rem] font-semibold text-ink">Turning enquiry into scope…</p>
-          <p className="mt-1 text-[0.8125rem] text-slate-500">
-            Phases · assumptions · questions to confirm
-          </p>
-        </div>
-      </div>
-    )
-  }
-
-  if (view === 'scope') {
-    return (
-      <div className="flex h-full min-h-0 flex-col">
-        {header}
-        <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4">
-          <div className="space-y-3">
-            <div className="rounded-xl bg-white p-3 ring-1 ring-slate-200">
-              <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-slate-500">
-                What we understood
-              </p>
-              <p className="mt-2 text-[0.8125rem] leading-relaxed text-slate-700">
-                B2B services firm (~40 staff) needs website refresh with possible brand work. Flexible
-                budget, hard EOFY deadline. Decision-maker: Marcus (Ops).
-              </p>
-            </div>
-
-            <div className="rounded-xl bg-white p-3 ring-1 ring-slate-200">
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-slate-500">
-                  Suggested phases
-                </p>
-                <p className="text-[0.6875rem] text-slate-500">Tap to include or exclude</p>
-              </div>
-              <div className="mt-2 space-y-2">
-                {phases.map((phase) => renderPhaseRow(phase, phase.id === 'brand'))}
-              </div>
-              <div className="mt-3 flex items-center justify-between rounded-lg bg-slate-800 px-3 py-2.5 text-white">
-                <div>
-                  <p className="text-[0.625rem] font-semibold uppercase tracking-wide text-white/70">
-                    Scope estimate
-                  </p>
-                  <p className="text-[0.75rem] text-white/80">
-                    {includedPhases.length} phase{includedPhases.length === 1 ? '' : 's'} · {totalWeeks} weeks
-                  </p>
-                </div>
-                <p className="text-[1.125rem] font-bold tabular-nums">{formatPrice(subtotal)}</p>
-              </div>
-            </div>
-
-            <div className="grid gap-2 sm:grid-cols-2">
-              <div className="rounded-xl bg-white p-3 ring-1 ring-slate-200">
-                <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-emerald-700">
-                  In scope
-                </p>
-                <ul className="mt-2 space-y-1 text-[0.75rem] text-slate-700">
-                  {includedPhases.length > 0 ? (
-                    includedPhases.map((phase) => (
-                      <li key={phase.id}>· {phase.label}</li>
-                    ))
-                  ) : (
-                    <li>· Select at least one phase above</li>
-                  )}
-                </ul>
-              </div>
-              <div className="rounded-xl bg-white p-3 ring-1 ring-slate-200">
-                <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-amber-700">
-                  Out of scope
-                </p>
-                <ul className="mt-2 space-y-1 text-[0.75rem] text-slate-700">
-                  <li>· Paid media · Photography shoot · ERP integration</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="rounded-xl bg-amber-50 p-3 ring-1 ring-amber-100">
-              <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-amber-900">
-                Assumptions
-              </p>
-              <p className="mt-1 text-[0.8125rem] text-amber-950">
-                Client provides logo assets · 2 revision rounds · Content sign-off within 5 business days
-              </p>
-            </div>
-
-            <DemoButton
-              accentColor={accent}
-              onClick={() => subtotal > 0 && setView('tiers')}
-              className={subtotal === 0 ? 'opacity-50' : ''}
-            >
-              Continue to quote options
-            </DemoButton>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="flex h-full min-h-0 flex-col">
-      {header}
-      <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4">
-        <div className="mb-3 flex items-center gap-2 text-[0.75rem] text-slate-500">
-          <span className="rounded-full bg-slate-200 px-2 py-0.5 font-medium">Inbox</span>
-          <span>Marcus · B2B services · Received 9:14am</span>
-        </div>
-
-        <GuideTarget id="enquiry-card">
-          <button
-            type="button"
-            onClick={() => {
-              enquiryCard.onGuideAction()
-              setEnquiryRead(true)
-            }}
-            className={`w-full rounded-xl bg-white p-4 text-left ring-1 transition-shadow ${
-              enquiryRead ? 'ring-teal-300' : 'ring-slate-200'
-            }`}
-          >
-            <p className="text-[0.6875rem] font-semibold uppercase tracking-wide text-slate-500">
-              Customer enquiry
-            </p>
-            <pre className="mt-3 whitespace-pre-wrap font-sans text-[0.8125rem] leading-relaxed text-slate-700">
-              {SAMPLE_ENQUIRY}
-            </pre>
-          </button>
         </GuideTarget>
-
-        <div className="mt-4">
-          <GuideTarget id="generate-btn">
+        {challenge.trim().length > 10 && (
+          <GuideTarget id="generate-canvas-btn">
             <DemoButton
               accentColor={accent}
               onClick={() => {
-                generateBtn.onGuideAction()
-                setView('generating')
+                generateCanvas.onGuideAction()
+                setIdeaView('processing')
               }}
             >
-              Turn into scope
+              Generate opportunity canvas
             </DemoButton>
           </GuideTarget>
+        )}
+      </BrightlineShell>
+    )
+  }
+
+  if (mode !== 'explore' && activeJourney?.id === 'transformation') {
+    if (transformView === 'processing') {
+      return (
+        <BrightlineShell title="Future state planning" subtitle="AI transformation">
+          <DemoProcessingSequence
+            messages={
+              activeJourney.processingMessages ?? [
+                'Assessing current state…',
+                'Modelling future state…',
+                'Identifying opportunities…',
+              ]
+            }
+            accentColor={accent}
+            onComplete={() => setTransformView('future')}
+          />
+        </BrightlineShell>
+      )
+    }
+
+    if (transformView === 'future') {
+      return (
+        <BrightlineShell
+          title="Future state plan"
+          subtitle="Transformation program"
+          onBack={() => setTransformView('current')}
+        >
+          <div className="rounded-xl bg-white p-4 ring-1 ring-slate-200">
+            <p className="text-[0.625rem] font-semibold uppercase text-slate-400">Target state</p>
+            <p className="mt-2 text-[0.8125rem] leading-relaxed text-slate-700">
+              Integrated customer experience · automated handoffs between sales and delivery ·
+              single source of truth for program status. 3 workstreams over 12 months.
+            </p>
+          </div>
+          <DemoRoadmapPanel
+            scenario="transformation"
+            {...brightlineRoadmaps.transformation}
+            accentColor={accent}
+          />
+          <DemoRecommendationPanel
+            recommendations={transformActions}
+            accentColor={accent}
+            highlightTargetId="action-transformation-roadmap"
+            selectedId={selectedAction ?? undefined}
+            onSelect={(id) => {
+              setSelectedAction(id)
+              if (id === 'transformation-roadmap') setTransformView('outcome')
+            }}
+          />
+        </BrightlineShell>
+      )
+    }
+
+    if (transformView === 'outcome') {
+      return (
+        <BrightlineShell title="Roadmap approved" subtitle="Transformation program">
+          <DemoOutcomeReveal
+            outcome={activeJourney.outcome}
+            accentColor={accent}
+            onContinue={() => {
+              skipToExplore()
+              setTab('scenarios')
+            }}
+          />
+        </BrightlineShell>
+      )
+    }
+
+    return (
+      <BrightlineShell title="Current state" subtitle="Transformation assessment">
+        <GuideTarget id="current-state-review">
+          <div
+            className="space-y-3 rounded-xl bg-white p-4 ring-1 ring-slate-200"
+            onClick={() => currentState.onGuideAction()}
+            onKeyDown={() => {}}
+            role="presentation"
+          >
+            <p className="text-[0.625rem] font-semibold uppercase text-slate-400">
+              Current state assessment
+            </p>
+            {[
+              { label: 'Delivery efficiency', value: '62% · below benchmark' },
+              { label: 'Customer satisfaction', value: 'NPS 41 · declining' },
+              { label: 'Manual handoffs', value: '14 per project · bottleneck' },
+            ].map((row) => (
+              <div
+                key={row.label}
+                className="flex justify-between border-b border-slate-100 pb-2 text-[0.8125rem] last:border-0"
+              >
+                <span className="text-slate-600">{row.label}</span>
+                <span className="font-semibold text-slate-900">{row.value}</span>
+              </div>
+            ))}
+            <div className="rounded-lg bg-amber-50 px-3 py-2 text-[0.75rem] text-amber-900 ring-1 ring-amber-100">
+              Key gap · No shared view of program status across teams
+            </div>
+          </div>
+        </GuideTarget>
+        <GuideTarget id="future-state-btn">
+          <DemoButton
+            accentColor={accent}
+            onClick={() => {
+              futureState.onGuideAction()
+              setTransformView('processing')
+            }}
+          >
+            Generate future state plan
+          </DemoButton>
+        </GuideTarget>
+      </BrightlineShell>
+    )
+  }
+
+  if (mode !== 'explore' && activeJourney?.id === 'workshop') {
+    if (workshopView === 'processing') {
+      return (
+        <BrightlineShell title="Facilitating" subtitle="Leadership workshop">
+          <DemoProcessingSequence
+            messages={
+              activeJourney.processingMessages ?? [
+                'Facilitating discussion…',
+                'Synthesising views…',
+                'Building priority matrix…',
+              ]
+            }
+            accentColor={accent}
+            onComplete={() => setWorkshopView('priorities')}
+          />
+        </BrightlineShell>
+      )
+    }
+
+    if (workshopView === 'priorities') {
+      return (
+        <BrightlineShell
+          title="Priority matrix"
+          subtitle="Leadership alignment"
+          onBack={() => setWorkshopView('challenge')}
+        >
+          <div className="rounded-xl bg-violet-50 p-3 ring-1 ring-violet-100">
+            <p className="text-[0.625rem] font-semibold uppercase text-violet-700">Facilitation summary</p>
+            <p className="mt-1 text-[0.8125rem] text-violet-900">
+              Customer experience program ranks highest on impact/effort. Market expansion should
+              defer to H2 if customer experience is funded.
+            </p>
+          </div>
+          <DemoRecommendationPanel
+            recommendations={workshopActions}
+            accentColor={accent}
+            highlightTargetId="action-align-priority"
+            selectedId={selectedAction ?? undefined}
+            onSelect={(id) => {
+              setSelectedAction(id)
+              if (id === 'align-priority') setWorkshopView('outcome')
+            }}
+          />
+        </BrightlineShell>
+      )
+    }
+
+    if (workshopView === 'outcome') {
+      return (
+        <BrightlineShell title="Alignment reached" subtitle="Leadership workshop">
+          <DemoOutcomeReveal
+            outcome={activeJourney.outcome}
+            accentColor={accent}
+            onContinue={() => {
+              skipToExplore()
+              setTab('workspace')
+            }}
+          />
+        </BrightlineShell>
+      )
+    }
+
+    return (
+      <BrightlineShell title="Workshop setup" subtitle="Leadership alignment">
+        <GuideTarget id="workshop-challenge">
+          <button
+            type="button"
+            onClick={() => workshopChallenge.onGuideAction()}
+            className="w-full rounded-xl bg-white p-4 text-left ring-1 ring-slate-200"
+          >
+            <p className="text-[0.625rem] font-semibold uppercase text-slate-400">
+              Strategic challenge
+            </p>
+            <p className="mt-2 text-[0.8125rem] leading-relaxed text-slate-700">{WORKSHOP_CHALLENGE}</p>
+            <p className="mt-3 text-[0.75rem] font-medium text-teal-800">Confirm challenge →</p>
+          </button>
+        </GuideTarget>
+        <GuideTarget id="run-facilitation-btn">
+          <DemoButton
+            accentColor={accent}
+            onClick={() => {
+              runFacilitation.onGuideAction()
+              setWorkshopView('processing')
+            }}
+          >
+            Run AI facilitation
+          </DemoButton>
+        </GuideTarget>
+      </BrightlineShell>
+    )
+  }
+
+  const navTabs: { id: Tab; label: string }[] = [
+    { id: 'workspace', label: 'Workspace' },
+    { id: 'scenarios', label: 'Scenarios' },
+    { id: 'roadmap', label: 'Roadmap' },
+  ]
+
+  const scenarioKeys: RoadmapScenario[] = ['growth', 'conservative', 'transformation']
+
+  return (
+    <div className="flex h-full min-h-0 flex-col">
+      <BrightlineHeader
+        title={
+          tab === 'workspace'
+            ? 'Planning workspace'
+            : tab === 'scenarios'
+              ? 'Scenario planning'
+              : 'Strategic roadmap'
+        }
+        right={
+          <span className="rounded-full bg-white/15 px-2.5 py-1 text-[0.6875rem] font-semibold text-white">
+            Explore mode
+          </span>
+        }
+      />
+      <div className="flex shrink-0 gap-1 border-b border-slate-200 bg-white px-4 py-2">
+        {navTabs.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => setTab(t.id)}
+            className={`rounded-lg px-3 py-1.5 text-[0.75rem] font-semibold transition ${
+              tab === t.id ? 'text-white' : 'text-slate-600 hover:bg-slate-100'
+            }`}
+            style={tab === t.id ? { backgroundColor: accent } : undefined}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto bg-slate-50 p-4">
+        <div className="mx-auto max-w-[540px] space-y-3">
+          {tab === 'workspace' && config.assistant && (
+            <DemoAiAssistant config={config.assistant} accentColor={accent} />
+          )}
+          {tab === 'scenarios' && (
+            <>
+              <div className="flex flex-wrap gap-1.5">
+                {scenarioKeys.map((key) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => {
+                      setScenario(key)
+                      exploreShow({
+                        id: `scenario-${key}`,
+                        clientAsk: 'to compare strategic paths before committing budget.',
+                        ourSolution: `${brightlineRoadmaps[key].label} with different 30/90-day trade-offs.`,
+                      })
+                    }}
+                    className={`rounded-lg px-2.5 py-1.5 text-[0.6875rem] font-semibold ${
+                      scenario === key ? 'text-white' : 'bg-white text-slate-600 ring-1 ring-slate-200'
+                    }`}
+                    style={scenario === key ? { backgroundColor: accent } : undefined}
+                  >
+                    {brightlineRoadmaps[key].label}
+                  </button>
+                ))}
+              </div>
+              <p className="text-[0.8125rem] text-slate-600">
+                Compare how priorities shift under different strategic assumptions.
+              </p>
+            </>
+          )}
+          {(tab === 'roadmap' || tab === 'scenarios') && (
+            <DemoRoadmapPanel scenario={scenario} {...brightlineRoadmaps[scenario]} accentColor={accent} />
+          )}
         </div>
       </div>
     </div>

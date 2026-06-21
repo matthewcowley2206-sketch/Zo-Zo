@@ -1,4 +1,5 @@
 import type { DemoAssistantConfig, DemoGuideConfig, DemoJourney } from './demoTypes'
+import { brightlineAssistant, brightlineJourneys } from './brightlineDemoContent'
 
 export type {
   DemoAssistantConfig,
@@ -800,88 +801,16 @@ export const demoGuides: Record<string, DemoGuideConfig> = {
   },
   'brightline-studio': {
     id: 'brightline-studio',
-    title: 'Enquiry to quote',
+    title: 'Strategic planning workspace',
     device: 'desktop',
     intro:
-      'This is a desk workflow prototype - not a chatbot. Follow the steps to turn a vague brief into a sendable quote.',
+      'Choose a scenario inside the prototype, then follow the guided workflow. Each step shows what the client asked for.',
     completeMessage:
-      'Walkthrough complete. Try toggling phases, switching tiers, or editing the client email before sending.',
+      'Journey complete. Try another scenario, explore scenario planning, or ask the strategy assistant.',
     scopeNote:
-      'Simulated AI - production would connect to your templates, rate card, CRM, and approval rules. This prototype was enough for leadership to agree what to build first.',
-    steps: [
-      {
-        id: 'enquiry',
-        target: 'enquiry-card',
-        hint: 'Read the enquiry - vague brief, flexible budget, tight deadline.',
-        recovery: 'Start on the New enquiry screen and review the message from Marcus.',
-        annotation: {
-          id: 'enquiry',
-          clientAsk:
-            'to stop losing half a day every time a hot lead lands in the inbox with a vague brief.',
-          ourSolution:
-            'a structured intake view that captures the messy enquiry before anyone opens a spreadsheet.',
-        },
-      },
-      {
-        id: 'generate',
-        target: 'generate-btn',
-        hint: 'Tap Turn into scope - watch structured output appear in seconds.',
-        recovery: 'From the enquiry screen, tap Turn into scope.',
-        annotation: {
-          id: 'generate',
-          clientAsk: 'scope drafted from enquiry without starting from a blank doc.',
-          ourSolution:
-            'one action that produces editable blocks - phases, assumptions, and questions - not a wall of AI text.',
-        },
-      },
-      {
-        id: 'edit',
-        target: 'scope-toggle',
-        hint: 'Toggle a phase off to show the quote is editable, not a black box.',
-        recovery: 'On the scope screen, tap Brand refresh to toggle it off.',
-        annotation: {
-          id: 'edit',
-          clientAsk: 'the team to adjust scope before pricing - not after the quote is sent.',
-          ourSolution:
-            'phase toggles wired to the quote - leadership saw pricing shift in the same session.',
-        },
-      },
-      {
-        id: 'tier',
-        target: 'tier-recommended',
-        hint: 'Pick Recommended - same scope, different packaging.',
-        recovery: 'Tap Continue to quote options, then select Recommended.',
-        annotation: {
-          id: 'tier',
-          clientAsk: 'three clear options instead of one take-it-or-leave-it number.',
-          ourSolution:
-            'Essential / Recommended / Full tiers - mirrors how they actually sell, tested in one workshop.',
-        },
-      },
-      {
-        id: 'email',
-        target: 'view-email-btn',
-        hint: 'View email - see the quote as Marcus would, ready to personalise.',
-        recovery: 'From the quote preview, tap View email.',
-        annotation: {
-          id: 'email',
-          clientAsk: 'to tweak the message before it goes out - not send a generic template.',
-          ourSolution:
-            'pre-filled client email with quote summary attached - edit subject and body before sending.',
-        },
-      },
-      {
-        id: 'send',
-        target: 'send-preview-btn',
-        hint: 'Personalise if you like, then send the preview.',
-        recovery: 'Open View email from the quote, then tap Send preview.',
-        annotation: {
-          id: 'send',
-          clientAsk: 'a quote they could stand behind before integrating CRM, Xero, or e-sign.',
-          ourSolution:
-            'sendable preview with line items and timeline - scoped CRM integration for phase two.',
-        },
-      },
-    ],
+      'Built to validate strategic planning and workshop facilitation for a growing services firm. Production connects to OKR tools, CRM, and program management — this prototype settled the experience first.',
+    steps: [],
+    journeys: brightlineJourneys,
+    assistant: brightlineAssistant,
   },
 }
